@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include <cstdint>
 #include <vector>
 #define NREG 64

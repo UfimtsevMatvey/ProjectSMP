@@ -1,5 +1,7 @@
-#pragma once
-#include "def.h"
+//#pragma once
+#ifndef def
+   #include "def.h"
+#endif
 
 SMP_word get_field(SMP_word a, int l, int h) 
 {
@@ -10,4 +12,10 @@ SMP_word get_field(SMP_word a, int l, int h)
 	temp += l;
 	res = res >> temp;
 	return res;
+}
+bool get_bit(SMP_word a, int n)
+{
+	SMP_word temp = 1;
+	temp = temp << n;
+	return (temp & a);
 }

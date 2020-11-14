@@ -1,6 +1,8 @@
-#include "def.h"
-#include "regf.h"
 
+#include "regf.h"
+#ifndef def
+   #include "def.h"
+#endif
 void regf::write(byte N, SMP_word data)
 {
 	if (N < NREG)
@@ -17,7 +19,7 @@ void regf::read(byte N, SMP_word& data)
 regf::regf()
 {//Инициализация регистрового файла
 	int i = 0;
-	for (i = 0; i < NREG; i++);
+	for (i = 0; i < NREG; i++)
 		R[i] = 0;
 }
 void regf::operator =(const regf& E)

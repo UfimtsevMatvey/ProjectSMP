@@ -1,5 +1,7 @@
-#pragma once
-#include "def.h"
+//#pragma once
+#ifndef def
+   #include "def.h"
+#endif
 class regf
 {
 public:

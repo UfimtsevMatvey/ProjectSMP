@@ -1,9 +1,11 @@
-#include "def.h"
+
 #include "mem.h"
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#ifndef def
+   #include "def.h"
+#endif
 mem::mem()
 {//init memory
 }

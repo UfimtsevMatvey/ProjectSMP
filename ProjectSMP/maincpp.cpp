@@ -5,8 +5,8 @@ using namespace std;
 
 int main(int argv, char* argc[])
 {
-	char filenameInstr[] = "C:\\Users\\Matvey\\source\\repos\\ProjectSMP\\x64\\Debug\\imem.dat";
-	char filenameData[] = "C:\\Users\\Matvey\\source\\repos\\ProjectSMP\\x64\\Debug\\dmem.dat";
+	char filenameInstr[] = "./imem.dat";
+	char filenameData[] = "./dmem.dat";
 
 	byte gpr = NREG;
 	byte idr = NREG;
@@ -29,9 +29,9 @@ int main(int argv, char* argc[])
 	*/
 	while (true)
 	{
-		MasterCore.start();
+		MasterCore.test_start();
 		if (true)
 			break;
 	}
-	return EXIT_SUCCESS;
+	return 0;
 }

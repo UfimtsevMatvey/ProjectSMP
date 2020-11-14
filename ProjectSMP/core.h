@@ -1,28 +1,71 @@
-#pragma once
-#include "def.h"
+//#pragma once
+
 #include "regf.h"
 #include "mem.h"
-struct Idescriptor
+#ifndef def
+   #include "def.h"
+#endif
+struct ALU_instr
 {
-	uint8_t cond;
-	uint8_t opcode;
+	SMP_word priv;
+	SMP_word cond;
+	SMP_word opcode;
 	bool I;
 	bool S;
-	bool flagR;
-	uint8_t func;
-	uint8_t R0;
-	uint8_t R1;
-	uint8_t R2;
-	uint8_t R3;
-	uint8_t port;
-
-	uint32_t offset;
-	uint64_t scale;
-
-	uint8_t imm8;
-	uint16_t imm16;
-	uint32_t imm32;
-	uint64_t imm48;
+	SMP_word func;
+	SMP_word Rn;
+	SMP_word Rd;
+	SMP_word Rm;
+	SMP_word Ra;
+	SMP_word imm16;
+	SMP_word imm32;
+};
+struct MUL_instr
+{
+	SMP_word priv;
+	SMP_word cond;
+	SMP_word opcode;
+	bool typeOper; //Mul or mull with additional
+	bool S; //Sign 
+	bool TO; //Type of third operand
+	SMP_word Ra;
+	SMP_word Rn;
+	SMP_word Rd;
+	SMP_word Rm;
+	SMP_word imm32;
+};
+struct MEM_instr
+{
+	SMP_word priv;
+	SMP_word cond;
+	SMP_word opcode;
+	bool typeOper; //load or store
+	SMP_word sizeOp; //Size of operands
+	SMP_word Rn;
+	SMP_word Rd;
+	SMP_word scale;
+	SMP_word offset;
+};
+struct CT_instr
+{
+	SMP_word priv;
+	SMP_word cond;
+	SMP_word opcode;
+	SMP_word typeOper; //types of operation
+	SMP_word R;//register 
+	SMP_word imm48;
+};
+struct SYS_instr
+{
+	SMP_word priv;
+	SMP_word cond;
+	SMP_word opcode;
+	SMP_word typeOper; //types of operation
+	SMP_word port;
+	SMP_word Rn;
+	SMP_word Rd;
+	bool I; //type of operands
+	SMP_word inum; //number of interapt
 };
 class core
 {
@@ -38,7 +81,18 @@ public:
 private:
 	void fetchInstr();
 	void decodeInst();
+	void init_ALU();
+	void init_MUL();
+	void init_MEM();
+	void init_CT();
+	void init_SYS();
 	void exec();
+
+	void alu_exec();
+	void mul_exec();
+	void mem_exec();
+	void ct_exec();
+	void sys_exec();
 	  
 	void initMemory(SMP_word isize, SMP_word dsize, const char* fileInst, const char* fileData);
 
@@ -53,7 +107,13 @@ private:
 	void syncDataFile();
 
 	SMP_word instr;
-	Idescriptor descInst;
+
+	ALU_instr aluTypeInst;
+	MUL_instr mulTypeInst;
+	MEM_instr memTypeInst;
+	CT_instr ctTypeInst;
+	SYS_instr sysTypeInst;
+
 	regf gpregs;	//Регистры общего назначения
 	regf idgers;	//Регистры адресов обработчиков исключений
 
@@ -69,11 +129,13 @@ private:
 	//Остальные регистры, хранящие архитектурное состояние
 	//Функции, соответствующие инструкциям.
 	//ALU
+	void AND();
 	void EOR();
 	void ORR();
 	void TST();
 	void TEQ();
 	void CMP();
+	void CMN();
 	void ADD();
 	void SUB();
 	void ADC();

@@ -1,9 +1,13 @@
-#pragma once
-#include "def.h"
+//#pragma once
+
 #include <fstream>
+
+#ifndef def
+   #include "def.h"
+#endif
+
 #define BUFFERSIZE 1024
 #define INVALID 0xFFFFFFFFFFFFFFFF
-//Работа с внешними файлами, только через класс  mem.
 class mem
 {
 public:
@@ -23,7 +27,7 @@ private:
 	void saveBuffer(SMP_word bsize, SMP_word entry);
 	void openFile();
 	void closeFile();
-	bool valid;//Если true то данные в файле действтельны
+	bool valid;
 	SMP_word Nbuffer;
 	SMP_word memSize;
 	SMP_word* memory;
