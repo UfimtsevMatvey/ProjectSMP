@@ -75,8 +75,6 @@ public:
 	void test_start();
 
 	void start();
-	//функция, принимающая инструкцию для декодирований и исполнения
-	//Она должна определить какую функцию, и с какими параметрами вызвать.
 
 private:
 	void fetchInstr();
@@ -114,20 +112,18 @@ private:
 	CT_instr ctTypeInst;
 	SYS_instr sysTypeInst;
 
-	regf gpregs;	//Регистры общего назначения
-	regf idgers;	//Регистры адресов обработчиков исключений
+	regf gpregs;
+	regf idgers;
 
-	reg PC;			//Указатель следующей инструкции
+	reg PC;
 
-	reg INR; //Регистр флагов прерываний
-	reg FLR; //Регистр флагов
+	reg INR;
+	reg FLR;
 
 	mem instr_mem;
 	mem data_mem;
 
-	SMP_word flgs;	//Регистр флагов
-	//Остальные регистры, хранящие архитектурное состояние
-	//Функции, соответствующие инструкциям.
+	SMP_word flgs;
 	//ALU
 	void AND();
 	void EOR();
@@ -182,14 +178,19 @@ private:
 	void STRW();
 	void LDRW();
 
+	void STRHW();
+	void LDRHW();
+
 	void STRB();
 	void LDRB();
 
 	//Branch instractions
 
 	void BL();//Save ip on reg0
-	void BO();
-	void B();
+	void BO_IMM();
+	void BO_REG();
+	void B_IMM();
+	void B_REG();
 	void RET();
 	void XRET();
 	//System instractions

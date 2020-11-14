@@ -3,6 +3,10 @@
 #include <iostream>
 #include "subfunc.h"
 #include "funcCode.h"
+#include "opcode.h"
+#include "memSizeOper.h"
+#include "ctCode.h"
+#include "sysCode.h"
 #ifndef def
    #include "def.h"
 #endif
@@ -51,27 +55,27 @@ void core::decodeInst()
 	SMP_word opcode;
 	opcode = get_field(instr, 2, 6);
 	switch(opcode){
-		case 0b0001:{
+		case ALUinstr:{
 			init_ALU();
 			break;
 		}
-		case 0b0010:{
+		case MULinstr:{
 			init_MUL();
 			break;
 		}	
-		case 0b1010:{
+		case wMULinstr:{
 			init_MUL();
 			break;
 		}
-		case 0b0011:{
+		case MEMinstr:{
 			init_MEM();
 			break;
 		}
-		case 0b0100:{
+		case CTinstr:{
 			init_CT();
 			break;
 		}
-		case 0b0101:{
+		case SYSinstr:{
 			init_SYS(); 
 			break;
 		}
@@ -82,27 +86,27 @@ void core::exec()
 {
 	SMP_word opcode = get_field(instr, 2, 6);
 	switch(opcode){
-		case 0b0001:{
+		case ALUinstr:{
 			alu_exec();
 			break;
 		}
-		case 0b0010:{
+		case MULinstr:{
 			mul_exec();
 			break;
 		}	
-		case 0b1010:{
+		case wMULinstr:{
 			mul_exec();
 			break;
 		}
-		case 0b0011:{
+		case MEMinstr:{
 			mem_exec();
 			break;
 		}
-		case 0b0100:{
+		case CTinstr:{
 			ct_exec();
 			break;
 		}
-		case 0b0101:{
+		case SYSinstr:{
 			sys_exec(); 
 			break;
 		}
@@ -145,19 +149,82 @@ void core::alu_exec()
 }
 void core::mul_exec()
 {
-
+	if(mulTypeInst.typeOper){
+		//Multiply without additional
+		if(mulTypeInst.opcode == MULinstr){
+			//Unsigned instraction
+			MUL();
+		}
+		else if(mulTypeInst.opcode == wMULinstr){
+			//Sign instraction
+			if(mulTypeInst.S){
+				SMULL();
+			}
+			else{
+				UMULL();
+			}
+		}
+	}
+	else{
+		//Multiply with additional
+		if(mulTypeInst.S){
+			SMLAL();
+		}
+		else{
+			UMLAL();
+		}
+	}
 }
 void core::mem_exec()
 {
-
+	if(memTypeInst.typeOper){
+		//load
+		switch(memTypeInst.sizeOp){
+			case BITS64: LDR(); 	break;
+			case BITS32: LDRW();	break;
+			case BITS16: LDRHW();	break;
+			case BITS08: LDRB();	break;
+		}
+	}
+	else{
+		//Store
+		switch(memTypeInst.sizeOp){
+			case BITS64: STR(); 	break;
+			case BITS32: STRW();	break;
+			case BITS16: STRHW();	break;
+			case BITS08: STRB();	break;
+		}
+	}	
 }
 void core::ct_exec()
 {
-
+	switch(ctTypeInst.typeOper){
+		case BL_CODE:		BL();		break;
+		case BO_REG_CODE:	BO_REG();	break;
+		case BO_IMM_CODE:	BO_IMM();	break;
+		case B_REG_CODE:	B_REG();	break;
+		case B_IMM_CODE:	B_IMM();	break;
+		case RET_CODE:		RET(); 		break;
+		case XRET_CODE: 	XRET(); 	break;
+	}
 }
 void core::sys_exec()
 {
+	switch(sysTypeInst.typeOper){
+		case INSY_CODE:	INSY(); break;
+		case IN_CODE: 	IN(); 	break;
+		case OUTSY_CODE:OUTSY();break;
+		case OUT_CODE: 	OUT(); 	break;
+		case SFL_CODE: 	SFL(); 	break;
+		case LFL_CODE: 	LFL(); 	break;
+		case SMF_CODE: 	SMF(); 	break;
+		case SINT_CODE:	SINT(); break;
+		case BINT_CODE:	BINT(); break;
+		case UINT_CODE: UINT(); break;
+		case CINT_CODE: CINT(); break;
+		case INT_CODE: 	INT(); 	break;
 
+	}
 }
 
 void core::init_ALU()
@@ -437,7 +504,14 @@ void core::LDRW()
 {
 	PC += 8;
 }
-
+void core::STRHW()
+{
+	PC += 8;
+}
+void core::LDRHW()
+{
+	PC += 8;
+}
 void core::STRB()
 {
 	PC += 8;
@@ -453,11 +527,19 @@ void core::BL()
 {
 
 }//Save ip on reg0
-void core::BO() 
+void core::BO_REG() 
 {
 
 }
-void core::B() 
+void core::BO_IMM() 
+{
+
+}
+void core::B_REG() 
+{
+
+}
+void core::B_IMM() 
 {
 
 }
