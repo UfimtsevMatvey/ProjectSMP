@@ -11,7 +11,7 @@ struct ALU_instr
 	SMP_word cond;
 	SMP_word opcode;
 	bool I;
-	bool S;
+	bool S;//Flag regs
 	SMP_word func;
 	SMP_word Rn;
 	SMP_word Rd;
@@ -104,6 +104,11 @@ private:
 	void getIntr(SMP_word ip, SMP_word& instr);
 	void syncDataFile();
 
+	void setFlag(int n);
+	void resetFlag(int n);
+
+	void resetFLR();
+
 	SMP_word instr;
 
 	ALU_instr aluTypeInst;
@@ -112,18 +117,21 @@ private:
 	CT_instr ctTypeInst;
 	SYS_instr sysTypeInst;
 
-	regf gpregs;
-	regf idgers;
+	regf gpregs;//General purpose registers
+	regf idgers;//Expeption's handlers address registers
 
 	reg PC;
 
-	reg INR;
-	reg FLR;
+	reg INR;//Exeption flag register
+	reg FLR;//Flag register
 
 	mem instr_mem;
 	mem data_mem;
 
 	SMP_word flgs;
+
+	void templateALU();
+
 	//ALU
 	void AND();
 	void EOR();

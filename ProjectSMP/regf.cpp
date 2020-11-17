@@ -27,6 +27,11 @@ void regf::operator =(const regf& E)
 	for (int i = 0; i < NREG; i++)
 		R[i] = E.R[i];
 }
+SMP_word& regf::operator[ ](SMP_word i)
+{
+	if(i < NREG)
+		return R[i];
+}
 void regf::flush()
 {
 	for (int i = 0; i < NREG; i++)

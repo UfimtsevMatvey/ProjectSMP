@@ -7,6 +7,7 @@
 #include "memSizeOper.h"
 #include "ctCode.h"
 #include "sysCode.h"
+#include "flagNum.h"
 #ifndef def
    #include "def.h"
 #endif
@@ -47,7 +48,7 @@ void core::start()
 	fetchInstr();//Выборка следующей инструкции
 	decodeInst();//Декодирование инструкции
 	exec();//Исполнение инструкции
-	flushInstr();//Очистка дескриптора инструкции
+	flushInstr();//Очистка дескрипторов инструкции
 }
 void core::decodeInst()
 {
@@ -290,6 +291,26 @@ void core::init_SYS()
 	sysTypeInst.inum = get_field(instr, 32, 37);
 }
 
+void core::setFlag(int n)
+{
+	SMP_word temp = 1;
+	temp = temp << n;
+	FLR = FLR | temp;
+}
+
+void core::resetFlag(int n)
+{
+	SMP_word temp = 1;
+	temp = temp << n;
+	temp = ~temp;
+	FLR = FLR & temp;
+}
+
+void core::resetFLR()
+{
+	FLR = 0;
+}
+
 void core::flushInstr() 
 {
 }
@@ -332,12 +353,46 @@ void core::getIntr(SMP_word ip, SMP_word& instr)
 	instr_mem.load(ip, instr);
 }
 
+//How to use functors???
+void core::templateALU()
+{
+	SMP_word Rd = aluTypeInst.Rd;
+	SMP_word Rn = aluTypeInst.Rn;
+	SMP_word oper2;
+	SMP_word res;
+
+	if(aluTypeInst.cond != get_field(FLR, 3, 6)) //do Nothink, if conditional is not true
+		return;
+
+	if(aluTypeInst.I){
+		oper2 = gpregs[aluTypeInst.Rm];
+	}
+	else{
+		oper2 = aluTypeInst.imm32;
+	}
+	res = gpregs[Rn] + oper2;
+	gpregs[Rd] = res;
+	if(aluTypeInst.S){
+		if(res == 0)	setFlag(Z);//Z - flag
+		else			resetFlag(Z);
+		if(res >= 0) 	setFlag(C);
+		else 			resetFlag(C);
+		resetFlag(N);
+		resetFlag(V);
+	}
+	PC += 8;
+	return;
+	
+}
+
+
 void core::AND() 
 {
-	PC += 8;
+	
 }
 void core::EOR() 
 {
+
 	PC += 8;
 }
 void core::ORR()
