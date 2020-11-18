@@ -1,3 +1,4 @@
+#pragma once
 #define BL_CODE      0b0000
 #define BO_IMM_CODE  0b0001
 #define BO_REG_CODE  0b1001

@@ -4,7 +4,7 @@ CXXFLAGS = -Wall
 all: SMPemu
 
 SMPemu: maincpp.o core.o mem.o regf.o subfunc.o logicFunctors.o
-	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o logicFunctors.o -o smpemu
+	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o logicFunctors.o -o smpemu.out
 
 maincpp.o:
 	$(CXX) $(CXXFLAGS) -c ../maincpp.cpp
@@ -23,6 +23,7 @@ subfunc.o:
 
 logicFunctors.o:
 	$(CXX) $(CXXFLAGS) -c ../logicFunctors.cpp
+
 
 clean:
 

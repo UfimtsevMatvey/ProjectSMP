@@ -1,4 +1,4 @@
-
+#pragma once
 #include "mem.h"
 #include <iostream>
 #include <fstream>

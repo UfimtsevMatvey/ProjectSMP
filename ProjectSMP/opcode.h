@@ -1,3 +1,4 @@
+#pragma once
 #define ALUinstr    0b0001
 #define MULinstr    0b0010
 #define wMULinstr   0b1010

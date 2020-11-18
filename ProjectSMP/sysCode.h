@@ -1,3 +1,4 @@
+#pragma once
 #define INSY_CODE    0
 #define IN_CODE      1
 #define OUTSY_CODE   2

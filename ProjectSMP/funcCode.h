@@ -1,3 +1,4 @@
+#pragma once
 #define FUNC_AND 0
 #define FUNC_EOR 1
 #define FUNC_ORR 2

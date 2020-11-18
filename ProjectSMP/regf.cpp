@@ -1,4 +1,4 @@
-
+#pragma once
 #include "regf.h"
 #ifndef def
    #include "def.h"

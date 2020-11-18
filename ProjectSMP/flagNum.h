@@ -1,3 +1,4 @@
+#pragma once
 #define INVALIDVALUE 2
 #define N 1
 #define Z 2

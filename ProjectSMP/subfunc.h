@@ -1,4 +1,4 @@
-//#pragma once
+#pragma once
 #ifndef def
    #include "def.h"
 #endif

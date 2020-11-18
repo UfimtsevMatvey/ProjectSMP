@@ -1,3 +1,4 @@
+#pragma once
 #define EQ 0
 #define NE 1
 #define CS 2
