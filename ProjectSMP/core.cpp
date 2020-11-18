@@ -290,7 +290,47 @@ void core::init_SYS()
 	sysTypeInst.I = get_bit(instr, 31);
 	sysTypeInst.inum = get_field(instr, 32, 37);
 }
+void core::setAALUflag(SMP_word res, SMP_word oper1, SMP_word oper2, SMP_word care)
+{
+	bit64 bres;
+	bit64 boper1;
+	bit64 boper2;
 
+	bres.u = res;
+	boper1.u = oper1;
+	boper2.u = oper2;
+
+
+	int64_t sres = bres.s;
+	int64_t soper1 = boper1.s;
+	int64_t soper2 = boper2.s;
+	uint128_t sum = oper1 + oper2;
+	int128_t ssum = soper1 + soper2;
+	if(res == 0)		setFlag(Z);//Z - flag
+	else				resetFlag(Z);
+
+	if(sum > MAGICNUMBER)	setFlag(C);
+	else 					resetFlag(C);
+
+	if(sres < 0){
+		setFlag(N);
+	}
+	else{
+		resetFlag(N);
+	}
+	if(ssum > (1 << 64)){
+		setFlag(V);
+	}
+	else{
+		resetFlag(V);
+	}
+}
+
+void core::setLALUflag(SMP_word res)
+{
+	if(res == 0)		setFlag(Z);//Z - flag
+	else				resetFlag(Z);
+}
 void core::setFlag(int n)
 {
 	SMP_word temp = 1;
@@ -1076,47 +1116,3 @@ void core::INT()
 	PC += 8;
 }
 
-void core::setAALUflag(SMP_word res, SMP_word oper1, SMP_word oper2, SMP_word care)
-{
-	bit64 bres;
-	bit64 boper1;
-	bit64 boper2;
-
-	bres.u = res;
-	boper1.u = oper1;
-	boper2.u = oper2;
-
-
-	int64_t sres = bres.s;
-	int64_t soper1 = boper1.s;
-	int64_t soper2 = boper2.s;
-	uint128_t sum = oper1 + oper2;
-	int128_t ssum = soper1 + soper2;
-	if(res == 0)		setFlag(Z);//Z - flag
-	else				resetFlag(Z);
-
-	if(sum > MAGICNUMBER)	setFlag(C);
-	else 					resetFlag(C);
-
-	if(sres < 0){
-		setFlag(N);
-	}
-	else{
-		resetFlag(N);
-	}
-	if(ssum > (1 << 64)){
-		setFlag(V);
-	}
-	else{
-		resetFlag(V);
-	}
-}
-
-void core::setLALUflag(SMP_word res)
-{
-	if(res == 0)		setFlag(Z);//Z - flag
-	else				resetFlag(Z);
-	resetFlag(N);
-	resetFlag(V);
-	resetFlag(C);
-}
