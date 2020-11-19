@@ -72,7 +72,7 @@ class core
 public:
 	core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile);
 	
-	void test_start();
+	void test_start(SMP_word testInstr);
 
 	void start();
 

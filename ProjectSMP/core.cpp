@@ -24,8 +24,14 @@ void core::initMemory(SMP_word isize, SMP_word dsize, const char* fileInst, cons
 	instr_mem.Init(isize, fileInst);
 	data_mem.Init(dsize, fileData);
 }
-void core::test_start()
+void core::test_start(SMP_word testInstr)
 {
+	{
+		//Testing command path
+		instr = testInstr;
+		decodeInst();
+		exec();
+	}
 	//Тестовый код
 
 	//Чтение / запись в регистровый файл
