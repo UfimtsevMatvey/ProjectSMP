@@ -18,7 +18,10 @@ int main(int argv, char* argc[])
 	core MasterCore(entry, instr_size, data_size, filenameInstr, filenameData);
 	while (true)
 	{
-		MasterCore.test_start();
+		MasterCore.test_start(static_cast<uint64_t>(SADD_TEST_INSTR_0));
+		MasterCore.test_start(static_cast<uint64_t>(SADD_TEST_INSTR_1));
+		MasterCore.test_start(static_cast<uint64_t>(SADD_TEST_INSTR_2));
+		MasterCore.test_start(static_cast<uint64_t>(SADD_TEST_INSTR_3));
 		if (true)
 			break;
 	}

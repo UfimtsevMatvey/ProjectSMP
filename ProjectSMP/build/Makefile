@@ -1,5 +1,5 @@
 CXX = c++
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall -g
 
 all: SMPemu
 
