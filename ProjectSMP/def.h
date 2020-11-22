@@ -14,8 +14,23 @@ typedef uint8_t byte;
 typedef __int128 int128_t;
 typedef unsigned __int128 uint128_t;
 
+struct ddwordu{
+    SMP_word h;
+    SMP_word l;
+};
+
+struct ddwords{
+    SMP_word h;
+    SMP_word l;
+};
 
 union bit64{
     uint64_t u;
     int64_t s;
+};
+
+union bit128{
+    ddwordu dsu;
+    ddwords dss;
+    uint128_t dw;
 };

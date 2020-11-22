@@ -21,7 +21,7 @@ core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, co
 	initMemory(isize, dsize, ifile, dfile);
 }
 void core::initMemory(SMP_word isize, SMP_word dsize, const char* fileInst, const char* fileData)
-{//Инициализация памяти.
+{//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
 	instr_mem.Init(isize, fileInst);
 	data_mem.Init(dsize, fileData);
 }
@@ -34,14 +34,14 @@ void core::test_start(SMP_word testInstr)
 		exec();
 		return;
 	}
-	//Тестовый код
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
 
-	//Чтение / запись в регистровый файл
+	//пїЅпїЅпїЅпїЅпїЅпїЅ / пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 	SMP_word data = 0;
 	store2reg(32, 346);
 	load2reg(32, data);
 
-	//Чтение / запись в память
+	//пїЅпїЅпїЅпїЅпїЅпїЅ / пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
 	for (SMP_word i = 0; i < 8192; i++) {
 		store2memData(i, 0xFFFFFFFFFFAA0000 + i);
@@ -53,14 +53,13 @@ void core::test_start(SMP_word testInstr)
 }
 void core::start()
 {
-	fetchInstr();//Выборка следующей инструкции
-	decodeInst();//Декодирование инструкции
-	exec();//Исполнение инструкции
-	flushInstr();//Очистка дескрипторов инструкции
+	fetchInstr();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	decodeInst();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	exec();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	flushInstr();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 }
 void core::decodeInst()
 {
-	SMP_word tinstr = instr;
 	SMP_word opcode;
 	opcode = get_field(instr, 7, 10);
 	switch(opcode){
@@ -158,7 +157,7 @@ void core::alu_exec()
 }
 void core::mul_exec()
 {
-	if(mulTypeInst.typeOper){
+	if(!mulTypeInst.typeOper){
 		//Multiply without additional
 		if(mulTypeInst.opcode == MULinstr){
 			//Unsigned instraction
@@ -176,11 +175,17 @@ void core::mul_exec()
 	}
 	else{
 		//Multiply with additional
-		if(mulTypeInst.S){
-			SMLAL();
+		if(mulTypeInst.opcode == MULinstr){
+			MLA();
 		}
-		else{
-			UMLAL();
+		else if(mulTypeInst.opcode == wMULinstr){
+			//Sign mul
+			if(mulTypeInst.S){
+				SMLAL();
+			}//unsign mul
+			else{
+				UMLAL();
+			}
 		}
 	}
 }
@@ -361,21 +366,33 @@ void core::resetFLR()
 {
 	FLR = 0;
 }
-
+void core::resetINR()
+{
+	INR = 0;
+}
+void core::resetPC()
+{
+	PC = 0;
+}
 void core::flushInstr() 
 {
+	aluTypeInst.flush();
+	mulTypeInst.flush();
+	memTypeInst.flush();
+	ctTypeInst.flush();
+	sysTypeInst.flush();
 }
 void core::reset() 
 {
 	gpregs.flush();
 	idgers.flush();
-	FLR = 0;
-	INR = 0;
+	resetFLR();
+	resetINR();
 	flushInstr();
-	PC = 0;
+	resetPC();
 }
 void core::syncDataFile() 
-{//Синхронизация памяти с файлом памяти.
+{
 	data_mem.syncFile();
 }
 void core::fetchInstr()
@@ -487,7 +504,6 @@ void core::ORR()
 }
 void core::TST()
 {
-	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper2;
 	SMP_word res;
@@ -502,7 +518,6 @@ void core::TST()
 }
 void core::TEQ()
 {
-	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper2;
 	SMP_word res;
@@ -518,11 +533,9 @@ void core::TEQ()
 void core::CMP()
 {
 	SMP_word Rd = aluTypeInst.Rd;
-	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper1 = gpregs[Rd];
 	SMP_word oper2;
 	SMP_word addoper2;
-	bit64 bres;
 	bit64 boper1;
 	bit64 boper2;
 
@@ -550,11 +563,9 @@ void core::CMP()
 void core::CMN()
 {
 	SMP_word Rd = aluTypeInst.Rd;
-	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper1 = gpregs[Rd];
 	SMP_word oper2;
 
-	bit64 bres;
 	bit64 boper1;
 	bit64 boper2;
 
@@ -587,7 +598,6 @@ void core::ADD()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 
-	bit64 bres;
 	bit64 boper1;
 	bit64 boper2;
 
@@ -625,7 +635,6 @@ void core::SUB()
 	SMP_word addoper2;
 	SMP_word res;
 
-	bit64 bres;
 	bit64 boper1;
 	bit64 boper2;
 
@@ -662,7 +671,6 @@ void core::ADC()
 	SMP_word oper2;
 	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 
-	bit64 bres;
 	bit64 boper1;
 	bit64 boper2;
 	
@@ -694,12 +702,11 @@ void core::RSB()
 	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper1 = gpregs[Rn];
-	SMP_word oper2;
-	SMP_word addoper2;
-	SMP_word care;
-	SMP_word res;
+	SMP_word oper2 = 0;
+	SMP_word addoper2 = 0;
+	SMP_word care = 0;
+	SMP_word res = 0;
 
-	bit64 bres;
 	bit64 boper1;
 	bit64 boper2;
 
@@ -733,11 +740,10 @@ void core::SBC()
 	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper1 = gpregs[Rn];
-	SMP_word oper2;
-	SMP_word addoper2;
+	SMP_word oper2 = 0;
+	SMP_word addoper2 = 0;
 	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 
-	bit64 bres;
 	bit64 boper1;
 	bit64 boper2;
 
@@ -770,12 +776,9 @@ void core::MVN()
 	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper1 = gpregs[Rn];
-	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 	bit64 boper1;
 	boper1.u = oper1;
-	uint64_t soper1 = boper1.s;
 
-	uint64_t sres;
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
@@ -867,18 +870,17 @@ void core::RRX()
 	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
-	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
+	oper2 = oper2 & 0x000000000000003F;
 
-	SMP_word temp1 = get_bit(FLR, 3) << 63;
+	SMP_word temp1 = (get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0)) << 63;
 	SMP_word temp2;
-	setFlag(C);
 	for(int i = 0; i < oper2; i++){
-		temp2 = get_bit(res, 0) << 63;
+		temp2 = (get_bit(oper1, 63) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0)) << 63;
 		oper1 = oper1 >> 1;
 		oper1 = oper1 | temp1;
 		temp1 = temp2;
@@ -898,7 +900,6 @@ void core::ROR()
 	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
-	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 	SMP_word res;
 
 	bit64 bres;
@@ -912,7 +913,7 @@ void core::ROR()
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-
+	oper2 = oper2 & 0x000000000000003F;
 	bres.u = res;
 	boper1.u = oper1;
 	boper2.u = oper2;
@@ -938,14 +939,15 @@ void core::ROR()
 void core::BSWP()
 {
 	SMP_word Rd = aluTypeInst.Rd;
-	SMP_word res;
+	SMP_word res = 0;
 	SMP_word oper = gpregs[Rd];
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
-	__asm__ ("bswap  %%rax"
-                             :"=a"(oper)
-                             :"a"(res)
-                             );
+	asm("mov %0, %%rax\n\t"
+    		"bswap %%rax\n\t"
+			"mov %%rax, %1"
+    		: "=r" (res)
+    		: "r" (oper)); 
 	PC += 8;
 	return;
 }
@@ -953,7 +955,6 @@ void core::SWR()
 {
 	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word Rn = aluTypeInst.Rn;
-	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	SMP_word temp = gpregs[Rd];
@@ -1013,23 +1014,137 @@ void core::VSADDH()
 
 void core::MUL()
 {
+	SMP_word Rd = mulTypeInst.Rd;
+	SMP_word Rn = mulTypeInst.Rn;
+	SMP_word Rm = mulTypeInst.Rm;
+	SMP_word oper1 = 0;
+	SMP_word oper2 = 0;
+	SMP_word res = 0;
+	if(mulTypeInst.cond != 0b11111){
+		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+			return;//do Nothink, if conditional is not true
+		}
+	}
+	if(mulTypeInst.TO){
+		oper2 = mulTypeInst.imm32;
+	}
+	else{
+		oper2 = gpregs[Rm];
+	}
+	oper1 = gpregs[Rn];
+	res = oper1 * oper2;
+	if(res == 0) setFlag(Z);
+	else resetFlag(Z);
+	gpregs[Rd] = res;
 	PC += 8;
+	return;
 }
 void core::MLA()
 {
+	SMP_word Rd = mulTypeInst.Rd;
+	SMP_word Rn = mulTypeInst.Rn;
+	SMP_word Rm = mulTypeInst.Rm;
+	SMP_word Ra = mulTypeInst.Ra;
+	SMP_word oper1 = 0;
+	SMP_word oper2 = 0;
+	SMP_word operA = 0;
+	SMP_word res = 0;
+	if(mulTypeInst.cond != 0b11111){
+		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+			return;//do Nothink, if conditional is not true
+		}
+	}
+	oper1 = gpregs[Rn];
+	oper2 = gpregs[Rm];
+	operA = gpregs[Ra];
+	res = oper1 * oper2 + operA;
+	gpregs[Rd] = res;
 	PC += 8;
+	return;
 }
 void core::UMULL()
 {
+	SMP_word Rd = mulTypeInst.Rd;
+	SMP_word Rn = mulTypeInst.Rn;
+	SMP_word Rm = mulTypeInst.Rm;
+	SMP_word Ra = mulTypeInst.Ra;
+
+	bit128 dd;
+	uint128_t ddoper1;
+	uint128_t ddoper2;
+	uint128_t ddres;
+
+	if(mulTypeInst.cond != 0b11111){
+		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+			return;//do Nothink, if conditional is not true
+		}
+	}
+	ddoper1 = gpregs[Rm];
+	ddoper2 = gpregs[Ra];
+	ddres = ddoper1 * ddoper2;
+	dd.dw = ddres;
+	gpregs[Rd] = dd.dsu.h;
+	gpregs[Rd] = dd.dsu.l;
 	PC += 8;
+	return;
 }
 void core::UMLAL()
 {
+	SMP_word Rd = mulTypeInst.Rd;
+	SMP_word Rn = mulTypeInst.Rn;
+	SMP_word Rm = mulTypeInst.Rm;
+	SMP_word Ra = mulTypeInst.Ra;
+
+	bit128 dd;
+	uint128_t ddoper1;
+	uint128_t ddoper2;
+	uint128_t ddres;
+
+	if(mulTypeInst.cond != 0b11111){
+		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+			return;//do Nothink, if conditional is not true
+		}
+	}
+	ddoper1 = gpregs[Rn];
+	ddoper2 = gpregs[Rm];
+	ddres = ddoper1 * ddoper2;
+	dd.dw = ddres;
+	gpregs[Rd] = dd.dsu.h + gpregs[Rd];
+	gpregs[Ra] = dd.dsu.l + gpregs[Ra];
 	PC += 8;
+	return;
 }
 void core::SMULL()
 {
+	SMP_word Rd = mulTypeInst.Rd;
+	SMP_word Rm = mulTypeInst.Rm;
+	SMP_word Rn = mulTypeInst.Rn;
+	SMP_word Ra = mulTypeInst.Ra;
+
+	bit64 dw;
+	bit128 dd;
+	int128_t ddoper1;
+	int128_t ddoper2;
+	int128_t ddres;
+
+	if(mulTypeInst.cond != 0b11111){
+		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+			return;//do Nothink, if conditional is not true
+		}
+	}
+	dw.u = gpregs[Rm];
+	ddoper1 = dw.s;
+	dw.u = gpregs[Rn];
+	ddoper2 = dw.s;
+
+	ddres = ddoper1 * ddoper2;
+	dd.dw = ddres;
+	dw.s = dd.dss.h; //to unsigned 128 bits integer
+	gpregs[Rd] = dw.u;
+	dw.s = dd.dss.l;
+	gpregs[Ra] = dw.s;
 	PC += 8;
+	return;
 }
 void core::SMLAL()
 {
@@ -1157,3 +1272,65 @@ void core::INT()
 	PC += 8;
 }
 
+void ALU_instr::flush()
+{
+	priv = 0;
+	cond = 0;
+	opcode = 0;
+	I = false;
+	S = false;
+	func = 0;
+	Rn = 0;
+	Rd = 0;
+	Rm = 0;
+	Ra = 0;
+	imm16 = 0;
+	imm32 = 0;
+}
+void MUL_instr::flush()
+{
+	priv = 0;
+	cond = 0;
+	opcode = 0;
+	typeOper = false; 
+	S = false; 
+	TO = false;
+	Ra = 0;
+	Rn = 0;
+	Rd = 0;
+	Rm = 0;
+	imm32 = 0;
+}
+void MEM_instr::flush()
+{
+	priv = 0;
+	cond = 0;
+	opcode = 0;
+	typeOper = false;
+	sizeOp = 0;
+	Rn = 0;
+	Rd = 0;
+	scale = 0;
+	offset = 0;
+}
+void CT_instr::flush()
+{
+	priv = 0; 
+	cond = 0;
+	opcode = 0;
+	typeOper = 0;
+	R = 0;
+	imm48 = 0;
+}
+void SYS_instr::flush()
+{
+	priv = 0;
+	cond = 0;
+	opcode = 0;
+	typeOper = 0;
+	port = 0;
+	Rn = 0;
+	Rd = 0;
+	I = false;
+	inum = 0;
+}

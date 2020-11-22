@@ -20,7 +20,7 @@ bool get_bit(SMP_word a, int n)
 {
 	SMP_word temp = 1;
 	temp = temp << 8 * sizeof(SMP_word) - n - 1;
-	return (temp & a);
+	return temp & a;
 }
 
 int64_t signExtword2dword(int64_t a)

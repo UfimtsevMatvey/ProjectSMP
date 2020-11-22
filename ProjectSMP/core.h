@@ -7,6 +7,7 @@
 #endif
 struct ALU_instr
 {
+	void flush();
 	SMP_word priv;
 	SMP_word cond;
 	SMP_word opcode;
@@ -22,10 +23,11 @@ struct ALU_instr
 };
 struct MUL_instr
 {
+	void flush();
 	SMP_word priv;
 	SMP_word cond;
 	SMP_word opcode;
-	bool typeOper; //Mul or mull with additional
+	bool typeOper; //Mul or mul with addition
 	bool S; //Sign 
 	bool TO; //Type of third operand
 	SMP_word Ra;
@@ -36,6 +38,7 @@ struct MUL_instr
 };
 struct MEM_instr
 {
+	void flush();
 	SMP_word priv;
 	SMP_word cond;
 	SMP_word opcode;
@@ -48,6 +51,7 @@ struct MEM_instr
 };
 struct CT_instr
 {
+	void flush();
 	SMP_word priv;
 	SMP_word cond;
 	SMP_word opcode;
@@ -57,6 +61,7 @@ struct CT_instr
 };
 struct SYS_instr
 {
+	void flush();
 	SMP_word priv;
 	SMP_word cond;
 	SMP_word opcode;
@@ -108,6 +113,8 @@ private:
 	void resetFlag(int n);
 
 	void resetFLR();
+	void resetINR();
+	void resetPC();
 
 	SMP_word instr;
 
