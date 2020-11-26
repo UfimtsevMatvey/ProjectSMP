@@ -875,7 +875,7 @@ void core::RRX()
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-	oper2 = oper2 & 0x000000000000003F;
+	oper2 = oper2 & 0x000000000000003F;//Only 6 bit in shifh operand
 
 	SMP_word temp1 = (get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0)) << 63;
 	SMP_word temp2;
@@ -913,7 +913,7 @@ void core::ROR()
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-	oper2 = oper2 & 0x000000000000003F;
+	oper2 = oper2 & 0x000000000000003F;//Only 6 bit in shifh operand
 	bres.u = res;
 	boper1.u = oper1;
 	boper2.u = oper2;
@@ -944,9 +944,9 @@ void core::BSWP()
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	asm(
-		"MOV rax, %0		\n\t"
+		"MOV rax, %1		\n\t"
     	"BSWAP rax			\n\t"
-		"MOV %1, rax"
+		"MOV %0, rax		\n\t"
    		: "=r" (res)
    		: "r" (oper));
 	PC += 8;
@@ -974,28 +974,20 @@ void core::UADDPB()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 
-	bit64 boper1;
-	bit64 boper2;
-
-	uint64_t soper1;
-	uint64_t soper2;
-	uint64_t sres;
-
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-
 	asm(
 		"MOVD mm0, %0				\n\t"
 		"MOVD mm1, %1				\n\t"
     	"PADDUSB mm1, mm0			\n\t"
-		"MOVQ %2, mm1"
-    	: "=r" (soper1), "=r" (soper2)
-    	: "r" (sres)); 
+		"MOVQ %2, mm1				\n\t"
+    	: "=r" (res)
+    	: "r" (oper1), "r" (oper2)); 
 
-	gpregs[Rd] = sres;
+	gpregs[Rd] = res;
 	PC += 8;
 	return;
 }
@@ -1006,13 +998,6 @@ void core::UADDPH()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 
-	bit64 boper1;
-	bit64 boper2;
-
-	uint64_t soper1;
-	uint64_t soper2;
-	uint64_t sres;
-
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
@@ -1020,14 +1005,14 @@ void core::UADDPH()
 	else 				oper2 = aluTypeInst.imm32;
 
 	asm(
-		"MOVD mm0, %0				\n\t"
-		"MOVD mm1, %1				\n\t"
+		"MOVD mm0, %1				\n\t"
+		"MOVD mm1, %2				\n\t"
     	"PADDUSW mm1, mm0			\n\t"
-		"MOVQ %2, mm1"
-    	: "=r" (soper1), "=r" (soper2)
-    	: "r" (sres)); 
+		"MOVQ %0, mm1				\n\t"
+    	: "=r" (res)
+    	: "r" (oper1), "r" (oper2)); 
 
-	gpregs[Rd] = sres;
+	gpregs[Rd] = res;
 	PC += 8;
 	return;
 }
@@ -1038,28 +1023,20 @@ void core::UADDPW()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 
-	bit64 boper1;
-	bit64 boper2;
-
-	uint64_t soper1;
-	uint64_t soper2;
-	uint64_t sres;
-
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-
 	asm(
-		"MOVD xmm0, %0				\n\t"
-		"MOVD xmm1, %1				\n\t"
+		"MOVD xmm0, %1				\n\t"
+		"MOVD xmm1, %2				\n\t"
     	"PADDD xmm1, xmm0			\n\t"
-		"MOVQ %%mm1, %2"
-    	: "=r" (soper1), "=r" (soper2)
-    	: "r" (sres));
+		"MOVQ %0, xmm1				\n\t"
+    	: "=r" (res)
+    	: "r" (oper1), "r" (oper2)); 
 
-	gpregs[Rd] = sres;
+	gpregs[Rd] = res;
 	PC += 8;
 	return;
 }
@@ -1071,24 +1048,29 @@ void core::SADDPB()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 
-	uint64_t soper1;
-	uint64_t soper2;
-	uint64_t sres;
+	bit64 boper1;
+	bit64 boper2;
+
+	int64_t soper1;
+	int64_t soper2;
+	int64_t sres;
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-
+	boper1.u = oper1;
+	boper2.u = oper2;
+	soper1 = boper1.s;
+	soper2 = boper2.s;
 	asm(
-		
-		"MOVD %0, %%mm0 \n\t"
-		"MOVD %1, %%mm1 \n\t"
-    	"PADDSB %%mm0, %%mm1 \n\t"
-		"MOVQ %%mm1, %2"
-    	: "=r" (soper1), "=r" (soper2)
-    	: "r" (sres)); 
+		"MOVD mm0, %1 				\n\t"
+		"MOVD mm1, %2 				\n\t"
+    	"PADDSB mm1, mm0	 		\n\t"
+		"MOVQ %0, mm1				\n\t"
+    	: "=r" (sres)
+    	: "r" (soper1), "r" (soper2)); 
 
 	gpregs[Rd] = sres;
 	PC += 8;
@@ -1114,13 +1096,17 @@ void core::SADDPH()
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
+	boper1.u = oper1;
+	boper2.u = oper2;
+	soper1 = boper1.s;
+	soper2 = boper2.s;
 	asm(
-		"MOVD mm0, %0				\n\t"
-		"MOVD mm1, %1				\n\t"
+		"MOVD mm0, %1				\n\t"
+		"MOVD mm1, %2				\n\t"
     	"PADDSW mm1, mm0			\n\t"
-		"MOVQ %2, mm1"
-    	: "=r" (soper1), "=r" (soper2)
-    	: "r" (sres)); 
+		"MOVQ %0, mm1				\n\t"
+    	: "=r" (sres)
+    	: "r" (soper1), "r" (soper2)); 
 
 	gpregs[Rd] = sres;
 	PC += 8;
@@ -1139,23 +1125,30 @@ void core::VUADDB()
 	SMP_word Rm2 = aluTypeInst.Ra;
 
 	SMP_word imm8 = aluTypeInst.imm32 & 0xFF;
-
+	SMP_word OperH = gpregs[Rm1];
+	SMP_word OperL = gpregs[Rm2];
 	ddwords res;
+	res.h = 0;
+	res.l = 0;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	
 	asm(
 		"MOVQ xmm2, %0				\n\t"//init registers xmm2 (imm8) and xmm3 (Rm1)
 		"MOVQ xmm3, %1				\n\t"//Only low byte in xmm2 and xmm3 used
-		"VPBROADCASTW xmm0, xmm2	\n\t"//Brodcasting low byte to all registers
+		"VPBROADCASTB xmm0, xmm2	\n\t"//Brodcasting low byte to all registers
 		"VPBROADCASTQ xmm1, xmm3	\n\t"
 		"MOVQ xmm2, %2				\n\t"//init xmm2 (Rm2)
 		"PSLLQ xmm1, 64				\n\t"//Left shift Rm1 on half xmm size
 		"POR xmm1, xmm2				\n\t"//High part of xmm1 is Rm1, low part of xmm1 is Rm2
     	"PADDUSB xmm1, xmm0			\n\t"//Calculate sum.
-		"MOVDQU xmm1, %3"				 //Store resalt to 128-bit variable res 	
-    	: "=r" (imm8), "=r" (Rm1), "=r" (Rm2)
-    	: "rm" (res));
+		"MOVQ r14, xmm1				\n\t"//Store resalt to 128-bit variable res 
+		"PSRLDQ xmm1, 8				\n\t"
+		"MOVQ r15, xmm1				\n\t"
+		"MOV %0, r14				\n\t"
+		"MOV %1, r15				\n\t" 	
+		: "=r" (res.l), "=r" (res.h)
+    	: "r" (imm8), "r" (OperH), "r" (OperL));
 
 	gpregs[Rd] = res.h;
 	gpregs[Rn] = res.l;
@@ -1171,23 +1164,30 @@ void core::VUADDH()
 	SMP_word Rm2 = aluTypeInst.Ra;
 
 	SMP_word imm16 = aluTypeInst.imm32 & 0xFFFF;
-
+	SMP_word OperH = gpregs[Rm1];
+	SMP_word OperL = gpregs[Rm2];
 	ddwords res;
+	res.h = 0;
+	res.l = 0;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	
 	asm(
-		"MOVQ xmm2, %0				\n\t"
-		"MOVQ xmm3, %1				\n\t"
+		"MOVQ xmm2, %2				\n\t"
+		"MOVQ xmm3, %3				\n\t"
 		"VPBROADCASTW xmm0, xmm2	\n\t"
 		"VPBROADCASTQ xmm1, xmm3	\n\t"
-		"VMOVQ xmm2, %2				\n\t"
-		"PSLLQ xmm1, 64				\n\t"
+		"VMOVQ xmm2, %4				\n\t"
+		"PSLLDQ xmm1, 8				\n\t"
 		"POR xmm1, xmm2				\n\t"
     	"PADDUSB xmm1, xmm0			\n\t"
-		"MOVDQU xmm1, %3"
-    	: "=r" (imm16), "=r" (Rm1), "=r" (Rm2)
-    	: "rm" (res));
+		"MOVQ r14, xmm1				\n\t"
+		"PSRLDQ xmm1, 8				\n\t"
+		"MOVQ r15, xmm1				\n\t"
+		"MOV %0, r14				\n\t"
+		"MOV %1, r15				\n\t"
+		: "=r" (res.l), "=r" (res.h)
+    	: "r" (imm16), "r" (OperH), "r" (OperL));
 	gpregs[Rd] = res.h;
 	gpregs[Rn] = res.l;
 	PC += 8;
@@ -1202,30 +1202,37 @@ void core::VSADDB()
 	SMP_word Rm2 = aluTypeInst.Ra;
 
 	SMP_word imm8 = aluTypeInst.imm32 & 0xFF;
-
+	SMP_word OperH = gpregs[Rm1];
+	SMP_word OperL = gpregs[Rm2];
 	ddwords res;
+	res.h = 0;
+	res.l = 0;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	
 	asm(
-		"MOVQ xmm2, %0				\n\t"
-		"MOVQ xmm3, %1				\n\t"
-		"VPBROADCASTW xmm0, xmm2	\n\t"
-		"VPBROADCASTQ xmm1, xmm3	\n\t"
 		"MOVQ xmm2, %2				\n\t"
-		"PSLLQ xmm1, 64				\n\t"
+		"MOVQ xmm3, %3				\n\t"
+		"VPBROADCASTB xmm0, xmm2	\n\t"
+		"VPBROADCASTQ xmm1, xmm3	\n\t"
+		"MOVQ xmm2, %4				\n\t"
+		"PSLLDQ xmm1, 8				\n\t"
 		"POR xmm1, xmm2				\n\t"
-    	"PADDSB xmm1, xmm0			\n\t"
-		"MOVDQU xmm1, %3"
-    	: "=r" (imm8), "=r" (Rm1), "=r" (Rm2)
-    	: "rm" (res));
+		"PADDSB xmm1, xmm0			\n\t"
+		"MOVQ r14, xmm1				\n\t"
+		"PSRLDQ xmm1, 8				\n\t"
+		"MOVQ r15, xmm1				\n\t"
+		"MOV %0, r14				\n\t"
+		"MOV %1, r15				\n\t"
+		: "=r" (res.l), "=r" (res.h)
+    	: "r" (imm8), "r" (OperH), "r" (OperL));
 
 	gpregs[Rd] = res.h;
 	gpregs[Rn] = res.l;
 	PC += 8;
 	return;
 }
-//{Rd, Rn} = {Rm, Rm2} + imm16 (Signed)
+//{Rd, Rn} = {Rm1, Rm2} + imm16 (Signed)
 void core::VSADDH()
 {
 	SMP_word Rd = aluTypeInst.Rd;
@@ -1234,26 +1241,30 @@ void core::VSADDH()
 	SMP_word Rm2 = aluTypeInst.Ra;
 
 	SMP_word imm16 = aluTypeInst.imm32 & 0xFFFF;
-
+	SMP_word OperH = gpregs[Rm1];
+	SMP_word OperL = gpregs[Rm2];
 	ddwords res;
-	uint128_t res128;
+	res.h = 0;
+	res.l = 0;
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	
-	asm(
-		"MOV  r10,	 %0				\n\t"
-		"MOV  r11,	 %1				\n\t"
-		"MOVQ xmm2, r10				\n\t"
-		"MOVQ xmm3, r11				\n\t"
+	asm volatile(
+		"MOVQ xmm2, %2				\n\t"
+		"MOVQ xmm3, %3				\n\t"
 		"VPBROADCASTW xmm0, xmm2	\n\t"
 		"VPBROADCASTQ xmm1, xmm3	\n\t"
-		"VMOVQ xmm2, %2				\n\t"
-		"PSLLQ xmm1, 64				\n\t"
+		"MOVQ xmm2, %4				\n\t"
+		"PSLLDQ xmm1, 8				\n\t"
 		"POR xmm1, xmm2				\n\t"
     	"PADDSW xmm1, xmm0			\n\t"
-		"MOVDQU xmm1, %3"
-    	: "=r" (imm16), "=r" (Rm1), "=r" (Rm2)
-    	: "rm" (res));
+		"MOVQ r14, xmm1				\n\t"
+		"PSRLDQ xmm1, 8				\n\t"
+		"MOVQ r15, xmm1				\n\t"
+		"MOV %0, r14				\n\t"
+		"MOV %1, r15				\n\t"
+    	: "=r" (res.l), "=r" (res.h)
+    	: "r" (imm16), "r" (OperH), "r" (OperL));
 
 	gpregs[Rd] = res.h;
 	gpregs[Rn] = res.l;
