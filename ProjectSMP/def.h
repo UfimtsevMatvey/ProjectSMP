@@ -30,7 +30,7 @@ union bit64{
 };
 
 union bit128{
-    ddwordu dsu;
-    ddwords dss;
+    ddwordu dsu;// Low and High part of unsigned SMP word
+    ddwords dss;// Low and High part of signed SMP word
     uint128_t dw;
 };

@@ -1,5 +1,5 @@
-CXX = c++
-CXXFLAGS = -Wall -g
+CXX = g++
+CXXFLAGS = -Wall -g -march='znver1'  -mavx512f
 
 all: SMPemu
 
