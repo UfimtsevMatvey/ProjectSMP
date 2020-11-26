@@ -24,6 +24,7 @@ int main(int argv, char* argc[])
 		MasterCore.test_start(static_cast<uint64_t>(SADD_TEST_INSTR_3));
 		MasterCore.test_start(static_cast<uint64_t>(BSWP_TEST_INSTR_4));
 		MasterCore.test_start(static_cast<uint64_t>(RRX_TEST_INSTR_5));
+		MasterCore.test_start(static_cast<uint64_t>(VSADDH_TEST_INSTR_8));
 		if (true)
 			break;
 	}

@@ -174,8 +174,8 @@ private:
 	void SADDPW();
 
 
-	void VADDPB();
-	void VADDPH();
+	void VUADDB();
+	void VUADDH();
 	void VSADDB();
 	void VSADDH();
 
