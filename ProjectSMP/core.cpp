@@ -464,7 +464,7 @@ void core::AND()
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-	res = gpregs[Rn] + oper2;
+	res = gpregs[Rn] & oper2;
 	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setLALUflag(res);
 	PC += 8;
@@ -496,7 +496,7 @@ void core::ORR()
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-	res = gpregs[Rn] & oper2;
+	res = gpregs[Rn] | oper2;
 	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setLALUflag(res);
 	PC += 8;
@@ -943,7 +943,7 @@ void core::BSWP()
 	SMP_word oper = gpregs[Rd];
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
-	asm(
+	asm volatile(
 		"MOV rax, %1		\n\t"
     	"BSWAP rax			\n\t"
 		"MOV %0, rax		\n\t"
@@ -979,7 +979,7 @@ void core::UADDPB()
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-	asm(
+	asm volatile(
 		"MOVD mm0, %0				\n\t"
 		"MOVD mm1, %1				\n\t"
     	"PADDUSB mm1, mm0			\n\t"
@@ -1004,7 +1004,7 @@ void core::UADDPH()
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
-	asm(
+	asm volatile(
 		"MOVD mm0, %1				\n\t"
 		"MOVD mm1, %2				\n\t"
     	"PADDUSW mm1, mm0			\n\t"
@@ -1028,7 +1028,7 @@ void core::UADDPW()
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-	asm(
+	asm volatile(
 		"MOVD xmm0, %1				\n\t"
 		"MOVD xmm1, %2				\n\t"
     	"PADDD xmm1, xmm0			\n\t"
@@ -1064,7 +1064,7 @@ void core::SADDPB()
 	boper2.u = oper2;
 	soper1 = boper1.s;
 	soper2 = boper2.s;
-	asm(
+	asm volatile(
 		"MOVD mm0, %1 				\n\t"
 		"MOVD mm1, %2 				\n\t"
     	"PADDSB mm1, mm0	 		\n\t"
@@ -1100,7 +1100,7 @@ void core::SADDPH()
 	boper2.u = oper2;
 	soper1 = boper1.s;
 	soper2 = boper2.s;
-	asm(
+	asm volatile(
 		"MOVD mm0, %1				\n\t"
 		"MOVD mm1, %2				\n\t"
     	"PADDSW mm1, mm0			\n\t"
@@ -1133,7 +1133,7 @@ void core::VUADDB()
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	
-	asm(
+	asm volatile(
 		"MOVQ xmm2, %0				\n\t"//init registers xmm2 (imm8) and xmm3 (Rm1)
 		"MOVQ xmm3, %1				\n\t"//Only low byte in xmm2 and xmm3 used
 		"VPBROADCASTB xmm0, xmm2	\n\t"//Brodcasting low byte to all registers
@@ -1172,7 +1172,7 @@ void core::VUADDH()
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	
-	asm(
+	asm volatile(
 		"MOVQ xmm2, %2				\n\t"
 		"MOVQ xmm3, %3				\n\t"
 		"VPBROADCASTW xmm0, xmm2	\n\t"
@@ -1210,7 +1210,7 @@ void core::VSADDB()
 	if(aluTypeInst.cond != 0b11111)
 		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
 	
-	asm(
+	asm volatile(
 		"MOVQ xmm2, %2				\n\t"
 		"MOVQ xmm3, %3				\n\t"
 		"VPBROADCASTB xmm0, xmm2	\n\t"
