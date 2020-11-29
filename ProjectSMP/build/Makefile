@@ -3,8 +3,8 @@ CXXFLAGS = -Wall -g -march='znver1'  -mavx512f -mavx512cd -masm=intel
 
 all: SMPemu
 
-SMPemu: maincpp.o core.o mem.o regf.o subfunc.o logicFunctors.o
-	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o logicFunctors.o -o smpemu.out
+SMPemu: maincpp.o core.o mem.o regf.o subfunc.o
+	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o -o smpemu.out
 
 maincpp.o:
 	$(CXX) $(CXXFLAGS) -c ../maincpp.cpp
@@ -20,10 +20,6 @@ regf.o:
 
 subfunc.o:
 	$(CXX) $(CXXFLAGS) -c ../subfunc.cpp
-
-logicFunctors.o:
-	$(CXX) $(CXXFLAGS) -c ../logicFunctors.cpp
-
 
 clean:
 

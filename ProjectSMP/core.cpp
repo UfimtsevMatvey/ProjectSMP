@@ -21,7 +21,7 @@ core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, co
 	initMemory(isize, dsize, ifile, dfile);
 }
 void core::initMemory(SMP_word isize, SMP_word dsize, const char* fileInst, const char* fileData)
-{//������������� ������.
+{
 	instr_mem.Init(isize, fileInst);
 	data_mem.Init(dsize, fileData);
 }
@@ -34,14 +34,10 @@ void core::test_start(SMP_word testInstr)
 		exec();
 		return;
 	}
-	//�������� ���
 
-	//������ / ������ � ����������� ����
 	SMP_word data = 0;
 	store2reg(32, 346);
 	load2reg(32, data);
-
-	//������ / ������ � ������
 
 	for (SMP_word i = 0; i < 8192; i++) {
 		store2memData(i, 0xFFFFFFFFFFAA0000 + i);
@@ -53,10 +49,10 @@ void core::test_start(SMP_word testInstr)
 }
 void core::start()
 {
-	fetchInstr();//������� ��������� ����������
-	decodeInst();//������������� ����������
-	exec();//���������� ����������
-	flushInstr();//������� ������������ ����������
+	fetchInstr();
+	decodeInst();
+	exec();
+	flushInstr();
 }
 void core::decodeInst()
 {
@@ -124,35 +120,35 @@ void core::exec()
 void core::alu_exec()
 {
 	switch(aluTypeInst.func){
-		case FUNC_AND: AND(); break;
-		case FUNC_EOR: EOR(); break;
-		case FUNC_ORR: ORR(); break;
-		case FUNC_TST: TST(); break;
-		case FUNC_TEQ: TEQ(); break;
-		case FUNC_CMP: CMP(); break; 
-		case FUNC_CMN: CMN(); break;
-		case FUNC_ADD: ADD(); break;
-		case FUNC_SUB: SUB(); break;
-		case FUNC_ADC: ADC(); break;
-		case FUNC_RSB: RSB(); break;
-		case FUNC_SBC: SBC(); break;
-		case FUNC_MVN: MVN(); break;
-		case FUNC_LSL: LSL(); break;
-		case FUNC_ASR: ASR(); break;
-		case FUNC_RRX: RRX(); break;
-		case FUNC_ROR: ROR(); break;
-		case FUNC_BSWP: BSWP(); break;
-		case FUNC_SWR: SWR(); break;
-		case FUNC_UADDPB: UADDPB(); break;
-		case FUNC_UADDPH: UADDPH(); break;
-		case FUNC_UADDPW: UADDPW(); break;
-		case FUNC_SADDPB: SADDPB(); break;
-		case FUNC_SADDPH: SADDPH(); break;
-		case FUNC_SADDPW: SADDPW(); break;
-		case FUNC_VUADDB: VUADDB(); break;
-		case FUNC_VUADDH: VUADDH(); break;
-		case FUNC_VSADDB: VSADDB(); break;
-		case FUNC_VSADDH: VSADDH(); break;
+		case FUNC_AND: 		AND(); break;
+		case FUNC_EOR: 		EOR(); break;
+		case FUNC_ORR: 		ORR(); break;
+		case FUNC_TST: 		TST(); break;
+		case FUNC_TEQ: 		TEQ(); break;
+		case FUNC_CMP: 		CMP(); break; 
+		case FUNC_CMN: 		CMN(); break;
+		case FUNC_ADD: 		ADD(); break;
+		case FUNC_SUB: 		SUB(); break;
+		case FUNC_ADC: 		ADC(); break;
+		case FUNC_RSB: 		RSB(); break;
+		case FUNC_SBC: 		SBC(); break;
+		case FUNC_MVN: 		MVN(); break;
+		case FUNC_LSL: 		LSL(); break;
+		case FUNC_ASR: 		ASR(); break;
+		case FUNC_RRX: 		RRX(); break;
+		case FUNC_ROR: 		ROR(); break;
+		case FUNC_BSWP: 	BSWP(); break;
+		case FUNC_SWR: 		SWR(); break;
+		case FUNC_UADDPB: 	UADDPB(); break;
+		case FUNC_UADDPH: 	UADDPH(); break;
+		case FUNC_UADDPW: 	UADDPW(); break;
+		case FUNC_SADDPB: 	SADDPB(); break;
+		case FUNC_SADDPH: 	SADDPH(); break;
+		case FUNC_SADDPW: 	SADDPW(); break;
+		case FUNC_VUADDB: 	VUADDB(); break;
+		case FUNC_VUADDH: 	VUADDH(); break;
+		case FUNC_VSADDB: 	VSADDB(); break;
+		case FUNC_VSADDH: 	VSADDH(); break;
 	}
 }
 void core::mul_exec()
@@ -420,40 +416,6 @@ void core::getIntr(SMP_word ip, SMP_word& instr)
 {
 	instr_mem.load(ip, instr);
 }
-
-//How to use functors???
-void core::templateALU()
-{
-	SMP_word Rd = aluTypeInst.Rd;
-	SMP_word Rn = aluTypeInst.Rn;
-	SMP_word oper2;
-	SMP_word res;
-
-	if(aluTypeInst.cond != get_field(FLR, 3, 6)) //do Nothink, if conditional is not true
-		return;
-
-	if(aluTypeInst.I){
-		oper2 = gpregs[aluTypeInst.Rm];
-	}
-	else{
-		oper2 = aluTypeInst.imm32;
-	}
-	res = gpregs[Rn] + oper2;
-	gpregs[Rd] = res;
-	if(aluTypeInst.S){
-		if(res == 0)	setFlag(Z);//Z - flag
-		else			resetFlag(Z);
-		if(res >= 0) 	setFlag(C);
-		else 			resetFlag(C);
-		resetFlag(N);
-		resetFlag(V);
-	}
-	PC += 8;
-	return;
-	
-}
-
-
 void core::AND() 
 {
 	SMP_word Rd = aluTypeInst.Rd;

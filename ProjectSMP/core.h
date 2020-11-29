@@ -140,8 +140,6 @@ private:
 	void setAALUflag(SMP_word res, SMP_word oper1, SMP_word oper2, SMP_word care);
 	void setLALUflag(SMP_word res);
 
-	void templateALU();
-
 	//ALU
 	void AND();
 	void EOR();
