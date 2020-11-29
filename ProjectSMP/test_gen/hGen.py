@@ -1,5 +1,3 @@
-from goto import with_goto
-
 icond = {
     "EQ" :  "00000",
     "NE" :  "00001",
