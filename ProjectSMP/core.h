@@ -82,6 +82,7 @@ public:
 	void start();
 
 private:
+	bool cmp_cond(SMP_word cond);
 	void fetchInstr();
 	void decodeInst();
 	void init_ALU();

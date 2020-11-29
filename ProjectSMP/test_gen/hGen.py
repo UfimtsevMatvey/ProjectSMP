@@ -97,17 +97,105 @@ memOperSizeTable = {
         "LDRB"  :   "00"
     }
 memOpcodeTable = {
-        "MUL"     :   "0011",
-        "MLA"     :   "0011",
-        "UMULL"   :   "0011",
-        "UMLAL"   :   "0011",
-        "SMULL"   :   "0011",
-        "SMLAL"   :   "0011"
+        "STR"   :   "0011",
+        "LDR"   :   "0011",
+        "STRW"  :   "0011",
+        "LDRW"  :   "0011",
+        "STRHW" :   "0011",
+        "LDRHW" :   "0011",
+        "STRB"  :   "0011",
+        "LDRB"  :   "0011"
     }
+
+ctOpcodeTable = {
+        "BL"    :   "0100",   
+        "BOI"   :   "0100",
+        "BOR"   :   "0100",
+        "BI"    :   "0100",
+        "BR"    :   "0100",
+        "RET"   :   "0100",
+        "XRET"  :   "0100"
+}
+ctTypeTable = {
+        "BL"    :   "0000",   
+        "BOI"   :   "0001",
+        "BOR"   :   "1001",
+        "BI"    :   "0010",
+        "BR"    :   "1010",
+        "RET"   :   "0011",
+        "XRET"  :   "0100"
+}
+ctImmTable = {
+        "BL"    :   "0",   
+        "BOI"   :   "1",
+        "BOR"   :   "0",
+        "BI"    :   "1",
+        "BR"    :   "0",
+        "RET"   :   "0",
+        "XRET"  :   "0"
+}
+sysOpcodeTable = {
+        "INSY"  :   "0101",
+        "IN"    :   "0101",
+        "OUTSY" :   "0101",
+        "OUT"   :   "0101",
+        "SFL"   :   "0101",
+        "LFL"   :   "0101",
+        "SMF"   :   "0101",
+        "SINT"  :   "0101",
+        "BINT"  :   "0101",
+        "UINT"  :   "0101",
+        "CINT"  :   "0101",
+        "INT"   :   "0101"
+}
+sysTypeTable = {
+        "INSY"  :   "0000",
+        "IN"    :   "0001",
+        "OUTSY" :   "0010",
+        "OUT"   :   "0011",
+        "SFL"   :   "0100",
+        "LFL"   :   "0101",
+        "SMF"   :   "0110",
+        "SINT"  :   "0111",
+        "BINT"  :   "1000",
+        "UINT"  :   "1001",
+        "CINT"  :   "1010",
+        "INT"   :   "1011"
+}
+sysImmTable = {
+        "INSY"  :   "1",
+        "IN"    :   "1",
+        "OUTSY" :   "1",
+        "OUT"   :   "1",
+        "SFL"   :   "0",
+        "LFL"   :   "0",
+        "SMF"   :   "0",
+        "SINT"  :   "1",
+        "BINT"  :   "0",
+        "UINT"  :   "0",
+        "CINT"  :   "0",
+        "INT"   :   "1"
+}
 def ALUinstrType(instr):
     #begin
+    
     #parts of ALU instraction
     Nwords = len(instr)
+    #we cut conditional
+    itype = instr[0]
+    conditional = itype[0:1];
+    cond = icond.get(conditional.upper())
+    if cond != None:
+        itype = itype[2:]
+    else:
+        cond = "11111"
+
+    itype = itype.upper()
+    #we get only type
+    func = aluTable.get(itype)
+    if func == None:
+        return None
+
     #last or prelast word in instarction can consist of imm32/16 value
     if (instr[Nwords - 1][0].upper() != "R"):
         #begin
@@ -116,43 +204,33 @@ def ALUinstrType(instr):
         #end
     else:
         I = "0"
-    itype = instr[0]
+    
     if (itype[-1] == 'S'):
         S = "1"
     else:
         S = "0"
 
-    #we cut conditional
-    conditional = itype[0:1];
-    cond = icond.get(conditional.upper())
-    if cond != None:
-        itype = itype[2:]
-    else:
-        cond = "11111"
-    #we get only type
-    func = aluTable.get(itype.upper())
-    if func == None:
-        return None
+
     #Attantion!!!! Hardcode
     priv = "11"
     opcode = "0001"
 
     if Nwords == 6:
         #begin
-        Rd = format(int(instr[1][1:], base = 16), "b").zfill(6)
-        Rn = format(int(instr[2][1:], base = 16), "b").zfill(6)
-        Rd = format(int(instr[3][1:], base = 16), "b").zfill(6)
-        Rn = format(int(instr[4][1:], base = 16), "b").zfill(6)
+        Rd = format(int(instr[1][1:], base = 10), "b").zfill(6)
+        Rn = format(int(instr[2][1:], base = 10), "b").zfill(6)
+        Rd = format(int(instr[3][1:], base = 10), "b").zfill(6)
+        Rn = format(int(instr[4][1:], base = 10), "b").zfill(6)
         binInstr = priv + cond + opcode + I + S + func + "0" + Rn + Rd + Rm + Rm2
         #end
     elif Nwords == 4:
         #begin
-        Rd = format(int(instr[1][1:], base = 16), "b").zfill(6)
-        Rn = format(int(instr[2][1:], base = 16), "b").zfill(6)
+        Rd = format(int(instr[1][1:], base = 10), "b").zfill(6)
+        Rn = format(int(instr[2][1:], base = 10), "b").zfill(6)
         Rm2 = ""
         if I == "0":
             #begin
-            Rm = format(int(instr[3][1:], base = 16), "b").zfill(6)
+            Rm = format(int(instr[3][1:], base = 10), "b").zfill(6)
             imm32 = ""
             binInstr = priv + cond + opcode + I + S + func + "0" + Rn + Rd + Rm
             #end
@@ -182,12 +260,23 @@ def ALUinstrType(instr):
 
 def MULinstrType(instr):
     #begin
-    #get opcode
-    opcode = mulOpcodeTable.get(instr[0])
-    if opcode == None:
-        return None
     #parts of instraction
     Nwords = len(instr)
+
+    #we cut conditional
+    itype = instr[0]
+    conditional = itype[0:1];
+    cond = icond.get(conditional.upper())
+    if cond != None:
+        itype = itype[2:]#if cond it is existing
+    else:
+        cond = "11111"#if nocond instraction
+    itype = itype.upper()
+    #get opcode
+    opcode = mulOpcodeTable.get(itype)
+    if opcode == None:
+        return None
+    
     #12 bit on instraction:
     B12 = "0"
     #last or prelast word in instarction can consist of imm32/16 value
@@ -198,16 +287,8 @@ def MULinstrType(instr):
         #end
     else:
         I = "0"
-
-    itype = instr[0]
-
-    #we cut conditional
-    conditional = itype[0:1];
-    cond = icond.get(conditional.upper())
-    if cond != None:
-        itype = itype[2:]#if cond it is existing
-    else:
-        cond = "11111"#if nocond instraction
+    print("mul imm = ", imm32)
+    
     #we get only type
     #Attantion!!!! Hardcode
     priv = "11"
@@ -221,20 +302,21 @@ def MULinstrType(instr):
         B12 = I
     elif opcode == "1010":
         B12 = Sign
-    
+    print("B11 = ", B12)
     if I == "1":
         #begin
-        Rd = format(int(instr[1][1:], base = 16), "b").zfill(6)
-        Rn = format(int(instr[2][1:], base = 16), "b").zfill(6)
+        Rd = format(int(instr[1][1:], base = 10), "b").zfill(6)
+        Rn = format(int(instr[2][1:], base = 10), "b").zfill(6)
         Ra = "111111"
+        Rm = ""
         binInstr = priv + cond + opcode + A + B12 + Ra + Rn + Rd + imm32
         #end
     elif I == "0":
         #begin
-        Rd = format(int(instr[1][1:], base = 16), "b").zfill(6)
-        Rn = format(int(instr[2][1:], base = 16), "b").zfill(6)
-        Rm = format(int(instr[3][1:], base = 16), "b").zfill(6)
-        Ra = format(int(instr[4][1:], base = 16), "b").zfill(6)
+        Rd = format(int(instr[1][1:], base = 10), "b").zfill(6)
+        Rn = format(int(instr[2][1:], base = 10), "b").zfill(6)
+        Rm = format(int(instr[3][1:], base = 10), "b").zfill(6)
+        Ra = format(int(instr[4][1:], base = 10), "b").zfill(6)
         binInstr = priv + cond + opcode + A + B12 + Ra + Rn + Rd + Rm
         #end
     #debagging code
@@ -256,26 +338,10 @@ def MULinstrType(instr):
 
 def MEMinstrType(instr):
     #begin
-    #get opcode
-    opcode = memOpcodeTable.get(instr[0])
-    if opcode == None:
-        return None
-
     #parts of instraction
     Nwords = len(instr)
-    #last or prelast word in instarction can consist of imm32/16 value
-    if Nwords == 5:
-        #begin
-        offset = format(int(instr[Nwords - 1], base = 16), "b").zfill(32)
-        scale = format(int(instr[Nwords - 2], base = 16), "b").zfill(5)
-        Rd = format(int(instr[1][1:], base = 16), "b").zfill(6)
-        Rn = format(int(instr[2][1:], base = 16), "b").zfill(6)
-        #end
-    else:
-        return None
-
     itype = instr[0]
-
+    itype = itype.upper()
     #we cut conditional
     conditional = itype[0:1];
     cond = icond.get(conditional.upper())
@@ -283,6 +349,23 @@ def MEMinstrType(instr):
         itype = itype[2:]#if cond it is existing
     else:
         cond = "11111"#if nocond instraction
+    #get opcode
+    opcode = memOpcodeTable.get(itype)
+    print("MEM opcode", opcode)
+    if opcode == None:
+        return None
+    #last or prelast word in instarction can consist of imm32/16 value
+    if Nwords == 5:
+        #begin
+        offset = format(int(instr[Nwords - 1], base = 10), "b").zfill(32)
+        scale = format(int(instr[Nwords - 2], base = 10), "b").zfill(5)
+        Rd = format(int(instr[1][1:], base = 10), "b").zfill(6)
+        Rn = format(int(instr[2][1:], base = 10), "b").zfill(6)
+        #end
+    else:
+        return None
+
+
     #we get only type
     TO = memTypeTable.get(itype)
 
@@ -291,15 +374,12 @@ def MEMinstrType(instr):
 
     binInstr = priv + cond + opcode + TO + scale + Rn + Rd + offset
     #debagging code
-    print("MUL priv = ", priv)
-    print("MUL Rd = ", Rd)
-    print("Rn = ", Rn)
-    print("Rm = ", Rm)
-    print("Ra = ", Ra)
-    print("cond = ", cond)
-    print("A = ", A)
-    print("B12 = ", B12)
-    print("imm32 = ", imm32)
+    print("MEM priv = ", priv)
+    print("MEM Rd = ", Rd)
+    print("MEM Rn = ", Rn)
+    print("MEM cond = ", cond)
+    print("MEM offset = ", offset)
+    print("MEM scale = ", scale)
     #concatenate binary instraction
     temp = '{:<064}'
     output = temp.format(binInstr) 
@@ -308,19 +388,164 @@ def MEMinstrType(instr):
     #end
 
 def CTinstrType(instr):
-    return None
+    #begin
+    imm48 = ""
+    #parts of instraction
+    Nwords = len(instr)
+    itype = instr[0]
+    itype = itype.upper()
+    #we cut conditional
+    conditional = itype[0:1];
+    cond = icond.get(conditional.upper())
+    if cond != None:
+        itype = itype[2:]#if cond it is existing
+    else:
+        cond = "11111"#if nocond instraction
+    #get opcode
+    opcode = ctOpcodeTable.get(itype)
+    print("CT opcode = ", opcode)
+    if opcode == None:
+        return None
+    func = ctTypeTable.get(itype)
+    print("CT func = ", func)
+    if func == None:
+        return None
+    I = ctImmTable.get(itype)
+    print("CT I = ", I)
+    if I == None:
+        return None
+
+    #Attantion!!!! Hardcode
+    priv = "11"
+
+    #last or prelast word in instarction can consist of imm32/16 value
+    if Nwords == 2:
+        #begin
+        if I == "0":
+            #begin
+            R = format(int(instr[1][1:], base = 10), "b").zfill(6)
+            xfill = "00000"
+            binInstr = priv + cond + opcode + func + xfill + R
+            #end
+        elif I == "1":
+            #begin
+            imm48 = format(int(instr[1], base = 10), "b").zfill(48)
+            binInstr = priv + cond + opcode + func + imm48
+            #end
+        #end
+    elif Nwords == 1:
+        binInstr = priv + cond + opcode + func
+    elif Nwords > 2:
+        return None
+
+    #we get only type
+    TO = memTypeTable.get(itype)
+
+    #debagging code
+    print("CT priv = ", priv)
+    print("CT R = ", R)
+    print("CT imm48 = ", imm48)
+    print("CT cond = ", cond)
+    #concatenate binary instraction
+    temp = '{:<064}'
+    output = temp.format(binInstr) 
+    print("binary instraction is: ", output)
+    return output
+    #end
 
 def SYSinstrType(instr):
-    return None
+    #begin
+    imm48 = ""
+    #parts of instraction
+    Nwords = len(instr)
+    itype = instr[0]
+    itype = itype.upper()
+    #we cut conditional
+    conditional = itype[0:1];
+    cond = icond.get(conditional.upper())
+    if cond != None:
+        itype = itype[2:]#if cond it is existing
+    else:
+        cond = "11111"#if nocond instraction
+    #get opcode
+    opcode = sysOpcodeTable.get(itype)
+    print("CT opcode = ", opcode)
+    if opcode == None:
+        return None
+    func = sysTypeTable.get(itype)
+    print("CT func = ", func)
+    if func == None:
+        return None
+    I = sysImmTable.get(itype)
+    print("CT I = ", I)
+    if I == None:
+        return None
+
+    #Attantion!!!! Hardcode
+    priv = "11"
+
+    #last or prelast word in instarction can consist of imm32/16 value
+    if Nwords == 3:
+        #begin
+        if I == "0":
+            #begin
+            Rm = format(int(instr[2][1:], base = 10), "b").zfill(6)
+            Rn = format(int(instr[1][1:], base = 10), "b").zfill(6)
+            xfill = "0000"
+            binInstr = priv + cond + opcode + func + xfill + Rm + Rn + I
+            #end
+        elif I == "1":
+            #begin
+            imm = format(int(instr[2], base = 10), "b").zfill(6)
+            Rn = format(int(instr[1][1:], base = 10), "b").zfill(6)
+            xfill = "0000"
+            binInstr = priv + cond + opcode + func + xfill + Rn + xfill + "00" + I + imm
+            #end
+        #end
+    elif Nwords == 2:
+        #begin
+        if I == "0":
+            #begin
+            R = format(int(instr[1][1:], base = 10), "b").zfill(6)
+            binInstr = priv + cond + opcode + func + xfill + Rm + "000000" + I
+            #end 
+        elif I == "1":
+            #begin
+            zFill = "0000000000000000"
+            imm = format(int(instr[1], base = 10), "b").zfill(6)
+            binInstr = priv + cond + opcode + func + zFill + I + imm
+            #end
+        #end
+    elif Nwords == 1:
+        binInstr = priv + cond + opcode + func
+    else:
+        return None
+
+    #we get only type
+    TO = memTypeTable.get(itype)
+
+    #debagging code
+    print("SYS priv = ", priv)
+    print("SYS cond = ", cond)
+    print("SYS opcode = ", opcode)
+    print("SYS func code = ", func)
+    #concatenate binary instraction
+    temp = '{:<064}'
+    output = temp.format(binInstr) 
+    print("binary instraction is: ", output)
+    return output
+    #end
 
 def decode(instr):
     #begin
     instrTemp = instr.replace(',', ' ')
-    instrTemp = instrTemp.replace('[', ' ')
-    instrTemp = instrTemp.replace(']', ' ')
+    instrTemp = instrTemp.replace('[', '')
+    instrTemp = instrTemp.replace(']', '')
     instrTemp = instrTemp.replace('\n', '')
-    instrTemp = instrTemp.replace('  ', ' ')
+    #instrTemp = instrTemp.replace('  ', ' ')
+    instrTemp = re.sub('\s+',' ',instrTemp)
     words = instrTemp.split(' ')
+    print(words)
     #We split instraction on words
     binaryOut = ALUinstrType(words)
     if binaryOut == None:
@@ -331,6 +556,7 @@ def decode(instr):
             binaryOut = MEMinstrType(words)
             if binaryOut == None:
                 #begin
+                print("CT")
                 binaryOut = CTinstrType(words)
                 if binaryOut == None:
                     #begin
@@ -344,12 +570,10 @@ def decode(instr):
                 #end
             #end
         #end
-    print(words)
     return binaryOut
     #end
 
 
-@with_goto
 def main():
     #begin
     sFile  = open("sourse.smpasm", "r")
@@ -374,4 +598,5 @@ def main():
     return 0
     #end
 #entry point 
+import re
 main()

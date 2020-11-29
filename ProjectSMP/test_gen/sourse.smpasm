@@ -1,2 +1,6 @@
 add r10, r3, 0
-add r10, r2, 12
+add r10, r2  , 12
+mul r32, r8,    98213
+str r7, [r10  , 10, 21]
+BL 14
+BINT

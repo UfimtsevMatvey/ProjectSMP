@@ -8,6 +8,7 @@
 #include "ctCode.h"
 #include "sysCode.h"
 #include "flagNum.h"
+#include "condNum.h"
 #ifndef def
    #include "def.h"
 #endif
@@ -423,7 +424,7 @@ void core::AND()
 	SMP_word oper2;
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = gpregs[Rn] & oper2;
@@ -439,7 +440,7 @@ void core::EOR()
 	SMP_word oper2;
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = gpregs[Rn] ^ oper2;
@@ -455,7 +456,7 @@ void core::ORR()
 	SMP_word oper2;
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = gpregs[Rn] | oper2;
@@ -470,7 +471,7 @@ void core::TST()
 	SMP_word oper2;
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = gpregs[Rn] & oper2;
@@ -484,7 +485,7 @@ void core::TEQ()
 	SMP_word oper2;
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = gpregs[Rn] ^ oper2;
@@ -569,7 +570,7 @@ void core::ADD()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
@@ -605,7 +606,7 @@ void core::SUB()
 	int64_t sres;
 
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
@@ -642,7 +643,7 @@ void core::ADC()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
@@ -677,7 +678,7 @@ void core::RSB()
 	uint64_t sres;
 
 	if(aluTypeInst.cond != 0b1111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
@@ -715,7 +716,7 @@ void core::SBC()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
@@ -743,7 +744,7 @@ void core::MVN()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	res = ~oper1;
 	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setLALUflag(res);
@@ -758,7 +759,7 @@ void core::LSL()
 	SMP_word oper2;
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = oper1 << oper2;
@@ -776,7 +777,7 @@ void core::LSR()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = oper1 >> oper2;
@@ -803,7 +804,7 @@ void core::ASR()
 	
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	
@@ -834,7 +835,7 @@ void core::RRX()
 	SMP_word oper2;
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	oper2 = oper2 & 0x000000000000003F;//Only 6 bit in shifh operand
@@ -872,7 +873,7 @@ void core::ROR()
 	int64_t soper1;
 	int64_t soper2;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	oper2 = oper2 & 0x000000000000003F;//Only 6 bit in shifh operand
@@ -904,7 +905,7 @@ void core::BSWP()
 	SMP_word res = 0;
 	SMP_word oper = gpregs[Rd];
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	asm volatile(
 		"MOV rax, %1		\n\t"
     	"BSWAP rax			\n\t"
@@ -919,7 +920,7 @@ void core::SWR()
 	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word Rn = aluTypeInst.Rn;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	SMP_word temp = gpregs[Rd];
 	gpregs[Rd] = gpregs[Rn];
 	gpregs[Rn] = temp;
@@ -938,7 +939,7 @@ void core::UADDPB()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	asm volatile(
@@ -962,7 +963,7 @@ void core::UADDPH()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
@@ -987,7 +988,7 @@ void core::UADDPW()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	asm volatile(
@@ -1019,7 +1020,7 @@ void core::SADDPB()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	boper1.u = oper1;
@@ -1054,7 +1055,7 @@ void core::SADDPH()
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
@@ -1093,7 +1094,7 @@ void core::VUADDB()
 	res.h = 0;
 	res.l = 0;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	
 	asm volatile(
 		"MOVQ xmm2, %0				\n\t"//init registers xmm2 (imm8) and xmm3 (Rm1)
@@ -1132,7 +1133,7 @@ void core::VUADDH()
 	res.h = 0;
 	res.l = 0;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	
 	asm volatile(
 		"MOVQ xmm2, %2				\n\t"
@@ -1170,7 +1171,7 @@ void core::VSADDB()
 	res.h = 0;
 	res.l = 0;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	
 	asm volatile(
 		"MOVQ xmm2, %2				\n\t"
@@ -1209,7 +1210,7 @@ void core::VSADDH()
 	res.h = 0;
 	res.l = 0;
 	if(aluTypeInst.cond != 0b11111)
-		if(aluTypeInst.cond != get_field(FLR, 3, 6)) return;//do Nothink, if conditional is not true
+		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	
 	asm volatile(
 		"MOVQ xmm2, %2				\n\t"
@@ -1245,7 +1246,7 @@ void core::MUL()
 	SMP_word oper2 = 0;
 	SMP_word res = 0;
 	if(mulTypeInst.cond != 0b11111){
-		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+		if(!cmp_cond(mulTypeInst.cond)) {
 			return;//do Nothink, if conditional is not true
 		}
 	}
@@ -1274,7 +1275,7 @@ void core::MLA()
 	SMP_word operA = 0;
 	SMP_word res = 0;
 	if(mulTypeInst.cond != 0b11111){
-		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+		if(!cmp_cond(mulTypeInst.cond)) {
 			return;//do Nothink, if conditional is not true
 		}
 	}
@@ -1299,7 +1300,7 @@ void core::UMULL()
 	uint128_t ddres;
 
 	if(mulTypeInst.cond != 0b11111){
-		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+		if(!cmp_cond(mulTypeInst.cond)) {
 			return;//do Nothink, if conditional is not true
 		}
 	}
@@ -1325,7 +1326,7 @@ void core::UMLAL()
 	uint128_t ddres;
 
 	if(mulTypeInst.cond != 0b11111){
-		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+		if(!cmp_cond(mulTypeInst.cond)) {
 			return;//do Nothink, if conditional is not true
 		}
 	}
@@ -1352,7 +1353,7 @@ void core::SMULL()
 	int128_t ddres;
 
 	if(mulTypeInst.cond != 0b11111){
-		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+		if(!cmp_cond(mulTypeInst.cond)) {
 			return;//do Nothink, if conditional is not true
 		}
 	}
@@ -1385,7 +1386,7 @@ void core::SMLAL()
 	int128_t ddres;
 
 	if(mulTypeInst.cond != 0b11111){
-		if(mulTypeInst.cond != get_field(FLR, 3, 6)) {
+		if(!cmp_cond(mulTypeInst.cond)) {
 			return;//do Nothink, if conditional is not true
 		}
 	}
@@ -1590,4 +1591,31 @@ void SYS_instr::flush()
 	Rd = 0;
 	I = false;
 	inum = 0;
+}
+bool core::cmp_cond(SMP_word cond)
+{
+	SMP_word res = 0;
+	bool N_fl = get_bit(FLR, N);
+	bool Z_fl = get_bit(FLR, Z);
+	bool C_fl = get_bit(FLR, C);
+	bool V_fl = get_bit(FLR, V);
+	SMP_word SignificantBits = cond & 0x0F;
+	switch(SignificantBits){
+		case EQ:	return Z_fl;						break;
+		case NE:	return !Z_fl;						break;
+		case CS:	return C_fl;						break;
+		//case HL:	return C_fl;						break;
+		case CC:	return !C_fl;						break;
+		//case LO:	return !C_fl;						break;
+		case MI:	return N_fl;						break;
+		case PL:	return !N_fl;						break;
+		case VS:	return V_fl;						break;
+		case VC:	return !V_fl;						break;
+		case HI:	return (!Z_fl) && C_fl;				break;
+		case LS:	return Z_fl || (!C_fl);				break;
+		case GE:	return !(N_fl ^ V_fl);				break;
+		case LT:	return N_fl ^ V_fl;					break;
+		case GT:	return (!Z_fl) && (!(N_fl ^ V_fl));	break;
+		case LE:	return Z_fl || (N_fl ^ V_fl);		break;
+	}
 }
