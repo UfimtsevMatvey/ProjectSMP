@@ -1449,7 +1449,7 @@ void core::LDRB()
 
 void core::BL()
 {
-
+	
 }//Save ip on reg0
 void core::BO_REG() 
 {

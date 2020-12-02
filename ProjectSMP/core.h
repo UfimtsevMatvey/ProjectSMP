@@ -2,6 +2,7 @@
 
 #include "regf.h"
 #include "mem.h"
+#include "testClass.h"
 #ifndef def
    #include "def.h"
 #endif
@@ -75,6 +76,7 @@ struct SYS_instr
 class core
 {
 public:
+	friend class tests;
 	core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile);
 	
 	void test_start(SMP_word testInstr);
