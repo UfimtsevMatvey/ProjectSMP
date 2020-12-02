@@ -287,7 +287,6 @@ def MULinstrType(instr):
         I = "0"
     print("mul imm = ", imm32)
     
-    #we get only type
     #Attantion!!!! Hardcode
     priv = "11"
 
@@ -372,12 +371,12 @@ def MEMinstrType(instr):
 
     binInstr = priv + cond + opcode + TO + scale + Rn + Rd + offset
     #debagging code
-    print("MEM priv = ", priv)
-    print("MEM Rd = ", Rd)
-    print("MEM Rn = ", Rn)
-    print("MEM cond = ", cond)
-    print("MEM offset = ", offset)
-    print("MEM scale = ", scale)
+    #print("MEM priv = ", priv)
+    #print("MEM Rd = ", Rd)
+    #print("MEM Rn = ", Rn)
+    #print("MEM cond = ", cond)
+    #print("MEM offset = ", offset)
+    #print("MEM scale = ", scale)
     #concatenate binary instraction
     temp = '{:<064}'
     output = temp.format(binInstr) 
@@ -571,7 +570,7 @@ def decode(instr):
     return binaryOut
     #end
 
-
+#main function
 def main():
     #begin
     sFile  = open("sourse.smpasm", "r")
@@ -587,14 +586,20 @@ def main():
     for x in  instrs:
         #begin
         print("instraction", x ,"is translating\n")
-        dFile.writelines(decode(x) + "\n")
-
+        dex = decode(x)
+        if(dex != None):
+            dFile.writelines(dex + "\n")
         #end    
 
     dFile.close();
     sFile.close();
     return 0
     #end
-#entry point 
+#entry point
+
 import re
-main()
+res = main()
+if(res == 0):
+    print("sucsesfull")
+else:
+    print("Error in main function")
