@@ -528,28 +528,10 @@ void core::CMN()
 	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word oper1 = gpregs[Rd];
 	SMP_word oper2;
-
-	bit64 boper1;
-	bit64 boper2;
-
-	int64_t soper1;
-	int64_t soper2;
-	int64_t sres;
-
 	SMP_word res;
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-
-	boper1.u = oper1;
-	boper2.u = oper2;
-	
-	soper1 = boper1.s;
-	soper2 = boper2.s;
-
-	soper1 = signExtword2dword(soper1);
-	soper2 = signExtword2dword(soper2);
 	res = oper1 + oper2;
-	sres = soper1 + soper2;
 	if(aluTypeInst.S)	setAALUflag(res, oper1, oper2, 0);
 	PC += 8;
 	return;
@@ -561,29 +543,12 @@ void core::ADD()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 
-	bit64 boper1;
-	bit64 boper2;
-
-	int64_t soper1;
-	int64_t soper2;
-	int64_t sres;
-
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-
-	boper1.u = oper1;
-	boper2.u = oper2;
-	
-	soper1 = boper1.s;
-	soper2 = boper2.s;
-
-	soper1 = signExtword2dword(soper1);
-	soper2 = signExtword2dword(soper2);
 	res = oper1 + oper2;
-	sres = soper1 + soper2;
 	gpregs[Rd] = oper1 + oper2;
 	if(aluTypeInst.S)	setAALUflag(res, oper1, oper2, 0);
 	PC += 8;
@@ -598,30 +563,14 @@ void core::SUB()
 	SMP_word addoper2;
 	SMP_word res;
 
-	bit64 boper1;
-	bit64 boper2;
-
-	int64_t soper1;
-	int64_t soper2;
-	int64_t sres;
-
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
-	boper1.u = oper1;
-	boper2.u = oper2;
-	
-	soper1 = boper1.s;
-	soper2 = boper2.s;
-
-	soper1 = signExtword2dword(soper1);
-	soper2 = signExtword2dword(soper2);
 	addoper2 = ~oper2 + static_cast<uint64_t>(1);
 	res = oper1 + addoper2;
-	sres = soper1 - soper2;
-	gpregs[Rd] = oper1 + (~oper2) + static_cast<uint64_t>(1);
+	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setAALUflag(res, oper1, addoper2, 0);
 	PC += 8;
 	return;
@@ -634,27 +583,13 @@ void core::ADC()
 	SMP_word oper2;
 	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 
-	bit64 boper1;
-	bit64 boper2;
-	
-	uint64_t soper1;
-	uint64_t soper2;
-	uint64_t sres;
-
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
-	boper1.u = oper1;
-	boper2.u = oper2;
-	
-	soper1 = boper1.s;
-	soper2 = boper2.s;
-
 	res = oper1 + oper2 + care;
-	sres = soper1 + soper2 + care;
 	gpregs[Rd] = oper1 + oper2 + care;
 	if(aluTypeInst.S)	setAALUflag(res, oper1, oper2, care);
 	PC += 8;
@@ -670,30 +605,14 @@ void core::RSB()
 	SMP_word care = 0;
 	SMP_word res = 0;
 
-	bit64 boper1;
-	bit64 boper2;
-
-	uint64_t soper1;
-	uint64_t soper2;
-	uint64_t sres;
-
 	if(aluTypeInst.cond != 0b1111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
-	boper1.u = oper1;
-	boper2.u = oper2;
-	
-	soper1 = boper1.s;
-	soper2 = boper2.s;
-
-	soper1 = signExtword2dword(soper1);
-	soper2 = signExtword2dword(soper2);
 	addoper2 = ~oper1 + static_cast<uint64_t>(1) + care;
 	res = oper2 + addoper2;
-	sres = -soper1 + soper2;
-	gpregs[Rd] = (~oper1) + oper2 + static_cast<uint64_t>(1);
+	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setAALUflag(res, oper2, addoper2, 0);
 	PC += 8;
 	return;
@@ -707,29 +626,15 @@ void core::SBC()
 	SMP_word addoper2 = 0;
 	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 
-	bit64 boper1;
-	bit64 boper2;
-
-	int64_t sres;
-	int64_t soper1;
-	int64_t soper2;
-
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
-	boper1.u = oper1;
-	boper2.u = oper2;
-	
-	soper1 = boper1.s;
-	soper2 = boper2.s;
-
 	addoper2 = ~oper2 + static_cast<uint64_t>(1) + care;
 	res = oper1 + addoper2;
-	sres = soper1 - soper2 + care;
-	gpregs[Rd] = oper1 + addoper2;
+	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setAALUflag(res, oper1, addoper2, care);
 	PC += 8;
 	return;
@@ -842,6 +747,7 @@ void core::RRX()
 
 	SMP_word temp1 = (get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0)) << 63;
 	SMP_word temp2;
+	// rewrite with asm inline
 	for(int i = 0; i < oper2; i++){
 		temp2 = (get_bit(oper1, 63) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0)) << 63;
 		oper1 = oper1 >> 1;
@@ -888,12 +794,12 @@ void core::ROR()
 	soper1 = signExtword2dword(soper1);
 	soper2 = signExtword2dword(soper2);
 	SMP_word temp;
+	// rewrite with asm inline
 	for(int i = 0; i < soper2; i++){
 		temp = get_bit(res, 0) << 63;
 		oper1 = oper1 >> 1;
 		oper1 = oper1 | temp;
 	}
-
 	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setLALUflag(res);
 	PC += 8;
@@ -1215,12 +1121,12 @@ void core::VSADDH()
 	asm volatile(
 		"MOVQ xmm2, %2				\n\t"
 		"MOVQ xmm3, %3				\n\t"
-		"VPBROADCASTW xmm0, xmm2	\n\t"
-		"VPBROADCASTQ xmm1, xmm3	\n\t"
+		"VPBROADCASTW xmm0, xmm2		\n\t"
+		"VPBROADCASTQ xmm1, xmm3		\n\t"
 		"MOVQ xmm2, %4				\n\t"
 		"PSLLDQ xmm1, 8				\n\t"
 		"POR xmm1, xmm2				\n\t"
-    	"PADDSW xmm1, xmm0			\n\t"
+    		"PADDSW xmm1, xmm0			\n\t"
 		"MOVQ r14, xmm1				\n\t"
 		"PSRLDQ xmm1, 8				\n\t"
 		"MOVQ r15, xmm1				\n\t"
@@ -1304,9 +1210,10 @@ void core::UMULL()
 			return;//do Nothink, if conditional is not true
 		}
 	}
-	ddoper1 = gpregs[Rm];
-	ddoper2 = gpregs[Ra];
+	ddoper1 = static_cast<uint128_t>(gpregs[Rm]);
+	ddoper2 = static_cast<uint128_t>(gpregs[Ra]);
 	ddres = ddoper1 * ddoper2;
+	//cast to 2dword
 	dd.dw = ddres;
 	gpregs[Rd] = dd.dsu.h;
 	gpregs[Rd] = dd.dsu.l;
@@ -1323,6 +1230,7 @@ void core::UMLAL()
 	bit128 dd;
 	uint128_t ddoper1;
 	uint128_t ddoper2;
+	uint128_t ddoperA;
 	uint128_t ddres;
 
 	if(mulTypeInst.cond != 0b11111){
@@ -1330,12 +1238,16 @@ void core::UMLAL()
 			return;//do Nothink, if conditional is not true
 		}
 	}
-	ddoper1 = gpregs[Rn];
-	ddoper2 = gpregs[Rm];
-	ddres = ddoper1 * ddoper2;
+	dd.dsu.h = gpregs[Rd];
+	dd.dsu.l = gpregs[Ra];
+	ddoperA = dd.dw;
+
+	ddoper1 = static_cast<uint128_t>(gpregs[Rn]);
+	ddoper2 = static_cast<uint128_t>(gpregs[Rm]);
+	ddres = ddoper1 * ddoper2 + ddoperA;
 	dd.dw = ddres;
-	gpregs[Rd] = dd.dsu.h + gpregs[Rd];
-	gpregs[Ra] = dd.dsu.l + gpregs[Ra];
+	gpregs[Rd] = dd.dsu.h;
+	gpregs[Ra] = dd.dsu.l;
 	PC += 8;
 	return;
 }
@@ -1357,6 +1269,7 @@ void core::SMULL()
 			return;//do Nothink, if conditional is not true
 		}
 	}
+	//Sign cast (because sign extention)
 	dw.u = gpregs[Rm];
 	ddoper1 = static_cast<int128_t>(dw.s);
 	dw.u = gpregs[Rn];
@@ -1382,7 +1295,7 @@ void core::SMLAL()
 	bit128 dd;
 	int128_t ddoper1;
 	int128_t ddoper2;
-	int128_t acc;
+	int128_t ddoperA;
 	int128_t ddres;
 
 	if(mulTypeInst.cond != 0b11111){
@@ -1392,14 +1305,14 @@ void core::SMLAL()
 	}
 
 	dw.u = gpregs[Rd];
-	acc = static_cast<int128_t>(dw.s);
+	ddoperA = static_cast<int128_t>(dw.s);
 
 	dw.u = gpregs[Rm];
 	ddoper1 = static_cast<int128_t>(dw.s);
 	dw.u = gpregs[Rn];
 	ddoper2 = static_cast<int128_t>(dw.s);
 
-	ddres = ddoper1 * ddoper2 + acc;
+	ddres = ddoper1 * ddoper2 + ddoperA;
 	dd.dw = ddres;
 	dw.s = dd.dss.h; //to unsigned 128 bits integer
 	gpregs[Rd] = dw.u;
@@ -1604,18 +1517,16 @@ bool core::cmp_cond(SMP_word cond)
 		case EQ:	return Z_fl;						break;
 		case NE:	return !Z_fl;						break;
 		case CS:	return C_fl;						break;
-		//case HL:	return C_fl;						break;
 		case CC:	return !C_fl;						break;
-		//case LO:	return !C_fl;						break;
 		case MI:	return N_fl;						break;
 		case PL:	return !N_fl;						break;
 		case VS:	return V_fl;						break;
 		case VC:	return !V_fl;						break;
-		case HI:	return (!Z_fl) && C_fl;				break;
-		case LS:	return Z_fl || (!C_fl);				break;
-		case GE:	return !(N_fl ^ V_fl);				break;
+		case HI:	return (!Z_fl) && C_fl;					break;
+		case LS:	return Z_fl || (!C_fl);					break;
+		case GE:	return !(N_fl ^ V_fl);					break;
 		case LT:	return N_fl ^ V_fl;					break;
-		case GT:	return (!Z_fl) && (!(N_fl ^ V_fl));	break;
-		case LE:	return Z_fl || (N_fl ^ V_fl);		break;
+		case GT:	return (!Z_fl) && (!(N_fl ^ V_fl));			break;
+		case LE:	return Z_fl || (N_fl ^ V_fl);				break;
 	}
 }

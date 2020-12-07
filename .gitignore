@@ -259,3 +259,13 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+ProjectSMP/build/log.dat
+ProjectSMP/build/smpemu.out
+ProjectSMP/build/testClass.o
+ProjectSMP/build/smpemu.out
+ProjectSMP/build/core.o
+ProjectSMP/build/core.o
+ProjectSMP/build/maincpp.o
+ProjectSMP/build/core.o
+ProjectSMP/build/maincpp.o
+ProjectSMP/test_gen/sourse.smpasm

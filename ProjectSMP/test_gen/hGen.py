@@ -179,7 +179,9 @@ def ALUinstrType(instr):
     
     #parts of ALU instraction
     Nwords = len(instr)
+    lenopcode = len(instr[0])
     #we cut conditional
+    instr[0] = instr[0].upper()
     itype = instr[0]
     conditional = itype[0:1];
     cond = icond.get(conditional.upper())
@@ -188,6 +190,13 @@ def ALUinstrType(instr):
     else:
         cond = "11111"
 
+    if (itype[lenopcode - 1] == 'S'):
+        #begin
+        S = "1"
+        itype = itype[0:lenopcode - 1]
+        #end
+    else:
+        S = "0"
     itype = itype.upper()
     #we get only type
     func = aluTable.get(itype)
@@ -203,11 +212,6 @@ def ALUinstrType(instr):
     else:
         I = "0"
     
-    if (itype[-1] == 'S'):
-        S = "1"
-    else:
-        S = "0"
-
 
     #Attantion!!!! Hardcode
     priv = "11"
@@ -217,9 +221,10 @@ def ALUinstrType(instr):
         #begin
         Rd = format(int(instr[1][1:], base = 10), "b").zfill(6)
         Rn = format(int(instr[2][1:], base = 10), "b").zfill(6)
-        Rd = format(int(instr[3][1:], base = 10), "b").zfill(6)
-        Rn = format(int(instr[4][1:], base = 10), "b").zfill(6)
-        binInstr = priv + cond + opcode + I + S + func + "0" + Rn + Rd + Rm + Rm2
+        Rm = format(int(instr[3][1:], base = 10), "b").zfill(6)
+        Rm2= format(int(instr[4][1:], base = 10), "b").zfill(6)
+        imm = imm32[0:15]
+        binInstr = priv + cond + opcode + I + S + func + "0" + Rn + Rd + Rm + Rm2 + imm
         #end
     elif Nwords == 4:
         #begin
@@ -586,9 +591,12 @@ def main():
     for x in  instrs:
         #begin
         print("instraction", x ,"is translating\n")
-        dex = decode(x)
-        if(dex != None):
-            dFile.writelines(dex + "\n")
+        if(x != '\n'):
+            #begin
+            dex = decode(x)
+            if(dex != None):
+                dFile.writelines(dex + "\n")
+            #end
         #end    
 
     dFile.close();
@@ -598,8 +606,7 @@ def main():
 #entry point
 
 import re
-res = main()
-if(res == 0):
+if(main() == 0):
     print("sucsesfull")
 else:
     print("Error in main function")
