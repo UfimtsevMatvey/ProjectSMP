@@ -300,43 +300,27 @@ void core::init_SYS()
 	sysTypeInst.I = get_bit(instr, 31);
 	sysTypeInst.inum = get_field(instr, 32, 37);
 }
-void core::setAALUflag(SMP_word res, SMP_word oper1, SMP_word oper2, SMP_word care)
+void core::setAALUflag(uint128_t eres)
 {
-	bit64 bres;
-	bit64 boper1;
-	bit64 boper2;
-
-	bres.u = res;
-	boper1.u = oper1;
-	boper2.u = oper2;
-
-	
-	int64_t soper1 = boper1.s;
-	int64_t soper2 = boper2.s;
-
-	soper1 = signExtword2dword(soper1);
-	soper2 = signExtword2dword(soper2);
-	int64_t sres = soper1 + soper2;
-	uint128_t sum = oper1 + oper2;
-	int128_t ssum = soper1 + soper2;
-	if(res == 0)		setFlag(Z);//Z - flag
-	else				resetFlag(Z);
-
-	if(sum > MAGICNUMBER)	setFlag(C);
-	else 					resetFlag(C);
-
-	if(sres < 0){
-		setFlag(N);
-	}
-	else{
-		resetFlag(N);
-	}
-	if(ssum > (static_cast<int128_t>(1) << 64)){
-		setFlag(V);
-	}
-	else{
-		resetFlag(V);
-	}
+	bit128 t;
+	SMP_word res;
+	int64_t sres;
+	bool oV;
+	bool Cr;
+	//Convert to SMP_word
+	t.dw = eres;
+	res = t.dsu.l;
+	sres = t.dss.l;
+	Cr = (1 & t.dsu.h);
+	oV = Cr ^ (0x8000000000000000 & res);
+	if(res == 0) 	setFlag(Z);
+	else 			resetFlag(Z);
+	if(sres < 0)	setFlag(N);
+	else			resetFlag(N);
+	if(Cr)			setFlag(C);
+	else			resetFlag(C);
+	if(oV) 			setFlag(V);
+	else			resetFlag(V);
 }
 
 void core::setLALUflag(SMP_word res)
@@ -499,27 +483,12 @@ void core::CMP()
 	SMP_word oper1 = gpregs[Rd];
 	SMP_word oper2;
 	SMP_word addoper2;
-	bit64 boper1;
-	bit64 boper2;
-
-	int64_t soper1;
-	int64_t soper2;
-	int64_t sres;
-	SMP_word res;
+	uint128_t eres;
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-	boper1.u = oper1;
-	boper2.u = oper2;
-	
-	soper1 = boper1.s;
-	soper2 = boper2.s;
-
-	soper1 = signExtword2dword(soper1);
-	soper2 = signExtword2dword(soper2);
 	addoper2 = ~oper2 + static_cast<uint64_t>(1);
-	res = oper1 + addoper2;
-	sres = soper1 - soper2;
-	if(aluTypeInst.S)	setAALUflag(res, oper1, addoper2, 0);
+	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(addoper2);
+	if(aluTypeInst.S)	setAALUflag(eres);
 	PC += 8;
 	return;
 }
@@ -532,7 +501,7 @@ void core::CMN()
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = oper1 + oper2;
-	if(aluTypeInst.S)	setAALUflag(res, oper1, oper2, 0);
+	if(aluTypeInst.S)	setAALUflag(res);
 	PC += 8;
 	return;
 }
@@ -544,13 +513,15 @@ void core::ADD()
 	SMP_word oper2;
 
 	SMP_word res;
+	uint128_t eres;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = oper1 + oper2;
-	gpregs[Rd] = oper1 + oper2;
-	if(aluTypeInst.S)	setAALUflag(res, oper1, oper2, 0);
+	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(oper2);
+	if(aluTypeInst.S)	setAALUflag(eres);
+	gpregs[Rd] = res;
 	PC += 8;
 	return;
 }
@@ -562,7 +533,7 @@ void core::SUB()
 	SMP_word oper2;
 	SMP_word addoper2;
 	SMP_word res;
-
+	uint128_t eres;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
@@ -570,8 +541,9 @@ void core::SUB()
 
 	addoper2 = ~oper2 + static_cast<uint64_t>(1);
 	res = oper1 + addoper2;
+	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(addoper2);
+	if(aluTypeInst.S)	setAALUflag(eres);
 	gpregs[Rd] = res;
-	if(aluTypeInst.S)	setAALUflag(res, oper1, addoper2, 0);
 	PC += 8;
 	return;
 }
@@ -584,14 +556,16 @@ void core::ADC()
 	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 
 	SMP_word res;
+	uint128_t eres;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 
 	res = oper1 + oper2 + care;
-	gpregs[Rd] = oper1 + oper2 + care;
-	if(aluTypeInst.S)	setAALUflag(res, oper1, oper2, care);
+	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(oper2) + static_cast<uint128_t>(care); 
+	if(aluTypeInst.S)	setAALUflag(eres);
+	gpregs[Rd] = res;
 	PC += 8;
 	return;
 }
@@ -604,7 +578,7 @@ void core::RSB()
 	SMP_word addoper2 = 0;
 	SMP_word care = 0;
 	SMP_word res = 0;
-
+	uint128_t eres;
 	if(aluTypeInst.cond != 0b1111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
@@ -612,8 +586,9 @@ void core::RSB()
 
 	addoper2 = ~oper1 + static_cast<uint64_t>(1) + care;
 	res = oper2 + addoper2;
+	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(addoper2);
+	if(aluTypeInst.S)	setAALUflag(eres);
 	gpregs[Rd] = res;
-	if(aluTypeInst.S)	setAALUflag(res, oper2, addoper2, 0);
 	PC += 8;
 	return;
 }
@@ -627,6 +602,7 @@ void core::SBC()
 	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 
 	SMP_word res;
+	uint128_t eres;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
@@ -634,8 +610,9 @@ void core::SBC()
 
 	addoper2 = ~oper2 + static_cast<uint64_t>(1) + care;
 	res = oper1 + addoper2;
+	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(addoper2);
+	if(aluTypeInst.S)	setAALUflag(eres);
 	gpregs[Rd] = res;
-	if(aluTypeInst.S)	setAALUflag(res, oper1, addoper2, care);
 	PC += 8;
 	return;
 }
@@ -663,13 +640,15 @@ void core::LSL()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 	SMP_word res;
+	uint128_t eres;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = oper1 << oper2;
+	eres = static_cast<uint128_t>(oper1) << static_cast<uint128_t>(oper2);
+	if(aluTypeInst.S)	setLALUflag(eres);
 	gpregs[Rd] = res;
-	if(aluTypeInst.S)	setLALUflag(res);
 	PC += 8;
 	return;
 }
@@ -681,13 +660,15 @@ void core::LSR()
 	SMP_word oper2;
 
 	SMP_word res;
+	uint128_t eres;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	res = oper1 >> oper2;
+	eres = static_cast<uint128_t>(oper1) >> static_cast<uint128_t>(oper2);
+	if(aluTypeInst.S)	setLALUflag(eres);
 	gpregs[Rd] = res;
-	if(aluTypeInst.S)	setLALUflag(res);
 	PC += 8;
 	return;
 }
@@ -739,27 +720,35 @@ void core::RRX()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 	SMP_word res;
+	SMP_word Cf;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	oper2 = oper2 & 0x000000000000003F;//Only 6 bit in shifh operand
 
-	SMP_word temp1 = (get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0)) << 63;
-	SMP_word temp2;
+	Cf = (get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0));
 	// rewrite with asm inline
-	for(int i = 0; i < oper2; i++){
-		temp2 = (get_bit(oper1, 63) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0)) << 63;
-		oper1 = oper1 >> 1;
-		oper1 = oper1 | temp1;
-		temp1 = temp2;
-	}
-	if(temp1) 	setFlag(C);
+	asm volatile(
+		"MOV r10, %2	\n\t"
+		"MOV r11, %3	\n\t"
+		"MOV r12, %4	\n\t"
+		"RCR r12, 1		\n\t"		//Set CF for correct executing RCR instraction
+		"MOV rcx, r11	\n\t"
+		"_nRRX:			\n\t"
+    	"RCR r10, 1		\n\t"
+		"LOOP _nRRX		\n\t"
+		"XOR r12, r12	\n\t"
+		"RCL r12, 1		\n\t" 		//Get new value for Cf flag
+		"MOV %0, r10	\n\t"
+		"MOV %1, r12	\n\t"
+   		: "=r" (res), "=r" (Cf)
+   		: "r" (oper1), "r" (oper2), "r" (Cf));
+
+	if(Cf == 1) setFlag(C);
 	else 		resetFlag(C);
 	gpregs[Rd] = res;
-
-
-	if(aluTypeInst.S)	setLALUflag(res);
+	setLALUflag(res);
 	PC += 8;
 	return;
 }
@@ -770,38 +759,24 @@ void core::ROR()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 	SMP_word res;
-
-	bit64 bres;
-	bit64 boper1;
-	bit64 boper2;
-
-	int64_t sres;
-	int64_t soper1;
-	int64_t soper2;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	oper2 = oper2 & 0x000000000000003F;//Only 6 bit in shifh operand
-	bres.u = res;
-	boper1.u = oper1;
-	boper2.u = oper2;
-
-	sres = bres.s;
-	soper1 = boper1.s;
-	soper2 = boper2.s;
-
-	soper1 = signExtword2dword(soper1);
-	soper2 = signExtword2dword(soper2);
-	SMP_word temp;
 	// rewrite with asm inline
-	for(int i = 0; i < soper2; i++){
-		temp = get_bit(res, 0) << 63;
-		oper1 = oper1 >> 1;
-		oper1 = oper1 | temp;
-	}
+	asm volatile(
+		"MOV r10, %1	\n\t"
+		"MOV r11, %2	\n\t"
+		"MOV rcx, r11	\n\t"
+		"_nROR:			\n\t"
+    	"ROR r10, 1		\n\t"
+		"LOOP _nROR		\n\t"
+		"MOV %0, r10	\n\t"
+   		: "=r" (res)
+   		: "r" (oper1), "r" (oper2));
+	setLALUflag(res);
 	gpregs[Rd] = res;
-	if(aluTypeInst.S)	setLALUflag(res);
 	PC += 8;
 	return;
 }
@@ -855,7 +830,6 @@ void core::UADDPB()
 		"MOVQ %2, mm1				\n\t"
     	: "=r" (res)
     	: "r" (oper1), "r" (oper2)); 
-
 	gpregs[Rd] = res;
 	PC += 8;
 	return;

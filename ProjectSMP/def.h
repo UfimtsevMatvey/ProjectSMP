@@ -15,13 +15,13 @@ typedef __int128 int128_t;
 typedef unsigned __int128 uint128_t;
 
 struct ddwordu{
-    SMP_word h;
     SMP_word l;
+    SMP_word h;
 };
 
 struct ddwords{
-    SMP_word h;
     SMP_word l;
+    SMP_word h;
 };
 
 union bit64{
