@@ -3,6 +3,7 @@
 #ifndef def
    #include "def.h"
 #endif
+//Likely write and read function will cut
 void regf::write(byte N, SMP_word data)
 {
 	if (N < NREG)
@@ -17,7 +18,7 @@ void regf::read(byte N, SMP_word& data)
 		data = 0;
 }
 regf::regf()
-{//Инициализация регистрового файла
+{
 	int i = 0;
 	for (i = 0; i < NREG; i++)
 		R[i] = 0;

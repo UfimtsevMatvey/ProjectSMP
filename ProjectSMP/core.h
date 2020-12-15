@@ -140,8 +140,8 @@ private:
 
 	SMP_word flgs;
 
-	void setAALUflag(uint128_t eres, SMP_word oper1, SMP_word oper2, SMP_word care);
-	void setLALUflag(SMP_word res);
+	void setALUflag(uint128_t eres, SMP_word oper1, SMP_word oper2, SMP_word care);
+	void setALUflag(SMP_word res);
 
 	//ALU
 	void AND();
@@ -190,7 +190,7 @@ private:
 	void SMLAL();
 
 	//Mem instractions
-
+	void genMEM(SMP_word*);
 	void STR();
 	void LDR();
 

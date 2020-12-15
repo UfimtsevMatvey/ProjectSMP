@@ -5,6 +5,11 @@
 #define IMSIZE 8192
 #define DMSIZE 8192
 #define MAGICNUMBER 0xFFFFFFFFFFFFFFFF
+#define MASK64 0xFFFFFFFFFFFFFFFF
+#define MASK32 0xFFFFFFFF
+#define MASK16 0xFFFF
+#define MASK8 0xFF
+
 typedef uint64_t SMP_word;
 typedef uint64_t reg;
 typedef uint32_t word;
