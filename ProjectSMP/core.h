@@ -77,14 +77,37 @@ class core
 {
 	friend class debugger;
 public:
+	
+	SMP_word getPort(int n);
+	
 	core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile);
 	
 	void test_start(SMP_word testInstr);
 
-	void start();
+	void start(int n);//Numbrt of iteration execute path
 
 private:
+	SMP_word port0;
+	int port0wait;
+	int port0ready;
+	SMP_word port1;
+	int port1wait;
+	int port1ready;
+	SMP_word port2;
+	int port2wait;
+	int port2ready;
+	SMP_word port3;
+	int port3wait;
+	int port3ready;
+	
+	int ErrorCode;
+	
+	SMP_word lowAddr;
+	SMP_word highAddr;
+	
+	
 	bool cmp_cond(SMP_word cond);
+	int preFetch();
 	void fetchInstr();
 	void decodeInst();
 	void init_ALU();

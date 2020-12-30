@@ -9,6 +9,7 @@
 #include "sysCode.h"
 #include "flagNum.h"
 #include "condNum.h"
+#include "errorCode.h"
 #ifndef def
    #include "def.h"
 #endif
@@ -48,12 +49,87 @@ void core::test_start(SMP_word testInstr)
 	}
 	syncDataFile();
 }
-void core::start()
+void core::start(int n)
 {
-	fetchInstr();
-	decodeInst();
-	exec();
-	flushInstr();
+	int i = 0;
+	while(i < n){
+		PC = preFetch();
+		fetchInstr();
+		decodeInst();
+		exec();
+		flushInstr();
+		i++;
+	}
+}
+int core::preFetch()
+{
+	if(INR == 0) return PC;
+	else switch(INR){
+		case 0x1: return idgers[0];
+		case 0x2: return idgers[1];
+		case 0x4: return idgers[2];
+		case 0x8: return idgers[3];
+		case 0x10: return idgers[4];
+		case 0x20: return idgers[5];
+		case 0x40: return idgers[6];
+		case 0x80: return idgers[7];
+		case 0x100: return idgers[8];
+		case 0x200: return idgers[9];
+		case 0x400: return idgers[10];
+		case 0x800: return idgers[11];
+		case 0x1000: return idgers[12];
+		case 0x2000: return idgers[13];
+		case 0x4000: return idgers[14];
+		case 0x8000: return idgers[15];
+		case 0x10000: return idgers[16];
+		case 0x20000: return idgers[17];
+		case 0x40000: return idgers[18];
+		case 0x80000: return idgers[19];
+		case 0x100000: return idgers[20];
+		case 0x200000: return idgers[21];
+		case 0x400000: return idgers[22];
+		case 0x800000: return idgers[23];
+		case 0x1000000: return idgers[24];
+		case 0x2000000: return idgers[25];
+		case 0x4000000: return idgers[26];
+		case 0x8000000: return idgers[27];
+		case 0x10000000: return idgers[28];
+		case 0x20000000: return idgers[29];
+		case 0x40000000: return idgers[30];
+		case 0x80000000: return idgers[31];
+		case 0x100000000: return idgers[32];
+		case 0x200000000: return idgers[33];
+		case 0x400000000: return idgers[34];
+		case 0x800000000: return idgers[35];
+		case 0x1000000000: return idgers[36];
+		case 0x2000000000: return idgers[37];
+		case 0x4000000000: return idgers[38];
+		case 0x8000000000: return idgers[39];
+		case 0x10000000000: return idgers[40];
+		case 0x20000000000: return idgers[41];
+		case 0x40000000000: return idgers[42];
+		case 0x80000000000: return idgers[43];
+		case 0x100000000000: return idgers[44];
+		case 0x200000000000: return idgers[45];
+		case 0x400000000000: return idgers[46];
+		case 0x800000000000: return idgers[47];
+		case 0x1000000000000: return idgers[48];
+		case 0x2000000000000: return idgers[49];
+		case 0x4000000000000: return idgers[50];
+		case 0x8000000000000: return idgers[51];
+		case 0x10000000000000: return idgers[52];
+		case 0x20000000000000: return idgers[53];
+		case 0x40000000000000: return idgers[54];
+		case 0x80000000000000: return idgers[55];
+		case 0x100000000000000: return idgers[56];
+		case 0x200000000000000: return idgers[57];
+		case 0x400000000000000: return idgers[58];
+		case 0x800000000000000: return idgers[59];
+		case 0x1000000000000000: return idgers[60];
+		case 0x2000000000000000: return idgers[61];
+		case 0x4000000000000000: return idgers[62];
+		case 0x8000000000000000: return idgers[63];
+	}
 }
 void core::decodeInst()
 {
@@ -1111,7 +1187,7 @@ void core::VSADDH()
 	asm volatile(
 		"MOVQ xmm2, %2				\n\t"
 		"MOVQ xmm3, %3				\n\t"
-		"VPBROADCASTW xmm0, xmm2		\n\t"
+		"VPBROADCASTW xmm0, xmm2		\n \t"
 		"VPBROADCASTQ xmm1, xmm3		\n\t"
 		"MOVQ xmm2, %4				\n\t"
 		"PSLLDQ xmm1, 8				\n\t"
@@ -1406,84 +1482,183 @@ void core::LDRB()
 
 void core::BL()
 {
-	
+	SMP_word imm = ctTypeInst.imm48;
+	imm = imm & (0xFFFFFFFF);
+	imm = imm << 8;
+	gpregs[1] = PC + 8;
+	PC = PC + 8 + imm;
 }//Save ip on reg0
 void core::BO_REG() 
 {
-
+	SMP_word Rd = ctTypeInst.R;
+	PC = PC + 8 + gpregs[Rd];
 }
 void core::BO_IMM() 
 {
-
+	SMP_word imm = ctTypeInst.imm48;
+	imm = imm & (0xFFFFFFFF);
+	PC = PC + 8 + (imm << 8);
 }
 void core::B_REG() 
 {
-
+	SMP_word Rd = ctTypeInst.R;
+	PC = gpregs[Rd];
 }
 void core::B_IMM() 
 {
-
+	SMP_word imm = ctTypeInst.imm48;
+	imm = imm & (0xFFFFFFFF);
+	PC = imm << 8;
 }
 void core::RET() 
 {
-
+	PC = gpregs[1];
 }
 void core::XRET() 
 {
-
+	PC = gpregs[2];
 }
-
 //System instractions
 
 void core::INSY()
 {
+	SMP_word Nport = sysTypeInst.port;
+	SMP_word Rs = sysTypeInst.Rd;
+	switch(Nport){
+		case 0: port0 = gpregs[Rs];
+				port0wait = 1;
+				while(port0wait == 1);
+				break;
+		case 1: port1 = gpregs[Rs];
+				port1wait = 1;
+				while(port1wait == 1);
+				break;
+		case 2: port2 = gpregs[Rs];
+				port2wait = 1;
+				while(port2wait == 1);
+				break;
+		case 3: port3 = gpregs[Rs];
+				port3wait = 1;
+				while(port3wait == 1);
+				break;
+		default: ErrorCode = ILLEGALPORT; break;
+	}
 	PC += 8;
 }
 void core::IN()
 {
+	SMP_word Nport = sysTypeInst.port;
+	SMP_word Rs = sysTypeInst.Rd;
+	switch(Nport){
+		case 0: port0 = gpregs[Rs];
+				break;
+		case 1: port1 = gpregs[Rs];
+				break;
+		case 2: port2 = gpregs[Rs];
+				break;
+		case 3: port3 = gpregs[Rs];
+				break;
+		default: ErrorCode = ILLEGALPORT; break;
+	}
 	PC += 8;
 }
-
 void core::OUTSY()
-{
+{	
+	SMP_word Nport = sysTypeInst.port;
+	SMP_word Rd = sysTypeInst.Rd;
+	switch(Nport){
+		case 0: while(port0ready == 0);
+				gpregs[Rd] = port0;
+				break;
+		case 1: while(port1ready == 0);
+				gpregs[Rd] = port1;
+				break;
+		case 2: while(port2ready == 0);
+				gpregs[Rd] = port2;
+				break;
+		case 3: while(port3ready == 0);
+				gpregs[Rd] = port3;
+				break;
+		default: ErrorCode = ILLEGALPORT; break;
+	}
 	PC += 8;
-}
+}	
 void core::OUT()
-{
+{	
+	SMP_word Nport = sysTypeInst.port;
+	SMP_word Rd = sysTypeInst.Rd;
+	switch(Nport){
+		case 0: if(port0ready == 0){
+					setFlag(INVALIDVALUE);
+					break;
+				}
+				gpregs[Rd] = port0;
+				break;
+		case 1: if(port1ready == 0){
+					setFlag(INVALIDVALUE);
+					break;
+				}
+				gpregs[Rd] = port1;
+				break;
+		case 2: if(port2ready == 0){
+					setFlag(INVALIDVALUE);
+					break;
+				}
+				gpregs[Rd] = port2;
+				break;
+		case 3: if(port3ready == 0){
+					setFlag(INVALIDVALUE);
+					break;
+				}
+				gpregs[Rd] = port3;
+				break;
+		default: ErrorCode = ILLEGALPORT; break;
+	}
 	PC += 8;
 }
 
 void core::SFL()
 {
+	gpregs[sysTypeInst.Rd] = FLR;
 	PC += 8;
 }
 void core::LFL()
 {
+	FLR = gpregs[sysTypeInst.Rd];
 	PC += 8;
 }
 void core::SMF()
 {
+	lowAddr = gpregs[sysTypeInst.Rd];
+	highAddr = gpregs[sysTypeInst.Rn];
 	PC += 8;
 }
 void core::SINT()
 {
+	idgers[sysTypeInst.inum] = gpregs[sysTypeInst.Rd];
 	PC += 8;
 }
 
 void core::BINT()
 {
+	setFlag(BLOCKINTR);
 	PC += 8;
 }
 void core::UINT()
 {
+	resetFlag(BLOCKINTR);
 	PC += 8;
 }
 void core::CINT()
 {
+	INR = 0;
 	PC += 8;
 }
 void core::INT()
 {
+	SMP_word temp = 1;
+	temp = temp << 8 * sizeof(SMP_word) - sysTypeInst.inum - 1;
+	INR = INR | temp;
 	PC += 8;
 }
 

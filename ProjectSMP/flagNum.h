@@ -6,3 +6,4 @@
 #define V 4
 #define MASTERCORE 5
 #define EXHANDLER 6
+#define BLOCKINTR 7
