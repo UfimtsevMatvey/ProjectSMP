@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include "mem.h"
 #include <iostream>
 #include <fstream>
@@ -15,13 +15,13 @@ mem::~mem()
 }
 void mem::Init(SMP_word size, const char* filename)
 {
-	//Выделение системной памяти для буффера
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	Nbuffer = INVALID;
 	bufferSize = BUFFERSIZE;
 	memSize = size;
 	memory = new SMP_word[bufferSize]; //Fucking brakets
 
-	//Открытие файла для чтения/записи
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅ
 	mFileName = filename;
 	//openFile();
 }
@@ -41,25 +41,25 @@ void mem::load(SMP_word addr, SMP_word& data)
 {
 	SMP_word Baddr = addr / bufferSize;
 
-	if (memory == nullptr){//Если память еще не выделялась
+	if (memory == nullptr){//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		if (memSize > addr){
 			Nbuffer = addr / bufferSize;
-			buffering(bufferSize, Nbuffer * bufferSize);//Загрузка в буффер блок из файла.
+			buffering(bufferSize, Nbuffer * bufferSize);//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 		}
 	}
 	else{
 		if (memSize > addr){
-			if (Baddr == Nbuffer) { // Нужное значение уже в памяти
+			if (Baddr == Nbuffer) { // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 				data = memory[addr - Nbuffer * bufferSize];
 			}
-			else{//Если нужного значения в памяти нет, то загрузить соответствующий блок из файла.
+			else{//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 				if (valid) {
 					Nbuffer = Baddr;
 					buffering(bufferSize, Baddr * bufferSize);
 					data = memory[addr - Nbuffer * bufferSize];
 				}
 				else{
-					//Сохранение в файл, текущего состояние буффера
+					//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 					if (Nbuffer != INVALID) {
 						saveBuffer(bufferSize, Nbuffer * bufferSize);
 					}
@@ -87,7 +87,7 @@ void mem::store(SMP_word addr, SMP_word data)
 				valid = false;
 			}
 			else{
-				//Сохранение в файл, текущего состояние буффера
+				//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				if (Nbuffer != INVALID) {
 					saveBuffer(bufferSize, Nbuffer * bufferSize);
 				}

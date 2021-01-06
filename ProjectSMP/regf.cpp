@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include "regf.h"
 #ifndef def
    #include "def.h"
@@ -32,6 +32,9 @@ SMP_word& regf::operator[ ](SMP_word i)
 {
 	if(i < NREG)
 		return R[i];
+	else
+		return R[0];
+	
 }
 void regf::flush()
 {

@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include "core.h"
 #include <iostream>
 #include "subfunc.h"
@@ -129,6 +129,7 @@ int core::preFetch()
 		case 0x2000000000000000: return idgers[61];
 		case 0x4000000000000000: return idgers[62];
 		case 0x8000000000000000: return idgers[63];
+		default: return 0;	
 	}
 }
 void core::decodeInst()
@@ -390,7 +391,7 @@ void core::setALUflag(uint128_t eres, SMP_word oper1, SMP_word oper2, SMP_word c
 	t.dw = eres;
 	res = t.dsu.l;
 	sres = t.dss.l;
-	Cr = (0x10000000000000000 & eres != 0);
+	Cr = ((0x1000000000000000 & eres) != 0);
 
 	poper1 = 0x7FFFFFFFFFFFFFFF & oper1;
 	poper2 = 0x7FFFFFFFFFFFFFFF & oper2;
@@ -415,14 +416,14 @@ void core::setALUflag(SMP_word res)
 void core::setFlag(int n)
 {
 	SMP_word temp = 1;
-	temp = temp << 8 * sizeof(SMP_word) - n - 1;
+	temp = temp << (8 * sizeof(SMP_word) - n - 1);
 	FLR = FLR | temp;
 }
 
 void core::resetFlag(int n)
 {
 	SMP_word temp = 1;
-	temp = temp << 8 * sizeof(SMP_word) - n - 1;
+	temp = temp << (8 * sizeof(SMP_word) - n - 1);
 	temp = ~temp;
 	FLR = FLR & temp;
 }
@@ -581,11 +582,9 @@ void core::CMN()
 	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word oper1 = gpregs[Rd];
 	SMP_word oper2;
-	SMP_word res;
 	uint128_t eres;
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
-	res = oper1 + oper2;
 	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(oper2);
 	if(aluTypeInst.S)	setALUflag(eres, oper1, oper2, 0);
 	PC += 8;
@@ -707,8 +706,6 @@ void core::MVN()
 	SMP_word Rd = aluTypeInst.Rd;
 	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper1 = gpregs[Rn];
-	bit64 boper1;
-	boper1.u = oper1;
 
 	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
@@ -726,7 +723,6 @@ void core::LSL()
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
 	SMP_word res;
-	uint128_t eres;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
@@ -745,7 +741,6 @@ void core::LSR()
 	SMP_word oper2;
 
 	SMP_word res;
-	uint128_t eres;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
@@ -762,7 +757,7 @@ void core::ASR()
 	SMP_word Rn = aluTypeInst.Rn;
 	SMP_word oper1 = gpregs[Rn];
 	SMP_word oper2;
-	SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
+	//SMP_word care = get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0);
 
 	bit64 bres;
 	bit64 boper1;
@@ -771,8 +766,6 @@ void core::ASR()
 	int64_t sres;
 	int64_t soper1;
 	int64_t soper2;
-	
-	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
@@ -790,7 +783,7 @@ void core::ASR()
 	bres.s = sres;
 	gpregs[Rd] = bres.u;
 	if(aluTypeInst.S){
-		setALUflag(res);
+		setALUflag(sres);
 		if(sres < 0) setFlag(N);
 		else resetFlag(N);
 	}
@@ -984,7 +977,6 @@ void core::SADDPB()
 	int64_t soper2;
 	int64_t sres;
 
-	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
@@ -1020,8 +1012,6 @@ void core::SADDPH()
 	uint64_t soper1;
 	uint64_t soper2;
 	uint64_t sres;
-
-	SMP_word res;
 	if(aluTypeInst.cond != 0b11111)
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
@@ -1040,7 +1030,7 @@ void core::SADDPH()
     	: "r" (soper1), "r" (soper2)); 
 
 	gpregs[Rd] = sres;
-	setALUflag(res);
+	setALUflag(sres);
 	PC += 8;
 	return;
 }
@@ -1265,7 +1255,7 @@ void core::MLA()
 void core::UMULL()
 {
 	SMP_word Rd = mulTypeInst.Rd;
-	SMP_word Rn = mulTypeInst.Rn;
+	//SMP_word Rn = mulTypeInst.Rn;
 	SMP_word Rm = mulTypeInst.Rm;
 	SMP_word Ra = mulTypeInst.Ra;
 
@@ -1657,7 +1647,7 @@ void core::CINT()
 void core::INT()
 {
 	SMP_word temp = 1;
-	temp = temp << 8 * sizeof(SMP_word) - sysTypeInst.inum - 1;
+	temp = temp << (8 * sizeof(SMP_word) - sysTypeInst.inum - 1);
 	INR = INR | temp;
 	PC += 8;
 }
@@ -1726,7 +1716,6 @@ void SYS_instr::flush()
 }
 bool core::cmp_cond(SMP_word cond)
 {
-	SMP_word res = 0;
 	bool N_fl = get_bit(FLR, N);
 	bool Z_fl = get_bit(FLR, Z);
 	bool C_fl = get_bit(FLR, C);
@@ -1747,5 +1736,6 @@ bool core::cmp_cond(SMP_word cond)
 		case LT:	return N_fl ^ V_fl;
 		case GT:	return (!Z_fl) && (!(N_fl ^ V_fl));
 		case LE:	return Z_fl || (N_fl ^ V_fl);
+		default: 	return false;
 	}
 }

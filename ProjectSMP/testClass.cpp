@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include "testClass.h"
 #include <iostream>
 #include <bitset>
