@@ -3,12 +3,17 @@
 #include "core.h"
 #include "tests.h"
 #include "testClass.h"
+#include "checkArh.h"
 
 
 using namespace std;
 
 int main(int argv, char* argc[])
 {
+	if(checkArh() == 0){
+		cout << "CPU is not avalible" << endl;
+		return 1;
+	}
 	char filenameInstr[] = "./imem.dat";
 	char filenameData[] = "./dmem.dat";
 

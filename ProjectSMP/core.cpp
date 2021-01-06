@@ -1187,12 +1187,12 @@ void core::VSADDH()
 	asm volatile(
 		"MOVQ xmm2, %2				\n\t"
 		"MOVQ xmm3, %3				\n\t"
-		"VPBROADCASTW xmm0, xmm2		\n \t"
-		"VPBROADCASTQ xmm1, xmm3		\n\t"
+		"VPBROADCASTW xmm0, xmm2	\n \t"
+		"VPBROADCASTQ xmm1, xmm3	\n\t"
 		"MOVQ xmm2, %4				\n\t"
 		"PSLLDQ xmm1, 8				\n\t"
 		"POR xmm1, xmm2				\n\t"
-    		"PADDSW xmm1, xmm0			\n\t"
+    	"PADDSW xmm1, xmm0			\n\t"
 		"MOVQ r14, xmm1				\n\t"
 		"PSRLDQ xmm1, 8				\n\t"
 		"MOVQ r15, xmm1				\n\t"
@@ -1733,19 +1733,19 @@ bool core::cmp_cond(SMP_word cond)
 	bool V_fl = get_bit(FLR, V);
 	SMP_word SignificantBits = cond & 0x0F;
 	switch(SignificantBits){
-		case EQ:	return Z_fl;						break;
-		case NE:	return !Z_fl;						break;
-		case CS:	return C_fl;						break;
-		case CC:	return !C_fl;						break;
-		case MI:	return N_fl;						break;
-		case PL:	return !N_fl;						break;
-		case VS:	return V_fl;						break;
-		case VC:	return !V_fl;						break;
-		case HI:	return (!Z_fl) && C_fl;					break;
-		case LS:	return Z_fl || (!C_fl);					break;
-		case GE:	return !(N_fl ^ V_fl);					break;
-		case LT:	return N_fl ^ V_fl;					break;
-		case GT:	return (!Z_fl) && (!(N_fl ^ V_fl));			break;
-		case LE:	return Z_fl || (N_fl ^ V_fl);				break;
+		case EQ:	return Z_fl;
+		case NE:	return !Z_fl;
+		case CS:	return C_fl;
+		case CC:	return !C_fl;
+		case MI:	return N_fl;
+		case PL:	return !N_fl;
+		case VS:	return V_fl;
+		case VC:	return !V_fl;
+		case HI:	return (!Z_fl) && C_fl;	
+		case LS:	return Z_fl || (!C_fl);
+		case GE:	return !(N_fl ^ V_fl);
+		case LT:	return N_fl ^ V_fl;
+		case GT:	return (!Z_fl) && (!(N_fl ^ V_fl));
+		case LE:	return Z_fl || (N_fl ^ V_fl);
 	}
 }

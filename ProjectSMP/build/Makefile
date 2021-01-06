@@ -1,10 +1,10 @@
 CXX = g++
-CXXFLAGS = -Wall -g -march='znver1'  -mavx512f -mavx512cd -masm=intel
+CXXFLAGS = -Wall -g  -mavx512f -mavx512cd -masm=intel
 
 all: SMPemu
 
-SMPemu: maincpp.o core.o mem.o regf.o subfunc.o testClass.o
-	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o testClass.o -o smpemu.out
+SMPemu: maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o
+	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o -o smpemu.out
 
 maincpp.o:
 	$(CXX) $(CXXFLAGS) -c ../maincpp.cpp
@@ -24,6 +24,8 @@ subfunc.o:
 testClass.o:
 	$(CXX) $(CXXFLAGS) -c ../testClass.cpp
 
-clean:
+checkArh.o:
+	$(CXX) $(CXXFLAGS) -c ../checkArh.cpp
 
+clean:
 	rm -rf *.o smpemu 
