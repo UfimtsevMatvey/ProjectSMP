@@ -12,7 +12,7 @@ int main(int argv, char* argc[])
 {
 	uint32_t cpuid = checkArh();
 	cout << "CPUID" << "\t" << cpuid << endl;
-	if(cpuid == static_cast<word>(0)){
+	if((cpuid & static_cast<word>((1 << 16) + (1 << 28)))){
 		cout << "CPU is not avalible" << endl;
 		return 1;
 	}
