@@ -10,7 +10,9 @@ using namespace std;
 
 int main(int argv, char* argc[])
 {
-	if(checkArh() == 0){
+	uint32_t cpuid = checkArh();
+	cout << "CPUID" << "\t" << cpuid << endl;
+	if(cpuid == static_cast<word>(0)){
 		cout << "CPU is not avalible" << endl;
 		return 1;
 	}

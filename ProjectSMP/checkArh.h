@@ -1,1 +1,1 @@
-int checkArh();
+uint32_t checkArh();
