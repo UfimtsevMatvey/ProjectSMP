@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -g  -mavx512f -mavx512cd -masm=intel
+CXXFLAGS = -Wall -g  -mavx  -masm=intel
 
 all: SMPemu
 
