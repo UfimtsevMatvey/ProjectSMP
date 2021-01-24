@@ -1,3 +1,7 @@
+import re
+import sys
+from bitstring import BitArray
+
 icond = {
     "EQ" :  "00000",
     "NE" :  "00001",
@@ -576,12 +580,34 @@ def decode(instr):
     #end
 
 #main function
-def main():
+def main(argv):
     #begin
-    sFile  = open("sourse.smpasm", "r")
-    dFile  = open("tests.h", "w")
-
-    if ((dFile.mode != 'w') | (sFile.mode != 'r')):
+    sFileName = ''
+    dFileName = ''
+    binFileName = ''
+    print("len = ", len(sys.argv))
+    if (len(sys.argv) == 3):
+        #begin
+        sFileName = sys.argv[1]
+        dFileName = sys.argv[2]
+        binFileName = sys.argv[2] + '.bin'
+        #end    
+    elif(len(sys.argv) == 2):
+        #begin
+        sFileName = sys.argv[1]
+        dFileName = sys.argv[1] + '.bindata'
+        binFileName = sys.argv[1] + '.bin'
+        #end
+    elif(len(sys.argv) == 1):
+        #begin
+        sFileName = 'sourse.smpasm'
+        dFileName = 'out.bindata'
+        binFileName = 'out' + '.bin'
+        #end
+    sFile  = open(sFileName, 'r')
+    dFile  = open(dFileName, 'w')
+    binFile = open(binFileName, 'wb')
+    if ((dFile.mode != 'w') | (sFile.mode != 'r') | (binFile.mode != 'wb')):
         #begin
         #file error
         print("File error\n")
@@ -596,17 +622,22 @@ def main():
             dex = decode(x)
             if(dex != None):
                 dFile.writelines(dex + "\n")
+                a = int(BitArray(bin=dex).bin,2)
+                binFile.write(a)
             #end
         #end    
-
+    
     dFile.close();
     sFile.close();
     return 0
     #end
 #entry point
+def hGen(argv):
+    #begin
+    if(main(argv) == 0):
+        print("sucsesfull")
+    else:
+        print("Error in main function")
+    #end   
 
-import re
-if(main() == 0):
-    print("sucsesfull")
-else:
-    print("Error in main function")
+hGen(sys.argv)
