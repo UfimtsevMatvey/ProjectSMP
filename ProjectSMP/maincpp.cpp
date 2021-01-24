@@ -10,14 +10,28 @@ using namespace std;
 
 int main(int argv, char* argc[])
 {
-	uint32_t cpuid = checkArh();
-	cout << "CPUID" << "\t" << cpuid << endl;
-	if(cpuid != 0x20){
-		cout << "CPU is not avalible" << endl;
+	if(checkArh() != 0x20){
+		cout << "Your CPU is not supported." << endl;
+		cout << "Your CPU should be support AVX2 instruction set." << endl;
+		cout << "Program is ended with return code: 1." << endl;
 		return 1;
 	}
-	char filenameInstr[] = "./imem.dat";
-	char filenameData[] = "./dmem.dat";
+
+	char* filenameInstr;
+	char* filenameData;
+
+	if(argv == 2){
+		filenameInstr = argc[1];
+		filenameData = argc[2];
+	}
+	else if(argv == 1){
+		filenameInstr = argc[1];
+		filenameData = "./dmem.dat";
+	}
+	else{
+		filenameInstr = "./imem.dat";
+		filenameData = "./dmem.dat";
+	}
 
 	byte gpr = NREG;
 	byte idr = NREG;

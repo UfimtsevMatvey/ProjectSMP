@@ -65,70 +65,70 @@ int core::preFetch()
 {
 	if(INR == 0) return PC;
 	else switch(INR){
-		case 0x1: return idgers[0];
-		case 0x2: return idgers[1];
-		case 0x4: return idgers[2];
-		case 0x8: return idgers[3];
-		case 0x10: return idgers[4];
-		case 0x20: return idgers[5];
-		case 0x40: return idgers[6];
-		case 0x80: return idgers[7];
-		case 0x100: return idgers[8];
-		case 0x200: return idgers[9];
-		case 0x400: return idgers[10];
-		case 0x800: return idgers[11];
-		case 0x1000: return idgers[12];
-		case 0x2000: return idgers[13];
-		case 0x4000: return idgers[14];
-		case 0x8000: return idgers[15];
-		case 0x10000: return idgers[16];
-		case 0x20000: return idgers[17];
-		case 0x40000: return idgers[18];
-		case 0x80000: return idgers[19];
-		case 0x100000: return idgers[20];
-		case 0x200000: return idgers[21];
-		case 0x400000: return idgers[22];
-		case 0x800000: return idgers[23];
-		case 0x1000000: return idgers[24];
-		case 0x2000000: return idgers[25];
-		case 0x4000000: return idgers[26];
-		case 0x8000000: return idgers[27];
-		case 0x10000000: return idgers[28];
-		case 0x20000000: return idgers[29];
-		case 0x40000000: return idgers[30];
-		case 0x80000000: return idgers[31];
-		case 0x100000000: return idgers[32];
-		case 0x200000000: return idgers[33];
-		case 0x400000000: return idgers[34];
-		case 0x800000000: return idgers[35];
-		case 0x1000000000: return idgers[36];
-		case 0x2000000000: return idgers[37];
-		case 0x4000000000: return idgers[38];
-		case 0x8000000000: return idgers[39];
-		case 0x10000000000: return idgers[40];
-		case 0x20000000000: return idgers[41];
-		case 0x40000000000: return idgers[42];
-		case 0x80000000000: return idgers[43];
-		case 0x100000000000: return idgers[44];
-		case 0x200000000000: return idgers[45];
-		case 0x400000000000: return idgers[46];
-		case 0x800000000000: return idgers[47];
-		case 0x1000000000000: return idgers[48];
-		case 0x2000000000000: return idgers[49];
-		case 0x4000000000000: return idgers[50];
-		case 0x8000000000000: return idgers[51];
-		case 0x10000000000000: return idgers[52];
-		case 0x20000000000000: return idgers[53];
-		case 0x40000000000000: return idgers[54];
-		case 0x80000000000000: return idgers[55];
-		case 0x100000000000000: return idgers[56];
-		case 0x200000000000000: return idgers[57];
-		case 0x400000000000000: return idgers[58];
-		case 0x800000000000000: return idgers[59];
-		case 0x1000000000000000: return idgers[60];
-		case 0x2000000000000000: return idgers[61];
-		case 0x4000000000000000: return idgers[62];
-		case 0x8000000000000000: return idgers[63];
+		case 0x1: 					return idgers[0];
+		case 0x2: 					return idgers[1];
+		case 0x4: 					return idgers[2];
+		case 0x8: 					return idgers[3];
+		case 0x10:					return idgers[4];
+		case 0x20:					return idgers[5];
+		case 0x40: 					return idgers[6];
+		case 0x80: 					return idgers[7];
+		case 0x100: 				return idgers[8];
+		case 0x200: 				return idgers[9];
+		case 0x400: 				return idgers[10];
+		case 0x800: 				return idgers[11];
+		case 0x1000: 				return idgers[12];
+		case 0x2000: 				return idgers[13];
+		case 0x4000: 				return idgers[14];
+		case 0x8000: 				return idgers[15];
+		case 0x10000:				return idgers[16];
+		case 0x20000:				return idgers[17];
+		case 0x40000:				return idgers[18];
+		case 0x80000: 				return idgers[19];
+		case 0x100000: 				return idgers[20];
+		case 0x200000: 				return idgers[21];
+		case 0x400000: 				return idgers[22];
+		case 0x800000: 				return idgers[23];
+		case 0x1000000: 			return idgers[24];
+		case 0x2000000: 			return idgers[25];
+		case 0x4000000: 			return idgers[26];
+		case 0x8000000: 			return idgers[27];
+		case 0x10000000: 			return idgers[28];
+		case 0x20000000: 			return idgers[29];
+		case 0x40000000: 			return idgers[30];
+		case 0x80000000: 			return idgers[31];
+		case 0x100000000: 			return idgers[32];
+		case 0x200000000: 			return idgers[33];
+		case 0x400000000: 			return idgers[34];
+		case 0x800000000: 			return idgers[35];
+		case 0x1000000000: 			return idgers[36];
+		case 0x2000000000: 			return idgers[37];
+		case 0x4000000000: 			return idgers[38];
+		case 0x8000000000: 			return idgers[39];
+		case 0x10000000000: 		return idgers[40];
+		case 0x20000000000: 		return idgers[41];
+		case 0x40000000000: 		return idgers[42];
+		case 0x80000000000: 		return idgers[43];
+		case 0x100000000000: 		return idgers[44];
+		case 0x200000000000: 		return idgers[45];
+		case 0x400000000000: 		return idgers[46];
+		case 0x800000000000: 		return idgers[47];
+		case 0x1000000000000: 		return idgers[48];
+		case 0x2000000000000: 		return idgers[49];
+		case 0x4000000000000: 		return idgers[50];
+		case 0x8000000000000: 		return idgers[51];
+		case 0x10000000000000: 		return idgers[52];
+		case 0x20000000000000: 		return idgers[53];
+		case 0x40000000000000: 		return idgers[54];
+		case 0x80000000000000: 		return idgers[55];
+		case 0x100000000000000: 	return idgers[56];
+		case 0x200000000000000:		return idgers[57];
+		case 0x400000000000000:		return idgers[58];
+		case 0x800000000000000:		return idgers[59];
+		case 0x1000000000000000:	return idgers[60];
+		case 0x2000000000000000:	return idgers[61];
+		case 0x4000000000000000:	return idgers[62];
+		case 0x8000000000000000:	return idgers[63];
 		default: return 0;	
 	}
 }
@@ -137,30 +137,12 @@ void core::decodeInst()
 	SMP_word opcode;
 	opcode = get_field(instr, 7, 10);
 	switch(opcode){
-		case ALUinstr:{
-			init_ALU();
-			break;
-		}
-		case MULinstr:{
-			init_MUL();
-			break;
-		}	
-		case wMULinstr:{
-			init_MUL();
-			break;
-		}
-		case MEMinstr:{
-			init_MEM();
-			break;
-		}
-		case CTinstr:{
-			init_CT();
-			break;
-		}
-		case SYSinstr:{
-			init_SYS(); 
-			break;
-		}
+		case ALUinstr:	init_ALU();	break;
+		case MULinstr:	init_MUL();	break;
+		case wMULinstr:	init_MUL();	break;
+		case MEMinstr:	init_MEM();	break;
+		case CTinstr:	init_CT();	break;
+		case SYSinstr:	init_SYS();	break;
 	}
 }
 
@@ -168,65 +150,47 @@ void core::exec()
 {
 	SMP_word opcode = get_field(instr, 7, 10);
 	switch(opcode){
-		case ALUinstr:{
-			alu_exec();
-			break;
-		}
-		case MULinstr:{
-			mul_exec();
-			break;
-		}	
-		case wMULinstr:{
-			mul_exec();
-			break;
-		}
-		case MEMinstr:{
-			mem_exec();
-			break;
-		}
-		case CTinstr:{
-			ct_exec();
-			break;
-		}
-		case SYSinstr:{
-			sys_exec(); 
-			break;
-		}
+		case ALUinstr:	alu_exec();	break;
+		case MULinstr:	mul_exec();	break;
+		case wMULinstr:	mul_exec();	break;
+		case MEMinstr:	mem_exec();	break;
+		case CTinstr:	ct_exec();	break;
+		case SYSinstr:	sys_exec(); break;
 	}
 }
 
 void core::alu_exec()
 {
 	switch(aluTypeInst.func){
-		case FUNC_AND: 		AND(); break;
-		case FUNC_EOR: 		EOR(); break;
-		case FUNC_ORR: 		ORR(); break;
-		case FUNC_TST: 		TST(); break;
-		case FUNC_TEQ: 		TEQ(); break;
-		case FUNC_CMP: 		CMP(); break; 
-		case FUNC_CMN: 		CMN(); break;
-		case FUNC_ADD: 		ADD(); break;
-		case FUNC_SUB: 		SUB(); break;
-		case FUNC_ADC: 		ADC(); break;
-		case FUNC_RSB: 		RSB(); break;
-		case FUNC_SBC: 		SBC(); break;
-		case FUNC_MVN: 		MVN(); break;
-		case FUNC_LSL: 		LSL(); break;
-		case FUNC_ASR: 		ASR(); break;
-		case FUNC_RRX: 		RRX(); break;
-		case FUNC_ROR: 		ROR(); break;
-		case FUNC_BSWP: 	BSWP(); break;
-		case FUNC_SWR: 		SWR(); break;
-		case FUNC_UADDPB: 	UADDPB(); break;
-		case FUNC_UADDPH: 	UADDPH(); break;
-		case FUNC_UADDPW: 	UADDPW(); break;
-		case FUNC_SADDPB: 	SADDPB(); break;
-		case FUNC_SADDPH: 	SADDPH(); break;
-		case FUNC_SADDPW: 	SADDPW(); break;
-		case FUNC_VUADDB: 	VUADDB(); break;
-		case FUNC_VUADDH: 	VUADDH(); break;
-		case FUNC_VSADDB: 	VSADDB(); break;
-		case FUNC_VSADDH: 	VSADDH(); break;
+		case FUNC_AND: 		AND(); 		break;
+		case FUNC_EOR: 		EOR(); 		break;
+		case FUNC_ORR: 		ORR(); 		break;
+		case FUNC_TST: 		TST(); 		break;
+		case FUNC_TEQ: 		TEQ(); 		break;
+		case FUNC_CMP: 		CMP(); 		break; 
+		case FUNC_CMN: 		CMN(); 		break;
+		case FUNC_ADD: 		ADD(); 		break;
+		case FUNC_SUB: 		SUB(); 		break;
+		case FUNC_ADC: 		ADC(); 		break;
+		case FUNC_RSB: 		RSB(); 		break;
+		case FUNC_SBC: 		SBC(); 		break;
+		case FUNC_MVN: 		MVN(); 		break;
+		case FUNC_LSL: 		LSL(); 		break;
+		case FUNC_ASR: 		ASR(); 		break;
+		case FUNC_RRX: 		RRX(); 		break;
+		case FUNC_ROR: 		ROR(); 		break;
+		case FUNC_BSWP: 	BSWP(); 	break;
+		case FUNC_SWR: 		SWR();		break;
+		case FUNC_UADDPB: 	UADDPB();	break;
+		case FUNC_UADDPH: 	UADDPH();	break;
+		case FUNC_UADDPW: 	UADDPW();	break;
+		case FUNC_SADDPB: 	SADDPB();	break;
+		case FUNC_SADDPH: 	SADDPH();	break;
+		case FUNC_SADDPW: 	SADDPW();	break;
+		case FUNC_VUADDB: 	VUADDB();	break;
+		case FUNC_VUADDH: 	VUADDH();	break;
+		case FUNC_VSADDB: 	VSADDB(); 	break;
+		case FUNC_VSADDH: 	VSADDH(); 	break;
 	}
 }
 void core::mul_exec()
