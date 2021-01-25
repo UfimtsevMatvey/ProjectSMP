@@ -1,18 +1,16 @@
 //#pragma once
-#include "core.h"
+#include "headers/core.h"
 #include <iostream>
-#include "subfunc.h"
-#include "funcCode.h"
-#include "opcode.h"
-#include "memSizeOper.h"
-#include "ctCode.h"
-#include "sysCode.h"
-#include "flagNum.h"
-#include "condNum.h"
-#include "errorCode.h"
-#ifndef def
-   #include "def.h"
-#endif
+#include "headers/subfunc.h"
+#include "headers/funcCode.h"
+#include "headers/opcode.h"
+#include "headers/memSizeOper.h"
+#include "headers/ctCode.h"
+#include "headers/sysCode.h"
+#include "headers/flagNum.h"
+#include "headers/condNum.h"
+#include "headers/errorCode.h"
+#include "headers/def.h"
 
 using namespace std;
 

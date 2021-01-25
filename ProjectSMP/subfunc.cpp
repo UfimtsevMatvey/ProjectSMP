@@ -1,7 +1,5 @@
 //#pragma once
-#ifndef def
-   #include "def.h"
-#endif
+#include "headers/def.h"
 
 SMP_word get_field(SMP_word a, int l, int h) 
 {

@@ -1,9 +1,9 @@
 #include <iostream>
 #include <array>
-#include "core.h"
-#include "tests.h"
-#include "testClass.h"
-#include "checkArh.h"
+#include "headers/core.h"
+#include "headers/tests.h"
+#include "headers/testClass.h"
+#include "headers/checkArh.h"
 
 
 using namespace std;

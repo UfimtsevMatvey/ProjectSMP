@@ -1,11 +1,10 @@
 //#pragma once
-#include "mem.h"
+#include "headers/mem.h"
 #include <iostream>
 #include <fstream>
 #include <string>
-#ifndef def
-   #include "def.h"
-#endif
+#include "headers/def.h"
+
 mem::mem()
 {//init memory
 }

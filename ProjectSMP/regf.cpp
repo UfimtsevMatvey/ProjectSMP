@@ -1,8 +1,7 @@
 //#pragma once
-#include "regf.h"
-#ifndef def
-   #include "def.h"
-#endif
+#include "headers/regf.h"
+#include "headers/def.h"
+
 //Likely write and read function will cut
 void regf::write(byte N, SMP_word data)
 {
