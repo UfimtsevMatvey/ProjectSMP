@@ -187,7 +187,7 @@ def ALUinstrType(instr):
     #we cut conditional
     instr[0] = instr[0].upper()
     itype = instr[0]
-    conditional = itype[0:1];
+    conditional = itype[0:1]
     cond = icond.get(conditional.upper())
     if cond != None:
         itype = itype[2:]
@@ -272,7 +272,7 @@ def MULinstrType(instr):
 
     #we cut conditional
     itype = instr[0]
-    conditional = itype[0:1];
+    conditional = itype[0:1]
     cond = icond.get(conditional.upper())
     if cond != None:
         itype = itype[2:]#if cond it is existing
@@ -349,7 +349,7 @@ def MEMinstrType(instr):
     itype = instr[0]
     itype = itype.upper()
     #we cut conditional
-    conditional = itype[0:1];
+    conditional = itype[0:1]
     cond = icond.get(conditional.upper())
     if cond != None:
         itype = itype[2:]#if cond it is existing
@@ -401,7 +401,7 @@ def CTinstrType(instr):
     itype = instr[0]
     itype = itype.upper()
     #we cut conditional
-    conditional = itype[0:1];
+    conditional = itype[0:1]
     cond = icond.get(conditional.upper())
     if cond != None:
         itype = itype[2:]#if cond it is existing
@@ -443,10 +443,6 @@ def CTinstrType(instr):
         binInstr = priv + cond + opcode + func
     elif Nwords > 2:
         return None
-
-    #we get only type
-    TO = memTypeTable.get(itype)
-
     #debagging code
     print("CT priv = ", priv)
     print("CT R = ", R)
@@ -461,13 +457,12 @@ def CTinstrType(instr):
 
 def SYSinstrType(instr):
     #begin
-    imm48 = ""
     #parts of instraction
     Nwords = len(instr)
     itype = instr[0]
     itype = itype.upper()
     #we cut conditional
-    conditional = itype[0:1];
+    conditional = itype[0:1]
     cond = icond.get(conditional.upper())
     if cond != None:
         itype = itype[2:]#if cond it is existing
@@ -511,10 +506,7 @@ def SYSinstrType(instr):
     elif Nwords == 2:
         #begin
         if I == "0":
-            #begin
-            R = format(int(instr[1][1:], base = 10), "b").zfill(6)
             binInstr = priv + cond + opcode + func + xfill + Rm + "000000" + I
-            #end 
         elif I == "1":
             #begin
             zFill = "0000000000000000"
@@ -526,10 +518,6 @@ def SYSinstrType(instr):
         binInstr = priv + cond + opcode + func
     else:
         return None
-
-    #we get only type
-    TO = memTypeTable.get(itype)
-
     #debagging code
     print("SYS priv = ", priv)
     print("SYS cond = ", cond)
@@ -621,23 +609,24 @@ def main(argv):
             #begin
             dex = decode(x)
             if(dex != None):
+                #begin 
                 dFile.writelines(dex + "\n")
                 a = int(BitArray(bin=dex).bin,2)
-                binFile.write(a)
+                bytes16 = a.to_bytes(16, byteorder='big', signed=True)
+                binFile.write(bytes16[8:16])
+                #begin
             #end
         #end    
     
-    dFile.close();
-    sFile.close();
+    dFile.close()
+    sFile.close()
     return 0
     #end
-#entry point
-def hGen(argv):
-    #begin
-    if(main(argv) == 0):
-        print("sucsesfull")
-    else:
-        print("Error in main function")
-    #end   
 
-hGen(sys.argv)
+
+
+#entry point
+if(main(sys.argv) == 0):
+    print("sucsesfull")
+else:
+    print("Error in main function")
