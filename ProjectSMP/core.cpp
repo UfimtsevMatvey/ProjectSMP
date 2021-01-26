@@ -1,4 +1,3 @@
-//#pragma once
 #include "headers/core.h"
 #include <iostream>
 #include "headers/subfunc.h"
@@ -12,6 +11,7 @@
 #include "headers/errorCode.h"
 #include "headers/def.h"
 #include "headers/excep.h"
+#include "headers/testClass.h"
 
 using namespace std;
 
@@ -50,18 +50,23 @@ void core::test_start(SMP_word testInstr)
 }
 void core::start(int n)
 {
+	debugger DBG;
 	int i = 0;
 	while(i < n){
+		std::cout << "PC = " << PC << std::endl;
 		PC = getNPC();
 		fetchInstr();
 		decodeInst();
+		PC++;
 		exec();
+		DBG.debugMode(*this);
 		flushInstr();
 		i++;
 	}
 }
 int core::getNPC()
 {
+	return PC;
 	if(INR == 0) return PC;
 	else switch(INR){
 		case 0x1: 					return idgers[0];
@@ -128,7 +133,7 @@ int core::getNPC()
 		case 0x2000000000000000:	return idgers[61];
 		case 0x4000000000000000:	return idgers[62];
 		case 0x8000000000000000:	return idgers[63];
-		default: return 0;	
+		default: return PC;	
 	}
 }
 void core::decodeInst()
@@ -461,6 +466,7 @@ void core::store2memData(SMP_word addr, SMP_word data)
 void core::getIntr(SMP_word ip, SMP_word& instr)
 {
 	instr_mem.load(ip, instr);
+	std::cout << "getIntrPC = " << ip << std::endl;
 }
 void core::AND() 
 {
@@ -475,7 +481,7 @@ void core::AND()
 	res = gpregs[Rn] & oper2;
 	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::EOR() 
@@ -491,7 +497,7 @@ void core::EOR()
 	res = gpregs[Rn] ^ oper2;
 	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::ORR()
@@ -507,7 +513,7 @@ void core::ORR()
 	res = gpregs[Rn] | oper2;
 	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::TST()
@@ -521,7 +527,7 @@ void core::TST()
 	else 				oper2 = aluTypeInst.imm32;
 	res = gpregs[Rn] & oper2;
 	if(aluTypeInst.S)	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::TEQ()
@@ -535,7 +541,7 @@ void core::TEQ()
 	else 				oper2 = aluTypeInst.imm32;
 	res = gpregs[Rn] ^ oper2;
 	if(aluTypeInst.S)	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::CMP()
@@ -550,7 +556,7 @@ void core::CMP()
 	addoper2 = ~oper2 + static_cast<uint64_t>(1);
 	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(addoper2);
 	if(aluTypeInst.S)	setALUflag(eres, oper1, addoper2, 0);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::CMN()
@@ -563,7 +569,7 @@ void core::CMN()
 	else 				oper2 = aluTypeInst.imm32;
 	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(oper2);
 	if(aluTypeInst.S)	setALUflag(eres, oper1, oper2, 0);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::ADD()
@@ -583,7 +589,7 @@ void core::ADD()
 	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(oper2);
 	if(aluTypeInst.S)	setALUflag(eres, oper1, oper2, 0);
 	gpregs[Rd] = res;
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::SUB()
@@ -605,7 +611,7 @@ void core::SUB()
 	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(addoper2);
 	if(aluTypeInst.S)	setALUflag(eres, oper1, addoper2, 0);
 	gpregs[Rd] = res;
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::ADC()
@@ -627,7 +633,7 @@ void core::ADC()
 	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(oper2) + static_cast<uint128_t>(care); 
 	if(aluTypeInst.S)	setALUflag(eres, oper1, oper2, care);
 	gpregs[Rd] = res;
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::RSB()
@@ -650,7 +656,7 @@ void core::RSB()
 	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(addoper2);
 	if(aluTypeInst.S)	setALUflag(eres, oper1, addoper2, 0);
 	gpregs[Rd] = res;
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::SBC()
@@ -674,7 +680,7 @@ void core::SBC()
 	eres = static_cast<uint128_t>(oper1) + static_cast<uint128_t>(addoper2);
 	if(aluTypeInst.S)	setALUflag(eres, oper1, addoper2, 0);
 	gpregs[Rd] = res;
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::MVN()
@@ -689,7 +695,7 @@ void core::MVN()
 	res = ~oper1;
 	gpregs[Rd] = res;
 	if(aluTypeInst.S)	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::LSL()
@@ -706,7 +712,7 @@ void core::LSL()
 	res = oper1 << oper2;
 	if(aluTypeInst.S)	setALUflag(res);
 	gpregs[Rd] = res;
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::LSR()
@@ -724,7 +730,7 @@ void core::LSR()
 	res = oper1 >> oper2;
 	if(aluTypeInst.S)	setALUflag(res);
 	gpregs[Rd] = res;
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::ASR()
@@ -763,7 +769,7 @@ void core::ASR()
 		if(sres < 0) setFlag(N);
 		else resetFlag(N);
 	}
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::RRX()
@@ -802,7 +808,7 @@ void core::RRX()
 	else 		resetFlag(C);
 	gpregs[Rd] = res;
 	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::ROR()
@@ -830,7 +836,7 @@ void core::ROR()
    		: "r" (oper1), "r" (oper2));
 	setALUflag(res);
 	gpregs[Rd] = res;
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::BSWP()
@@ -846,7 +852,7 @@ void core::BSWP()
 		"MOV %0, rax		\n\t"
    		: "=r" (res)
    		: "r" (oper));
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::SWR()
@@ -858,7 +864,7 @@ void core::SWR()
 	SMP_word temp = gpregs[Rd];
 	gpregs[Rd] = gpregs[Rn];
 	gpregs[Rn] = temp;
-	PC += 8;
+	//PC += 8;
 	return;
 }
 
@@ -885,7 +891,7 @@ void core::UADDPB()
     	: "r" (oper1), "r" (oper2)); 
 	gpregs[Rd] = res;
 	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::UADDPH()
@@ -911,7 +917,7 @@ void core::UADDPH()
 
 	gpregs[Rd] = res;
 	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::UADDPW()
@@ -936,7 +942,7 @@ void core::UADDPW()
 
 	gpregs[Rd] = res;
 	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 
@@ -972,7 +978,7 @@ void core::SADDPB()
 	temp.s = sres;
 	gpregs[Rd] = temp.u;
 	setALUflag(temp.u);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::SADDPH()
@@ -1007,7 +1013,7 @@ void core::SADDPH()
 
 	gpregs[Rd] = sres;
 	setALUflag(sres);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::SADDPW()
@@ -1051,7 +1057,7 @@ void core::VUADDB()
 	gpregs[Rd] = res.h;
 	gpregs[Rn] = res.l;
 	setALUflag(res.h | res.l);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 //{Rd, Rn} = {Rm, Rm2} + imm16
@@ -1090,7 +1096,7 @@ void core::VUADDH()
 	gpregs[Rd] = res.h;
 	gpregs[Rn] = res.l;
 	setALUflag(res.h | res.l);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 //{Rd, Rn} = {Rm, Rm2} + imm8 (Signed)
@@ -1130,7 +1136,7 @@ void core::VSADDB()
 	gpregs[Rd] = res.h;
 	gpregs[Rn] = res.l;
 	setALUflag(res.h | res.l);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 //{Rd, Rn} = {Rm1, Rm2} + imm16 (Signed)
@@ -1170,7 +1176,7 @@ void core::VSADDH()
 	gpregs[Rd] = res.h;
 	gpregs[Rn] = res.l;
 	setALUflag(res.h | res.l);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 
@@ -1201,7 +1207,7 @@ void core::MUL()
 	else resetFlag(Z);
 	gpregs[Rd] = res;
 	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::MLA()
@@ -1225,7 +1231,7 @@ void core::MLA()
 	res = oper1 * oper2 + operA;
 	gpregs[Rd] = res;
 	setALUflag(res);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::UMULL()
@@ -1253,7 +1259,7 @@ void core::UMULL()
 	gpregs[Rd] = dd.dsu.h;
 	gpregs[Rd] = dd.dsu.l;
 	setALUflag(dd.dsu.h | dd.dsu.l);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::UMLAL()
@@ -1285,7 +1291,7 @@ void core::UMLAL()
 	gpregs[Rd] = dd.dsu.h;
 	gpregs[Ra] = dd.dsu.l;
 	setALUflag(dd.dsu.h | dd.dsu.l);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::SMULL()
@@ -1319,7 +1325,7 @@ void core::SMULL()
 	dw.s = dd.dss.l;
 	gpregs[Ra] = dw.s;
 	setALUflag(dw.s);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 void core::SMLAL()
@@ -1357,7 +1363,7 @@ void core::SMLAL()
 	dw.s = dd.dss.l;
 	gpregs[Ra] = dw.s;
 	setALUflag(dw.s);
-	PC += 8;
+	//PC += 8;
 	return;
 }
 
@@ -1394,54 +1400,54 @@ void core::STR()
 {
 	SMP_word temp = MASK64;
 	genMEM(&temp);
-	PC += 8;
+	//PC += 8;
 }
 void core::LDR()
 {
 	SMP_word temp = MASK64;
 	genMEM(&temp);
 	gpregs[memTypeInst.Rd] = temp;
-	PC += 8;
+	//PC += 8;
 }
 
 void core::STRW()
 {
 	SMP_word temp = MASK32;
 	genMEM(&temp);
-	PC += 8;
+	//PC += 8;
 }
 void core::LDRW()
 {
 	SMP_word temp = MASK32;
 	genMEM(&temp);
 	gpregs[memTypeInst.Rd] = temp;
-	PC += 8;
+	//PC += 8;
 }
 void core::STRHW()
 {
 	SMP_word temp = MASK16;
 	genMEM(&temp);
-	PC += 8;
+	//PC += 8;
 }
 void core::LDRHW()
 {
 	SMP_word temp = MASK16;
 	genMEM(&temp);
 	gpregs[memTypeInst.Rd] = temp;
-	PC += 8;
+	//PC += 8;
 }
 void core::STRB()
 {
 	SMP_word temp = MASK8;
 	genMEM(&temp);
-	PC += 8;
+	//PC += 8;
 }
 void core::LDRB()
 {
 	SMP_word temp = MASK8;
 	genMEM(&temp);
 	gpregs[memTypeInst.Rd] = temp;
-	PC += 8;
+	//PC += 8;
 }
 
 //Branch instractions
@@ -1452,18 +1458,21 @@ void core::BL()
 	imm = imm & (0xFFFFFFFF);
 	imm = imm << 8;
 	gpregs[1] = PC + 8;
-	PC = PC + 8 + imm;
+	//PC = PC + 8 + imm;
+	PC = PC + imm;
 }//Save ip on reg0
 void core::BO_REG() 
 {
 	SMP_word Rd = ctTypeInst.R;
-	PC = PC + 8 + gpregs[Rd];
+	//PC = PC + 8 + gpregs[Rd];
+	PC = PC + gpregs[Rd];
 }
 void core::BO_IMM() 
 {
 	SMP_word imm = ctTypeInst.imm48;
 	imm = imm & (0xFFFFFFFF);
-	PC = PC + 8 + (imm << 8);
+	//PC = PC + 8 + (imm << 8);
+	PC = PC + (imm << 8);
 }
 void core::B_REG() 
 {
@@ -1510,7 +1519,7 @@ void core::INSY()
 		default: ErrorCode = ILLEGALPORT; 
 				break;
 	}
-	PC += 8;
+	//PC += 8;
 }
 void core::IN()
 {
@@ -1528,7 +1537,7 @@ void core::IN()
 		default: ErrorCode = ILLEGALPORT;
 				break;
 	}
-	PC += 8;
+	//PC += 8;
 }
 void core::OUTSY()
 {	
@@ -1550,7 +1559,7 @@ void core::OUTSY()
 		default: ErrorCode = ILLEGALPORT;
 				break;
 	}
-	PC += 8;
+	//PC += 8;
 }	
 void core::OUT()
 {	
@@ -1584,52 +1593,52 @@ void core::OUT()
 		default: ErrorCode = ILLEGALPORT;
 				break;
 	}
-	PC += 8;
+	//PC += 8;
 }
 
 void core::SFL()
 {
 	gpregs[sysTypeInst.Rd] = FLR;
-	PC += 8;
+	//PC += 8;
 }
 void core::LFL()
 {
 	FLR = gpregs[sysTypeInst.Rd];
-	PC += 8;
+	//PC += 8;
 }
 void core::SMF()
 {
 	lowAddr = gpregs[sysTypeInst.Rd];
 	highAddr = gpregs[sysTypeInst.Rn];
-	PC += 8;
+	//PC += 8;
 }
 void core::SINT()
 {
 	idgers[sysTypeInst.inum] = gpregs[sysTypeInst.Rd];
-	PC += 8;
+	//PC += 8;
 }
 
 void core::BINT()
 {
 	setFlag(BLOCKINTR);
-	PC += 8;
+	//PC += 8;
 }
 void core::UINT()
 {
 	resetFlag(BLOCKINTR);
-	PC += 8;
+	//PC += 8;
 }
 void core::CINT()
 {
 	INR = 0;
-	PC += 8;
+	//PC += 8;
 }
 void core::INT()
 {
 	SMP_word temp = 1;
 	temp = temp << (8 * sizeof(SMP_word) - sysTypeInst.inum - 1);
 	INR = INR | temp;
-	PC += 8;
+	//PC += 8;
 }
 
 void ALU_instr::flush()

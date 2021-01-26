@@ -20,16 +20,16 @@ int main(int argv, char* argc[])
 	const char* filenameInstr;
 	const char* filenameData;
 
-	if(argv == 2){
+	if(argv == 3){
 		filenameInstr = argc[1];
 		filenameData = argc[2];
 	}
-	else if(argv == 1){
+	else if(argv == 2){
 		filenameInstr = argc[1];
 		filenameData = "./dmem.dat";
 	}
 	else{
-		filenameInstr = "./imem.dat";
+		filenameInstr = "../test_gen/sourse.smpasm.bin";
 		filenameData = "./dmem.dat";
 	}
 
@@ -40,6 +40,8 @@ int main(int argv, char* argc[])
 	SMP_word entry = 0;
 	
 	core MasterCore(entry, instr_size, data_size, filenameInstr, filenameData);
+	MasterCore.start(10);
+/*
 	debugger CoreDebug;
 	CoreDebug.v = 0;
 	while (true)
@@ -60,6 +62,6 @@ int main(int argv, char* argc[])
 		CoreDebug.debugMode(MasterCore);
 		if (true)
 			break;
-	}
+	}*/
 	return 0;
 }

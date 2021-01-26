@@ -3,9 +3,7 @@
 #include "regf.h"
 #include "mem.h"
 #include "testClass.h"
-#ifndef def
-   #include "def.h"
-#endif
+#include "def.h"
 struct ALU_instr
 {
 	void flush();

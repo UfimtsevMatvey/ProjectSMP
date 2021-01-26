@@ -46,7 +46,8 @@ void debugger::printState(class core &C)
     std::cout << "sysTypeInst = \t" << std::bitset<4>(C.sysTypeInst.opcode) << std::endl;
 
     std::cout << "flags = \t" << std::bitset<64>(C.FLR) << std::endl;
-
+    std::cout << "INR = \t" << std::bitset<64>(C.INR) << std::endl;
+    std::cout << "PC = \t" << std::bitset<64>(C.PC) << std::endl;
     for(int i = 0; i < 64; i +=2)
         std::cout << "REG["<<i<<"]\t" << std::bitset<64>(C.gpregs[i]) << " \t REG["<<i + 1<<"] \t" << std::bitset<64>(C.gpregs[i + 1])  << std::endl;
     return;
