@@ -52,7 +52,7 @@ void core::start(int n)
 {
 	int i = 0;
 	while(i < n){
-		PC = preFetch();
+		PC = getNPC();
 		fetchInstr();
 		decodeInst();
 		exec();
@@ -60,7 +60,7 @@ void core::start(int n)
 		i++;
 	}
 }
-int core::preFetch()
+int core::getNPC()
 {
 	if(INR == 0) return PC;
 	else switch(INR){

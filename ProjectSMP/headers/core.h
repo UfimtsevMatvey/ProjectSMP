@@ -107,7 +107,7 @@ private:
 	
 	
 	bool cmp_cond(SMP_word cond);
-	int preFetch();
+	int getNPC();
 	void fetchInstr();
 	void decodeInst();
 	void init_ALU();
