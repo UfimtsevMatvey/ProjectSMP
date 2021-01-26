@@ -11,6 +11,7 @@
 #include "headers/condNum.h"
 #include "headers/errorCode.h"
 #include "headers/def.h"
+#include "headers/excep.h"
 
 using namespace std;
 
@@ -141,6 +142,7 @@ void core::decodeInst()
 		case MEMinstr:	init_MEM();	break;
 		case CTinstr:	init_CT();	break;
 		case SYSinstr:	init_SYS();	break;
+		default: setINR(OPEX);		break;
 	}
 }
 
@@ -154,6 +156,7 @@ void core::exec()
 		case MEMinstr:	mem_exec();	break;
 		case CTinstr:	ct_exec();	break;
 		case SYSinstr:	sys_exec(); break;
+		default: setINR(OPEX);		break;
 	}
 }
 
@@ -189,6 +192,7 @@ void core::alu_exec()
 		case FUNC_VUADDH: 	VUADDH();	break;
 		case FUNC_VSADDB: 	VSADDB(); 	break;
 		case FUNC_VSADDH: 	VSADDH(); 	break;
+		default: setINR(OPEX);			break;
 	}
 }
 void core::mul_exec()
@@ -223,6 +227,7 @@ void core::mul_exec()
 				UMLAL();
 			}
 		}
+		else setINR(OPEX);
 	}
 }
 void core::mem_exec()
@@ -234,6 +239,7 @@ void core::mem_exec()
 			case BITS32: LDRW();	break;
 			case BITS16: LDRHW();	break;
 			case BITS08: LDRB();	break;
+			default: setINR(OPEX);	break;
 		}
 	}
 	else{
@@ -243,6 +249,7 @@ void core::mem_exec()
 			case BITS32: STRW();	break;
 			case BITS16: STRHW();	break;
 			case BITS08: STRB();	break;
+			default: setINR(OPEX);	break;
 		}
 	}	
 }
@@ -256,6 +263,7 @@ void core::ct_exec()
 		case B_IMM_CODE:	B_IMM();	break;
 		case RET_CODE:		RET(); 		break;
 		case XRET_CODE: 	XRET(); 	break;
+		default: setINR(OPEX);			break;
 	}
 }
 void core::sys_exec()
@@ -273,7 +281,7 @@ void core::sys_exec()
 		case UINT_CODE: UINT(); break;
 		case CINT_CODE: CINT(); break;
 		case INT_CODE: 	INT(); 	break;
-
+		default: setINR(OPEX);	break;
 	}
 }
 
@@ -381,7 +389,13 @@ void core::setFlag(int n)
 	temp = temp << (8 * sizeof(SMP_word) - n - 1);
 	FLR = FLR | temp;
 }
-
+void core::setINR(int n)
+{
+	SMP_word temp = 1;
+	temp = temp << (8 * sizeof(SMP_word) - n - 1);
+	INR = INR | temp;
+	INR = INR & 0x00FFFFFFFFFFFFFF; //Because 56 bit register.
+}
 void core::resetFlag(int n)
 {
 	SMP_word temp = 1;
@@ -1493,7 +1507,8 @@ void core::INSY()
 				port3wait = 1;
 				while(port3wait == 1);
 				break;
-		default: ErrorCode = ILLEGALPORT; break;
+		default: ErrorCode = ILLEGALPORT; 
+				break;
 	}
 	PC += 8;
 }
@@ -1510,7 +1525,8 @@ void core::IN()
 				break;
 		case 3: port3 = gpregs[Rs];
 				break;
-		default: ErrorCode = ILLEGALPORT; break;
+		default: ErrorCode = ILLEGALPORT;
+				break;
 	}
 	PC += 8;
 }
@@ -1531,7 +1547,8 @@ void core::OUTSY()
 		case 3: while(port3ready == 0);
 				gpregs[Rd] = port3;
 				break;
-		default: ErrorCode = ILLEGALPORT; break;
+		default: ErrorCode = ILLEGALPORT;
+				break;
 	}
 	PC += 8;
 }	
@@ -1564,7 +1581,8 @@ void core::OUT()
 				}
 				gpregs[Rd] = port3;
 				break;
-		default: ErrorCode = ILLEGALPORT; break;
+		default: ErrorCode = ILLEGALPORT;
+				break;
 	}
 	PC += 8;
 }

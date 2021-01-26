@@ -17,8 +17,8 @@ int main(int argv, char* argc[])
 		return 1;
 	}
 
-	char* filenameInstr;
-	char* filenameData;
+	const char* filenameInstr;
+	const char* filenameData;
 
 	if(argv == 2){
 		filenameInstr = argc[1];
@@ -33,8 +33,8 @@ int main(int argv, char* argc[])
 		filenameData = "./dmem.dat";
 	}
 
-	byte gpr = NREG;
-	byte idr = NREG;
+//	byte gpr = NREG;
+//	byte idr = NREG;
 	SMP_word data_size = DMSIZE;
 	SMP_word instr_size = IMSIZE;
 	SMP_word entry = 0;

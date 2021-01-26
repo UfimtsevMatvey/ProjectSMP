@@ -137,6 +137,7 @@ private:
 
 	void setFlag(int n);
 	void resetFlag(int n);
+	void setINR(int n);
 
 	void resetFLR();
 	void resetINR();

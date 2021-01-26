@@ -1,4 +1,3 @@
-//#pragma once
 #include "headers/mem.h"
 #include <iostream>
 #include <fstream>

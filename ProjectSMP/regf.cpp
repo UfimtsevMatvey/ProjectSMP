@@ -1,4 +1,3 @@
-//#pragma once
 #include "headers/regf.h"
 #include "headers/def.h"
 
