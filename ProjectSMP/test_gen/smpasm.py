@@ -376,10 +376,6 @@ def MEMinstrType(instr):
 
 
     #we get only type
-    if instr[0] == 'S':
-        slbit = "1";
-    else:
-        slbit = "0"
     slbit = memTypeTable.get(itype)
     TO = memOperSizeTable.get(itype)
     #Attantion!!!! Hardcode
