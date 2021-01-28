@@ -34,3 +34,8 @@ mul r32, r8,    98213
 str r7, [r10  , 10, 21]
 BL 14
 BINT
+
+
+add R1, R2, 10
+STR R7, [r0  , 0, 0]
+ldr R29, [r0  , 0, 0]

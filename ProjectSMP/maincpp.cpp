@@ -29,7 +29,7 @@ int main(int argv, char* argc[])
 		filenameData = "./dmem.dat";
 	}
 	else{
-		filenameInstr = "../test_gen/sourse.smpasm.bin";
+		filenameInstr = "../test_gen/test.smpasm.bin";
 		filenameData = "./dmem.dat";
 	}
 
@@ -40,7 +40,7 @@ int main(int argv, char* argc[])
 	SMP_word entry = 0;
 	
 	core MasterCore(entry, instr_size, data_size, filenameInstr, filenameData);
-	MasterCore.start(10);
+	MasterCore.start(37);
 /*
 	debugger CoreDebug;
 	CoreDebug.v = 0;

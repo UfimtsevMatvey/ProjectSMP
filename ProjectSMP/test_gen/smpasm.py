@@ -376,19 +376,23 @@ def MEMinstrType(instr):
 
 
     #we get only type
-    TO = memTypeTable.get(itype)
-
+    if instr[0] == 'S':
+        slbit = "1";
+    else:
+        slbit = "0"
+    slbit = memTypeTable.get(itype)
+    TO = memOperSizeTable.get(itype)
     #Attantion!!!! Hardcode
     priv = "11"
 
-    binInstr = priv + cond + opcode + TO + scale + Rn + Rd + offset
+    binInstr = priv + cond + opcode + slbit + TO + scale + Rn + Rd + offset
     #debagging code
-    #print("MEM priv = ", priv)
-    #print("MEM Rd = ", Rd)
-    #print("MEM Rn = ", Rn)
-    #print("MEM cond = ", cond)
-    #print("MEM offset = ", offset)
-    #print("MEM scale = ", scale)
+    print("MEM priv = ", priv)
+    print("MEM Rd = ", Rd)
+    print("MEM Rn = ", Rn)
+    print("MEM cond = ", cond)
+    print("MEM offset = ", offset)
+    print("MEM scale = ", scale)
     #concatenate binary instraction
     temp = '{:<064}'
     output = temp.format(binInstr) 

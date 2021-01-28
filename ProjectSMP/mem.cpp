@@ -81,7 +81,8 @@ void mem::store(SMP_word addr, SMP_word data)
 		else{
 			if (valid) {
 				buffering(bufferSize, Baddr * bufferSize);
-				memory[addr - Nbuffer * bufferSize] = data;
+				memory[addr - Baddr * bufferSize] = data;
+				Nbuffer = Baddr;
 				valid = false;
 			}
 			else{
@@ -91,7 +92,7 @@ void mem::store(SMP_word addr, SMP_word data)
 				}
 				Nbuffer = Baddr;
 				buffering(bufferSize, Baddr * bufferSize);
-				memory[addr - Nbuffer * bufferSize] = data;
+				memory[addr - Baddr * bufferSize] = data;
 				valid = false;
 			}
 		}

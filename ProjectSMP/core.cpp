@@ -1386,13 +1386,13 @@ void core::genMEM(SMP_word* retValueMask)
 		}
 	}
 	if(memTypeInst.typeOper) {
-		load2reg(addr, value);
+		load2memData(addr, value);
 		*retValueMask = value & *retValueMask;
 		return;
 	}
 	else{
 		value = value & *retValueMask;
-		store2reg(addr, value);
+		store2memData(addr, value);
 		return;
 	}	
 }
