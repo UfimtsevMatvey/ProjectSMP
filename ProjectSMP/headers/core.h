@@ -88,21 +88,22 @@ private:
 	SMP_word port0;
 	int port0wait;
 	int port0ready;
+
 	SMP_word port1;
 	int port1wait;
 	int port1ready;
+
 	SMP_word port2;
 	int port2wait;
 	int port2ready;
+
 	SMP_word port3;
 	int port3wait;
 	int port3ready;
-	
-	int ErrorCode;
-	
 	SMP_word lowAddr;
 	SMP_word highAddr;
 	
+
 	
 	bool cmp_cond(SMP_word cond);
 	int getNPC();
@@ -142,6 +143,7 @@ private:
 	void resetPC();
 
 	SMP_word instr;
+	SMP_word typeInstr;
 
 	ALU_instr aluTypeInst;
 	MUL_instr mulTypeInst;

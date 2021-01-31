@@ -8,7 +8,6 @@
 #include "headers/sysCode.h"
 #include "headers/flagNum.h"
 #include "headers/condNum.h"
-#include "headers/errorCode.h"
 #include "headers/def.h"
 #include "headers/excep.h"
 #include "headers/testClass.h"
@@ -51,95 +50,95 @@ void core::test_start(SMP_word testInstr)
 void core::start(int n)
 {
 	debugger DBG;
+	int dbgparam = 0;
 	int i = 0;
 	while(i < n){
 		std::cout << "PC = " << PC << std::endl;
 		PC = getNPC();
 		fetchInstr();
 		decodeInst();
+		dbgparam = typeInstr;
 		PC++;
 		exec();
-		DBG.debugMode(*this);
+		DBG.debugMode(*this, dbgparam);
 		flushInstr();
 		i++;
 	}
 }
 int core::getNPC()
 {
-	return PC;
 	if(INR == 0) return PC;
-	else switch(INR){
-		case 0x1: 					return idgers[0];
-		case 0x2: 					return idgers[1];
-		case 0x4: 					return idgers[2];
-		case 0x8: 					return idgers[3];
-		case 0x10:					return idgers[4];
-		case 0x20:					return idgers[5];
-		case 0x40: 					return idgers[6];
-		case 0x80: 					return idgers[7];
-		case 0x100: 				return idgers[8];
-		case 0x200: 				return idgers[9];
-		case 0x400: 				return idgers[10];
-		case 0x800: 				return idgers[11];
-		case 0x1000: 				return idgers[12];
-		case 0x2000: 				return idgers[13];
-		case 0x4000: 				return idgers[14];
-		case 0x8000: 				return idgers[15];
-		case 0x10000:				return idgers[16];
-		case 0x20000:				return idgers[17];
-		case 0x40000:				return idgers[18];
-		case 0x80000: 				return idgers[19];
-		case 0x100000: 				return idgers[20];
-		case 0x200000: 				return idgers[21];
-		case 0x400000: 				return idgers[22];
-		case 0x800000: 				return idgers[23];
-		case 0x1000000: 			return idgers[24];
-		case 0x2000000: 			return idgers[25];
-		case 0x4000000: 			return idgers[26];
-		case 0x8000000: 			return idgers[27];
-		case 0x10000000: 			return idgers[28];
-		case 0x20000000: 			return idgers[29];
-		case 0x40000000: 			return idgers[30];
-		case 0x80000000: 			return idgers[31];
-		case 0x100000000: 			return idgers[32];
-		case 0x200000000: 			return idgers[33];
-		case 0x400000000: 			return idgers[34];
-		case 0x800000000: 			return idgers[35];
-		case 0x1000000000: 			return idgers[36];
-		case 0x2000000000: 			return idgers[37];
-		case 0x4000000000: 			return idgers[38];
-		case 0x8000000000: 			return idgers[39];
-		case 0x10000000000: 		return idgers[40];
-		case 0x20000000000: 		return idgers[41];
-		case 0x40000000000: 		return idgers[42];
-		case 0x80000000000: 		return idgers[43];
-		case 0x100000000000: 		return idgers[44];
-		case 0x200000000000: 		return idgers[45];
-		case 0x400000000000: 		return idgers[46];
-		case 0x800000000000: 		return idgers[47];
-		case 0x1000000000000: 		return idgers[48];
-		case 0x2000000000000: 		return idgers[49];
-		case 0x4000000000000: 		return idgers[50];
-		case 0x8000000000000: 		return idgers[51];
-		case 0x10000000000000: 		return idgers[52];
-		case 0x20000000000000: 		return idgers[53];
-		case 0x40000000000000: 		return idgers[54];
-		case 0x80000000000000: 		return idgers[55];
-		case 0x100000000000000: 	return idgers[56];
-		case 0x200000000000000:		return idgers[57];
-		case 0x400000000000000:		return idgers[58];
-		case 0x800000000000000:		return idgers[59];
-		case 0x1000000000000000:	return idgers[60];
-		case 0x2000000000000000:	return idgers[61];
-		case 0x4000000000000000:	return idgers[62];
-		case 0x8000000000000000:	return idgers[63];
-		default: return PC;	
-	}
+	if((INR & (0x1)) 				== 0x1) 				return idgers[0];
+	if((INR & (0x2)) 				== 0x2) 				return idgers[1];
+	if((INR & (0x4)) 				== 0x4) 				return idgers[2];
+	if((INR & (0x8)) 				== 0x8) 				return idgers[3];
+	if((INR & (0x10)) 				== 0x10) 				return idgers[4];
+	if((INR & (0x20))				== 0x20) 				return idgers[5];
+	if((INR & (0x40)) 				== 0x40) 				return idgers[6];
+	if((INR & (0x80)) 				== 0x80) 				return idgers[7];
+	if((INR & (0x100)) 				== 0x100) 				return idgers[8];
+	if((INR & (0x200)) 				== 0x200) 				return idgers[9];
+	if((INR & (0x400)) 				== 0x400) 				return idgers[10];
+	if((INR & (0x800))				== 0x800) 				return idgers[11];
+	if((INR & (0x1000)) 			== 0x1000) 				return idgers[12];
+	if((INR & (0x2000)) 			== 0x2000) 				return idgers[13];
+	if((INR & (0x4000)) 			== 0x4000) 				return idgers[14];
+	if((INR & (0x8000)) 			== 0x8000) 				return idgers[15];
+	if((INR & (0x10000)) 			== 0x10000) 			return idgers[16];
+	if((INR & (0x20000)) 			== 0x20000) 			return idgers[17];
+	if((INR & (0x40000)) 			== 0x40000) 			return idgers[18];
+	if((INR & (0x80000)) 			== 0x80000) 			return idgers[19];
+	if((INR & (0x100000)) 			== 0x100000) 			return idgers[20];
+	if((INR & (0x200000)) 			== 0x200000) 			return idgers[21];
+	if((INR & (0x400000)) 			== 0x400000) 			return idgers[22];
+	if((INR & (0x800000)) 			== 0x800000) 			return idgers[23];
+	if((INR & (0x1000000)) 			== 0x1000000) 			return idgers[24];
+	if((INR & (0x2000000)) 			== 0x2000000) 			return idgers[25];
+	if((INR & (0x4000000)) 			== 0x4000000) 			return idgers[26];
+	if((INR & (0x8000000)) 			== 0x8000000) 			return idgers[27];
+	if((INR & (0x10000000)) 		== 0x10000000) 			return idgers[28];
+	if((INR & (0x20000000)) 		== 0x20000000) 			return idgers[29];
+	if((INR & (0x40000000)) 		== 0x40000000) 			return idgers[30];
+	if((INR & (0x80000000)) 		== 0x80000000) 			return idgers[31];
+	if((INR & (0x100000000))		== 0x100000000) 		return idgers[32];
+	if((INR & (0x200000000))		== 0x200000000) 		return idgers[33];
+	if((INR & (0x400000000))		== 0x400000000) 		return idgers[34];
+	if((INR & (0x800000000))		== 0x800000000) 		return idgers[35];
+	if((INR & (0x1000000000))		== 0x1000000000) 		return idgers[36];
+	if((INR & (0x2000000000))		== 0x2000000000) 		return idgers[37];
+	if((INR & (0x4000000000))		== 0x4000000000) 		return idgers[38];
+	if((INR & (0x8000000000))		== 0x8000000000) 		return idgers[39];
+	if((INR & (0x10000000000))		== 0x10000000000) 		return idgers[40];
+	if((INR & (0x20000000000))		== 0x20000000000) 		return idgers[41];
+	if((INR & (0x40000000000))		== 0x40000000000) 		return idgers[42];
+	if((INR & (0x80000000000))		== 0x80000000000) 		return idgers[43];
+	if((INR & (0x100000000000))		== 0x100000000000) 		return idgers[44];
+	if((INR & (0x200000000000))		== 0x200000000000) 		return idgers[45];
+	if((INR & (0x400000000000))		== 0x400000000000) 		return idgers[46];
+	if((INR & (0x800000000000))		== 0x800000000000) 		return idgers[47];
+	if((INR & (0x1000000000000))	== 0x1000000000000) 	return idgers[48];
+	if((INR & (0x2000000000000))	== 0x2000000000000) 	return idgers[49];
+	if((INR & (0x4000000000000))	== 0x4000000000000) 	return idgers[50];
+	if((INR & (0x8000000000000))	== 0x8000000000000) 	return idgers[51];
+	if((INR & (0x10000000000000))	== 0x10000000000000) 	return idgers[52];
+	if((INR & (0x20000000000000))	== 0x20000000000000) 	return idgers[53];
+	if((INR & (0x40000000000000))	== 0x40000000000000) 	return idgers[54];
+	if((INR & (0x80000000000000))	== 0x80000000000000) 	return idgers[55];
+	if((INR & (0x100000000000000))	== 0x100000000000000) 	return idgers[56];
+	if((INR & (0x200000000000000))	== 0x200000000000000) 	return idgers[57];
+	if((INR & (0x400000000000000))	== 0x400000000000000) 	return idgers[58];
+	if((INR & (0x800000000000000))	== 0x800000000000000)	return idgers[59];
+	if((INR & (0x1000000000000000))	== 0x1000000000000000) 	return idgers[60];
+	if((INR & (0x2000000000000000))	== 0x2000000000000000) 	return idgers[61];
+	if((INR & (0x4000000000000000))	== 0x4000000000000000) 	return idgers[62];
+	if((INR & (0x8000000000000000))	== 0x8000000000000000) 	return idgers[63];	
+	return PC;
 }
 void core::decodeInst()
 {
 	SMP_word opcode;
 	opcode = get_field(instr, 7, 10);
+	typeInstr = opcode;
 	switch(opcode){
 		case ALUinstr:	init_ALU();	break;
 		case MULinstr:	init_MUL();	break;
@@ -149,6 +148,7 @@ void core::decodeInst()
 		case SYSinstr:	init_SYS();	break;
 		default: setINR(OPEX);		break;
 	}
+	return;
 }
 
 void core::exec() 
@@ -163,6 +163,7 @@ void core::exec()
 		case SYSinstr:	sys_exec(); break;
 		default: setINR(OPEX);		break;
 	}
+	return;
 }
 
 void core::alu_exec()
@@ -199,6 +200,7 @@ void core::alu_exec()
 		case FUNC_VSADDH: 	VSADDH(); 	break;
 		default: setINR(OPEX);			break;
 	}
+	return;
 }
 void core::mul_exec()
 {
@@ -234,9 +236,19 @@ void core::mul_exec()
 		}
 		else setINR(OPEX);
 	}
+	return;
 }
 void core::mem_exec()
 {
+	SMP_word Rn = memTypeInst.Rn;
+	SMP_word offset = memTypeInst.offset;
+	SMP_word scale = memTypeInst.scale;
+	SMP_word addr = Rn * scale + offset;
+	if(addr - lowAddr > highAddr){
+		setINR(MEMEX);
+		return;
+	}
+
 	if(memTypeInst.typeOper){
 		//load
 		switch(memTypeInst.sizeOp){
@@ -256,7 +268,8 @@ void core::mem_exec()
 			case BITS08: STRB();	break;
 			default: setINR(OPEX);	break;
 		}
-	}	
+	}
+	return;
 }
 void core::ct_exec()
 {
@@ -270,6 +283,7 @@ void core::ct_exec()
 		case XRET_CODE: 	XRET(); 	break;
 		default: setINR(OPEX);			break;
 	}
+	return;
 }
 void core::sys_exec()
 {
@@ -288,6 +302,7 @@ void core::sys_exec()
 		case INT_CODE: 	INT(); 	break;
 		default: setINR(OPEX);	break;
 	}
+	return;
 }
 
 void core::init_ALU()
@@ -304,6 +319,7 @@ void core::init_ALU()
 	aluTypeInst.Ra = get_field(instr, 37, 42);
 	aluTypeInst.imm16 = get_field(instr, 43, 58);
 	aluTypeInst.imm32 = get_field(instr, 31, 62);
+	return;
 }
 void core::init_MUL()
 {
@@ -318,6 +334,7 @@ void core::init_MUL()
 	mulTypeInst.Rd = get_field(instr, 25, 30);
 	mulTypeInst.Rm = get_field(instr, 31, 36);
 	mulTypeInst.imm32 = get_field(instr, 31, 62);
+	return;
 }
 void core::init_MEM()
 {
@@ -330,6 +347,7 @@ void core::init_MEM()
 	memTypeInst.Rd = get_field(instr, 25, 30);
 	memTypeInst.scale = get_field(instr, 14, 18);
 	memTypeInst.offset = get_field(instr, 31, 62);
+	return;
 }
 void core::init_CT()
 {
@@ -339,6 +357,7 @@ void core::init_CT()
 	ctTypeInst.typeOper = get_field(instr, 11, 14);
 	ctTypeInst.R = get_field(instr, 19, 24);
 	ctTypeInst.imm48 = get_field(instr, 15, 62);
+	return;
 }
 void core::init_SYS()
 {
@@ -351,6 +370,7 @@ void core::init_SYS()
 	sysTypeInst.Rd = get_field(instr, 19, 24);
 	sysTypeInst.I = get_bit(instr, 31);
 	sysTypeInst.inum = get_field(instr, 32, 37);
+	return;
 }
 void core::setALUflag(uint128_t eres, SMP_word oper1, SMP_word oper2, SMP_word care)
 {
@@ -1516,7 +1536,7 @@ void core::INSY()
 				port3wait = 1;
 				while(port3wait == 1);
 				break;
-		default: ErrorCode = ILLEGALPORT; 
+		default: setINR(ILLEGALPORT); 
 				break;
 	}
 	//PC += 8;
@@ -1534,7 +1554,7 @@ void core::IN()
 				break;
 		case 3: port3 = gpregs[Rs];
 				break;
-		default: ErrorCode = ILLEGALPORT;
+		default: setINR(ILLEGALPORT);
 				break;
 	}
 	//PC += 8;
@@ -1556,7 +1576,7 @@ void core::OUTSY()
 		case 3: while(port3ready == 0);
 				gpregs[Rd] = port3;
 				break;
-		default: ErrorCode = ILLEGALPORT;
+		default: setINR(ILLEGALPORT);
 				break;
 	}
 	//PC += 8;
@@ -1590,7 +1610,7 @@ void core::OUT()
 				}
 				gpregs[Rd] = port3;
 				break;
-		default: ErrorCode = ILLEGALPORT;
+		default: setINR(ILLEGALPORT);
 				break;
 	}
 	//PC += 8;
