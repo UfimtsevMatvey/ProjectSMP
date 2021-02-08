@@ -11,6 +11,8 @@
 #include "headers/def.h"
 #include "headers/excep.h"
 #include "headers/testClass.h"
+#include "headers/error_Core.h"
+#include "headers/core_Mode.h"
 
 using namespace std;
 
@@ -18,10 +20,24 @@ core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, co
 {
 	FLR = 0;
 	PC = entry;
+	state = CORFIN;
 	initMemory(isize, dsize, ifile, dfile);
 }
 void core::initMemory(SMP_word isize, SMP_word dsize, const char* fileInst, const char* fileData)
 {
+	//Check file memory
+	std::fstream instr_File;
+	std::fstream data_File;
+	instr_File.open(fileInst, std::ios::binary | std::ios::in | std::ios::out);
+	data_File.open(fileData, std::ios::binary | std::ios::in | std::ios::out);
+	if(!instr_File) {
+		state = state | FMINF;
+	}
+	if(!data_File){
+		state = state | FMDNF;
+	}
+	instr_File.close();
+	data_File.close();
 	instr_mem.Init(isize, fileInst);
 	data_mem.Init(dsize, fileData);
 }
@@ -47,23 +63,67 @@ void core::test_start(SMP_word testInstr)
 	}
 	syncDataFile();
 }
-void core::start(int n)
+int core::start(int n, int mode)
 {
 	debugger DBG;
 	int dbgparam = 0;
 	int i = 0;
-	while(i < n){
-		std::cout << "PC = " << PC << std::endl;
-		PC = getNPC();
-		fetchInstr();
-		decodeInst();
-		dbgparam = typeInstr;
-		PC++;
-		exec();
-		DBG.debugMode(*this, dbgparam);
-		flushInstr();
-		i++;
+	if((state & FMINF) == 0){
+		std::cout << "Error!" << std::endl;
+		std::cout << "Instaction memory is not found" << std::endl;
+		std::cout << "Program is ended with return code: 1." << std::endl;
+		return FMINF;
 	}
+	if((state & FMDNF) == 0)
+	{
+		std::cout << "Warning!" << std::endl;
+		std::cout << "Data memory is not found" << std::endl;
+		std::cout << "Data memory file will be create with dmem.dat name." << std::endl;
+	}
+	//Start core
+	if(mode == DEBUGMODE){
+		while(i < n){
+			//std::cout << "PC = " << PC << std::endl;
+			PC = getNPC();
+			fetchInstr();
+			decodeInst();
+			dbgparam = typeInstr;
+			PC++;
+			exec();
+			DBG.debugMode(*this, DEBUGMODE, dbgparam);
+			flushInstr();
+			i++;
+		}
+	}
+	else if(mode == STDMODE){
+		while(i < n){
+			//std::cout << "PC = " << PC << std::endl;
+			PC = getNPC();
+			fetchInstr();
+			decodeInst();
+			dbgparam = typeInstr;
+			PC++;
+			exec();
+			flushInstr();
+			i++;
+		}
+	}
+	else if(mode == STEPMODE){
+		while(i < n){
+			//std::cout << "PC = " << PC << std::endl;
+			PC = getNPC();
+			fetchInstr();
+			decodeInst();
+			dbgparam = typeInstr;
+			PC++;
+			exec();
+			DBG.debugMode(*this, STEPMODE, dbgparam);
+			flushInstr();
+			i++;
+		}
+	}
+	syncDataFile();
+	return state;
 }
 int core::getNPC()
 {
@@ -807,7 +867,7 @@ void core::RRX()
 	oper2 = oper2 & 0x000000000000003F;//Only 6 bit in shifh operand
 
 	Cf = (get_bit(FLR, 3) ? static_cast<uint64_t>(1) : static_cast<uint64_t>(0));
-	// rewrite with asm inline
+	// rewrite without asm inline
 	asm volatile(
 		"MOV r10, %2	\n\t"
 		"MOV r11, %3	\n\t"
@@ -843,7 +903,7 @@ void core::ROR()
 	if(!aluTypeInst.I)	oper2 = gpregs[aluTypeInst.Rm];
 	else 				oper2 = aluTypeInst.imm32;
 	oper2 = oper2 & 0x000000000000003F;//Only 6 bit in shifh operand
-	// rewrite with asm inline
+	// rewrite without asm inline
 	asm volatile(
 		"MOV r10, %1	\n\t"
 		"MOV r11, %2	\n\t"

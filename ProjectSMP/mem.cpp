@@ -13,15 +13,12 @@ mem::~mem()
 }
 void mem::Init(SMP_word size, const char* filename)
 {
-	//��������� ��������� ������ ��� �������
+
 	Nbuffer = INVALID;
 	bufferSize = BUFFERSIZE;
 	memSize = size;
 	memory = new SMP_word[bufferSize]; //Fucking brakets
-
-	//�������� ����� ��� ������/������
 	mFileName = filename;
-	//openFile();
 }
 void mem::openFile()
 {
@@ -39,25 +36,24 @@ void mem::load(SMP_word addr, SMP_word& data)
 {
 	SMP_word Baddr = addr / bufferSize;
 
-	if (memory == nullptr){//���� ������ ��� �� ����������
+	if (memory == nullptr){
 		if (memSize > addr){
 			Nbuffer = addr / bufferSize;
-			buffering(bufferSize, Nbuffer * bufferSize);//�������� � ������ ���� �� �����.
+			buffering(bufferSize, Nbuffer * bufferSize);
 		}
 	}
 	else{
 		if (memSize > addr){
-			if (Baddr == Nbuffer) { // ������ �������� ��� � ������
+			if (Baddr == Nbuffer) {
 				data = memory[addr - Nbuffer * bufferSize];
 			}
-			else{//���� ������� �������� � ������ ���, �� ��������� ��������������� ���� �� �����.
+			else{
 				if (valid) {
 					Nbuffer = Baddr;
 					buffering(bufferSize, Baddr * bufferSize);
 					data = memory[addr - Nbuffer * bufferSize];
 				}
 				else{
-					//���������� � ����, �������� ��������� �������
 					if (Nbuffer != INVALID) {
 						saveBuffer(bufferSize, Nbuffer * bufferSize);
 					}
@@ -86,7 +82,6 @@ void mem::store(SMP_word addr, SMP_word data)
 				valid = false;
 			}
 			else{
-				//���������� � ����, �������� ��������� �������
 				if (Nbuffer != INVALID) {
 					saveBuffer(bufferSize, Nbuffer * bufferSize);
 				}

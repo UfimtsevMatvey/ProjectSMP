@@ -82,9 +82,12 @@ public:
 	
 	void test_start(SMP_word testInstr);
 
-	void start(int n);//Numbrt of iteration execute path
+	int start(int n, int mode);//Numbrt of iteration execute path
 
 private:
+
+	int state;
+
 	SMP_word port0;
 	int port0wait;
 	int port0ready;

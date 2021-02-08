@@ -4,21 +4,21 @@
 #include "headers/tests.h"
 #include "headers/testClass.h"
 #include "headers/checkArh.h"
-
+#include "headers/core_Mode.h"
 
 using namespace std;
 
 int main(int argv, char* argc[])
 {
+	const char* filenameInstr;
+	const char* filenameData;
+
 	if(checkArh() != 0x20){
 		cout << "Your CPU is not supported." << endl;
 		cout << "Your CPU should be support AVX2 instruction set." << endl;
 		cout << "Program is ended with return code: 1." << endl;
 		return 1;
 	}
-
-	const char* filenameInstr;
-	const char* filenameData;
 
 	if(argv == 3){
 		filenameInstr = argc[1];
@@ -28,11 +28,10 @@ int main(int argv, char* argc[])
 		filenameInstr = argc[1];
 		filenameData = "./dmem.dat";
 	}
-	else{
+	else if(argv == 1){
 		filenameInstr = "../test_gen/test.smpasm.bin";
 		filenameData = "./dmem.dat";
 	}
-
 //	byte gpr = NREG;
 //	byte idr = NREG;
 	SMP_word data_size = DMSIZE;
@@ -40,7 +39,7 @@ int main(int argv, char* argc[])
 	SMP_word entry = 0;
 	
 	core MasterCore(entry, instr_size, data_size, filenameInstr, filenameData);
-	MasterCore.start(37);
+	MasterCore.start(37, DEBUGMODE);
 /*
 	debugger CoreDebug;
 	CoreDebug.v = 0;
