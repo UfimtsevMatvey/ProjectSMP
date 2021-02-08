@@ -3,8 +3,8 @@ CXXFLAGS = -Wall -g  -mavx  -masm=intel
 
 all: SMPemu
 
-SMPemu: maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o
-	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o -o smpemu.out
+SMPemu: maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o cmd_line.o
+	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o cmd_line.o -o smpemu.out
 
 maincpp.o:
 	$(CXX) $(CXXFLAGS) -c ../maincpp.cpp
@@ -26,6 +26,9 @@ testClass.o:
 
 checkArh.o:
 	$(CXX) $(CXXFLAGS) -c ../checkArh.cpp
+
+cmd_line.o:
+	$(CXX) $(CXXFLAGS) -c ../cmd_line.cpp
 
 clean:
 	rm -rf *.o smpemu 
