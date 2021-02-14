@@ -128,7 +128,7 @@ ctTypeTable = {
         "XRET"  :   "0100"
 }
 ctImmTable = {
-        "BL"    :   "0",   
+        "BL"    :   "1",   
         "BOI"   :   "1",
         "BOR"   :   "0",
         "BI"    :   "1",
@@ -230,7 +230,7 @@ def ALUinstrType(instr):
         Rn = format(int(instr[2][1:], base = 10), "b").zfill(6)
         Rm = format(int(instr[3][1:], base = 10), "b").zfill(6)
         Rm2= format(int(instr[4][1:], base = 10), "b").zfill(6)
-        imm = imm32[0:15]
+        imm = imm32[12:32]
         binInstr = priv + cond + opcode + I + S + func + "0" + Rn + Rd + Rm + Rm2 + imm
         #end
     elif Nwords == 4:
@@ -426,7 +426,7 @@ def CTinstrType(instr):
 
     #Attantion!!!! Hardcode
     priv = "11"
-
+    R = None
     #last or prelast word in instarction can consist of imm32/16 value
     if Nwords == 2:
         #begin
@@ -438,7 +438,18 @@ def CTinstrType(instr):
             #end
         elif I == "1":
             #begin
-            imm48 = format(int(instr[1], base = 10), "b").zfill(48)
+            offset = int(instr[1], base = 10)
+            if offset < 0:
+                #begin
+                #offset = -offset
+                offset = offset + 2**64
+                imm48 = format(offset, "b")
+                imm48 = imm48[16:64]
+                len48 = 48 - len(imm48)
+                imm48 = str('1')*len48 + imm48
+                #end
+            else:
+                imm48 = format(offset, "b").zfill(48)
             binInstr = priv + cond + opcode + func + imm48
             #end
         #end

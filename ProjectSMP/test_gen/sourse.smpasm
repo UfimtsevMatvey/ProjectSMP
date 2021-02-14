@@ -13,7 +13,6 @@ sbc r7, r7, 45
 mvn r8, r9, r10
 lsl r1, r1, r2
 asr r7, r7, r8
-
 neasrs r8, r8, r8
 rrxs r9, r43, 44
 ror r21, r35, 5352
@@ -25,14 +24,13 @@ uaddpw r45, r23, 42314
 saddpb r1, r2, r3
 saddph r5, r6, r7
 saddpw r1, r2, 345
-
-vuaddb r23, r32, ,r34, r31, 23
+vuaddb r23, r32, r34, r31, 23
 vuaddh r4, r5, r5, r8, 212
 vsaddb r4, r8, r4, r8, 43
 vsaddh r5, r6, r7, r8, 34
 mul r32, r8,    98213
 str r7, [r10  , 10, 21]
-BL 14
+BL -14
 BINT
 
 
