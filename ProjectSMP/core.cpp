@@ -30,12 +30,12 @@ void core::initMemory(SMP_word isize, SMP_word dsize, const char* fileInst, cons
 	std::fstream data_File;
 	instr_File.open(fileInst, std::ios::binary | std::ios::in | std::ios::out);
 	data_File.open(fileData, std::ios::binary | std::ios::in | std::ios::out);
-	if(!instr_File) {
+	std::cout << fileInst << std::endl;
+	std::cout << fileData << std::endl;
+	if(!instr_File) 
 		state = state | FMINF;
-	}
-	if(!data_File){
+	if(!data_File)
 		state = state | FMDNF;
-	}
 	instr_File.close();
 	data_File.close();
 	instr_mem.Init(isize, fileInst);
@@ -68,13 +68,13 @@ int core::start(int n, int mode)
 	debugger DBG;
 	int dbgparam = 0;
 	int i = 0;
-	if((state & FMINF) == 0){
+	if((state & FMINF) != 0){
 		std::cout << "Error!" << std::endl;
 		std::cout << "Instaction memory is not found" << std::endl;
 		std::cout << "Program is ended with return code: 1." << std::endl;
 		return FMINF;
 	}
-	if((state & FMDNF) == 0)
+	if((state & FMDNF) != 0)
 	{
 		std::cout << "Warning!" << std::endl;
 		std::cout << "Data memory is not found" << std::endl;
@@ -127,6 +127,7 @@ int core::start(int n, int mode)
 }
 int core::getNPC()
 {
+//	return PC;
 	if(INR == 0) return PC;
 	if((INR & (0x1)) 				== 0x1) 				return idgers[0];
 	if((INR & (0x2)) 				== 0x2) 				return idgers[1];
@@ -1118,11 +1119,11 @@ void core::VUADDB()
 		if(!cmp_cond(aluTypeInst.cond)) return;//do Nothink, if conditional is not true
 	
 	asm volatile(
-		"MOVQ xmm2, %0				\n\t"//init registers xmm2 (imm8) and xmm3 (Rm1)
-		"MOVQ xmm3, %1				\n\t"//Only low byte in xmm2 and xmm3 used
+		"MOVQ xmm2, %2				\n\t"//init registers xmm2 (imm8) and xmm3 (Rm1)
+		"MOVQ xmm3, %3				\n\t"//Only low byte in xmm2 and xmm3 used
 		"VPBROADCASTB xmm0, xmm2	\n\t"//Brodcasting low byte to all registers
 		"VPBROADCASTQ xmm1, xmm3	\n\t"
-		"MOVQ xmm2, %2				\n\t"//init xmm2 (Rm2)
+		"MOVQ xmm2, %4				\n\t"//init xmm2 (Rm2)
 		"PSLLQ xmm1, 64				\n\t"//Left shift Rm1 on half xmm size
 		"POR xmm1, xmm2				\n\t"//High part of xmm1 is Rm1, low part of xmm1 is Rm2
     	"PADDUSB xmm1, xmm0			\n\t"//Calculate sum.
@@ -1179,6 +1180,8 @@ void core::VUADDH()
 	//PC += 8;
 	return;
 }
+//Instractions VSADDB and VSADDH is canceled.
+//Assembler is not support this instractions
 //{Rd, Rn} = {Rm, Rm2} + imm8 (Signed)
 void core::VSADDB()
 {
@@ -1534,12 +1537,19 @@ void core::LDRB()
 
 void core::BL()
 {
-	SMP_word imm = ctTypeInst.imm48;
-	imm = imm & (0xFFFFFFFF);
-	imm = imm << 8;
-	gpregs[1] = PC + 8;
-	//PC = PC + 8 + imm;
-	PC = PC + imm;
+	SMP_word immu = ctTypeInst.imm48;
+	//imm = imm & (0xFFFFFFFF);
+	//imm = imm << 8;
+	bit64 imm;
+	imm.u = immu;
+	int64_t imms = imm.s;
+	{
+		imms = imms << 16;
+		imms = imms >> 16;
+		std::cout << "BL" << imms << std::endl;
+	}
+	gpregs[1] = PC + 1;
+	PC = (PC + imms) & 0xFFFFFFFF;
 }//Save ip on reg0
 void core::BO_REG() 
 {
@@ -1550,9 +1560,9 @@ void core::BO_REG()
 void core::BO_IMM() 
 {
 	SMP_word imm = ctTypeInst.imm48;
-	imm = imm & (0xFFFFFFFF);
+	//imm = imm & (0xFFFFFFFF);
 	//PC = PC + 8 + (imm << 8);
-	PC = PC + (imm << 8);
+	PC = (PC + imm) & 0xFFFFFFFF;
 }
 void core::B_REG() 
 {
@@ -1563,7 +1573,7 @@ void core::B_IMM()
 {
 	SMP_word imm = ctTypeInst.imm48;
 	imm = imm & (0xFFFFFFFF);
-	PC = imm << 8;
+	PC = imm;
 }
 void core::RET() 
 {

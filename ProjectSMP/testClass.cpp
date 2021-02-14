@@ -107,7 +107,7 @@ void debugger::printState_sys(class core &C)
 }
 void debugger::userControl(int mode, int dbgparam, class core &C)
 {
-	int command;
+	char command;
 	std::cout << ">>";
 	std::cin >> command;
 	switch(command){
