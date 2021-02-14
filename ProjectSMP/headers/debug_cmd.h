@@ -1,2 +1,2 @@
-#define NULLCMD '/n'
+#define NULLCMD 'n'
 #define PRTCMD 's'
