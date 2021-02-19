@@ -1,5 +1,5 @@
 module register #(
-    parameters width 64;
+    parameter width = 64
 ) (
     input wire rst,
     input wire clk, 

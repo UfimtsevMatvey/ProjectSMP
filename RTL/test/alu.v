@@ -1,4 +1,4 @@
-`include "main.def.v"
+`include "define/main.def.v"
 
 module alu(
     input rst,

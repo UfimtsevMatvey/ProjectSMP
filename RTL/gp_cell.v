@@ -1,4 +1,4 @@
-`include "main.def.v"
+`include "define/main.def.v"
 
 module gp_cell(
     input  wire g_left, g_right, p_left, p_right,
