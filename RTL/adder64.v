@@ -3,11 +3,12 @@
 module adder64(
     input wire rst,
     input wire clk,
-    input wire en,
+    input wire en,// enable module
+    input wire valid,//valid data for adder
     input wire [`LEN_DATA - 1:0] a,
     input wire [`LEN_DATA - 1:0] b,
-    output [`LEN_DATA - 1:0] sum,
-    output reg rdy
+    output wire [`LEN_DATA - 1:0] sum,
+    output wire rdy
 );
 wire [`LEN_DATA - 1:0] p_pipeline [9:0];
 wire [`LEN_DATA - 1:0] g_pipeline [9:0];
@@ -15,21 +16,39 @@ wire [`LEN_DATA - 1:0] a_reg;
 wire [`LEN_DATA - 1:0] b_reg;
 
 wire [`LEN_DATA - 1:0] axorb_pipeline [9:0];
+wire rdy_pipeline [9:0];
 
-wire [`LEN_DATA - 1:0] axorb; 
 wire [`LEN_DATA - 1:0] res;
-wire [`LEN_DATA - 1:0] sres;
 assign axorb_pipeline[0] = a_reg ^ b_reg;
-assign res = (g_pipeline[7][`LEN_DATA - 1:0]<<1) ^ axorb_pipeline[8];
-register #(.width(`LEN_DATA))
-    reg_sum 
+assign sum = (g_pipeline[7][`LEN_DATA - 1:0]<<1) ^ axorb_pipeline[8];
+/*
+    If valid is asserted, then rdy will be aserted after 9 clock time
+*/
+assign rdy = rdy_pipeline[8];
+register #(.width(1))
+    reg_rdy
     (
         .rst(rst),
         .clk(clk),
-        .en(en),
-        .d(res),
-        .q(sum)
+        .en(1'b1),
+        .d(valid),
+        .q(rdy_pipeline[0])
     );
+genvar j;
+generate
+    for(j = 0; j < 9; j = j + 1) begin : ready_pipeline
+    register #(.width(1))
+        reg_rdy
+        (
+            .rst(rst),
+            .clk(clk),
+            .en(1'b1),
+            .d(rdy_pipeline[j]),
+            .q(rdy_pipeline[j + 1])
+        );
+    end
+    
+endgenerate
     //data pipeline
 register #(.width(2*`LEN_DATA))
     reg_data0
@@ -54,7 +73,7 @@ generate
         );
     end
 endgenerate
-    
+    //adder pipeline
 wire [`LEN_DATA - 1:0] gen_stage0;
 wire [`LEN_DATA - 1:0] prop_stage0;
 adder_stage0 
