@@ -14,9 +14,13 @@ wire [`LEN_DATA - 1:0] g_pipeline [9:0];
 wire [`LEN_DATA - 1:0] a_reg;
 wire [`LEN_DATA - 1:0] b_reg;
 
+wire [`LEN_DATA - 1:0] axorb_pipeline [9:0];
+
+wire [`LEN_DATA - 1:0] axorb; 
 wire [`LEN_DATA - 1:0] res;
 wire [`LEN_DATA - 1:0] sres;
-assign res = (g_pipeline[7][`LEN_DATA - 1:0]<<1) ^ a_reg ^ b_reg;
+assign axorb_pipeline[0] = a_reg ^ b_reg;
+assign res = (g_pipeline[7][`LEN_DATA - 1:0]<<1) ^ axorb_pipeline[8];
 register #(.width(`LEN_DATA))
     reg_sum 
     (
@@ -26,8 +30,9 @@ register #(.width(`LEN_DATA))
         .d(res),
         .q(sum)
     );
+    //data pipeline
 register #(.width(2*`LEN_DATA))
-    reg_data 
+    reg_data0
     (
         .rst(rst),
         .clk(clk),
@@ -35,6 +40,21 @@ register #(.width(2*`LEN_DATA))
         .d({a, b}),
         .q({a_reg, b_reg})
     );
+genvar i;
+generate
+    for(i = 0; i < 9; i = i + 1) begin : data_pipeline  
+    register #(.width(`LEN_DATA))
+        reg_data
+        (
+            .rst(rst),
+            .clk(clk),
+            .en(en),
+            .d(axorb_pipeline[i    ]),
+            .q(axorb_pipeline[i + 1])
+        );
+    end
+endgenerate
+    
 wire [`LEN_DATA - 1:0] gen_stage0;
 wire [`LEN_DATA - 1:0] prop_stage0;
 adder_stage0 
@@ -200,26 +220,4 @@ register #(.width(2*`LEN_DATA))
         .d({gen_stage7, prop_stage7}),
         .q({g_pipeline[7], p_pipeline[7]})
     );
-
-
-//wire [`LEN_DATA - 1:0] gen_stage8;
-//wire [`LEN_DATA - 1:0] prop_stage8;
-/*adder_stage8 
-    adder_stage8
-    (
-        .generate_in(g_pipeline[7]),
-        .propogate_in(p_pipeline[7]),
-        .generate_out(gen_stage8),
-        .propogate_out(prop_stage8)
-    );
-register #(.width(2*`LEN_DATA))
-    reg_stage8 
-    (
-        .rst(rst),
-        .clk(clk),
-        .en(en),
-        .d({gen_stage8, prop_stage8}),
-        .q({g_pipeline[8], p_pipeline[8]})
-    );
-*/
 endmodule
