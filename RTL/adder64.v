@@ -7,20 +7,24 @@ module adder64(
     input wire valid,//valid data for adder
     input wire [`LEN_DATA - 1:0] a,
     input wire [`LEN_DATA - 1:0] b,
+    input wire cin,
     output wire [`LEN_DATA - 1:0] sum,
+    output wire cout,
     output wire rdy
 );
 wire [`LEN_DATA - 1:0] p_pipeline [9:0];
 wire [`LEN_DATA - 1:0] g_pipeline [9:0];
 wire [`LEN_DATA - 1:0] a_reg;
 wire [`LEN_DATA - 1:0] b_reg;
+wire cin_reg;
 
 wire [`LEN_DATA - 1:0] axorb_pipeline [9:0];
 wire rdy_pipeline [9:0];
 
 wire [`LEN_DATA - 1:0] res;
 assign axorb_pipeline[0] = a_reg ^ b_reg;
-assign sum = (g_pipeline[7][`LEN_DATA - 1:0]<<1) ^ axorb_pipeline[8];
+assign sum = (g_pipeline[7][`LEN_DATA - 1:0] << 1) ^ axorb_pipeline[8] ^ {{`LEN_DATA{1'b0}},g_pipeline[7][0]};
+assign cout = g_pipeline[7][`LEN_DATA - 1];
 /*
     If valid is asserted, then rdy will be aserted after 9 clock time
 */
@@ -50,14 +54,14 @@ generate
     
 endgenerate
     //data pipeline
-register #(.width(2*`LEN_DATA))
+register #(.width(2*`LEN_DATA + 1))
     reg_data0
     (
         .rst(rst),
         .clk(clk),
         .en(en),
-        .d({a, b}),
-        .q({a_reg, b_reg})
+        .d({a, b, cin}),
+        .q({a_reg, b_reg, cin_reg})
     );
 genvar i;
 generate
@@ -81,6 +85,7 @@ adder_stage0
     (
         .A(a_reg),
         .B(b_reg),
+        .Cin(cin_reg),
         .gen_out(gen_stage0),
         .prop_out(prop_stage0)
     );
