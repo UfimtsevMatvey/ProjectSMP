@@ -1,1 +1,0 @@
-int cmd_line(int argv, char* argc[], const char** filenameInstr, const char** filenameData, char* cmode, int* ni);
