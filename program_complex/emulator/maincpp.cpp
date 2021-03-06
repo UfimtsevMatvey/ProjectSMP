@@ -39,8 +39,8 @@ int main(int argv, char* argc[])
 	SMP_word instr_size = IMSIZE;
 	SMP_word entry = 0;
 	
-	core MasterCore(entry, instr_size, data_size, filenameInstr, filenameData);
-	MasterCore.start(ni, mode);
+	core master_core(entry, instr_size, data_size, filenameInstr, filenameData);
+	master_core.start(ni, mode);
 
 	return 0;
 }
