@@ -12,6 +12,7 @@ module testbench();
     reg [`LEN_DATA - 1:0] DUT_a;
     reg [`LEN_DATA - 1:0] DUT_b;
     reg DUT_cin;
+    reg [7:0] DUT_cmsk_n;
     wire [`LEN_DATA - 1:0] DUT_sum;
     wire DUT_cout;
     wire DUT_rdy;
@@ -25,6 +26,7 @@ module testbench();
         .a      (DUT_a      ),
         .b      (DUT_b      ),
         .cin    (DUT_cin    ),
+        .cmsk_n (DUT_cmsk_n ),
         .sum    (DUT_sum    ),
         .cout   (DUT_cout   ),
         .rdy    (DUT_rdy    )
@@ -39,6 +41,7 @@ module testbench();
         DUT_a   = {`LEN_DATA{1'b0}};
         DUT_b   = {`LEN_DATA{1'b0}};
         DUT_cin = 1'b0;
+        DUT_cmsk_n = 8'h00;
         #34
         en = 1'b1;
         DUT_rst = 1'b1;
@@ -53,6 +56,7 @@ module testbench();
                 DUT_a = $random;// & 64'hff;
                 DUT_b = $random;// & 64'hff;
                 DUT_cin = $random;
+                DUT_cmsk_n = $random;
             end
             else begin
                DUT_valid = 1'b0; 
