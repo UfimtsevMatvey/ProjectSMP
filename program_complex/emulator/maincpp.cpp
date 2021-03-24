@@ -14,7 +14,7 @@ int main(int argv, char* argc[])
 	char cmode;
 	int mode;
 	int ni;
-	if(checkArh() != 0x20){
+	if(checkArh()){
 		std::cout << "Your CPU is not supported." << std::endl;
 		std::cout << "Your CPU should be support AVX2 instruction set." << std::endl;
 		std::cout << "Program is ended with return code: 1." << std::endl;

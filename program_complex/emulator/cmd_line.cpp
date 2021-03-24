@@ -1,9 +1,9 @@
 int cmd_line(int argv, char* argc[], const char** filenameInstr, const char** filenameData, char* cmode, int* ni)
 {
     if(argv == 1){
-        *filenameInstr = "../../translator/out.bin";
-        *filenameData= "data.bin";
-        *cmode = 'r';
+        if(filenameInstr != nullptr) *filenameInstr = "../../translator/out.bin";
+        if(filenameData != nullptr) *filenameData= "data.bin";
+        if(cmode != nullptr) *cmode = 'r';
         *ni = 100;
     }
     else if(argv == 2){
