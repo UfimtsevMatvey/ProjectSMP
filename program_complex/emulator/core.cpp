@@ -267,18 +267,15 @@ void core::mul_exec()
 {
 	if(!mulTypeInst.typeOper){
 		//Multiply without additional
-		if(mulTypeInst.opcode == MULinstr){
+		if(mulTypeInst.opcode == MULinstr)
 			//Unsigned instraction
 			MUL();
-		}
 		else if(mulTypeInst.opcode == wMULinstr){
 			//Sign instraction
-			if(mulTypeInst.S){
+			if(mulTypeInst.S)
 				SMULL();
-			}
-			else{
+			else
 				UMULL();
-			}
 		}
 	}
 	else{
@@ -288,12 +285,11 @@ void core::mul_exec()
 		}
 		else if(mulTypeInst.opcode == wMULinstr){
 			//Sign mul
-			if(mulTypeInst.S){
+			if(mulTypeInst.S)
 				SMLAL();
-			}//unsign mul
-			else{
+			//unsign mul
+			else
 				UMLAL();
-			}
 		}
 		else setINR(OPEX);
 	}
