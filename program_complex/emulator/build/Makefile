@@ -25,7 +25,7 @@ testClass.o:
 	$(CXX) $(CXXFLAGS) -c ../testClass.cpp
 
 checkArh.o:
-	$(CXX) $(CXXFLAGS) -fsanitize=address -c ../checkArh.cpp
+	$(CXX) $(CXXFLAGS) -c ../checkArh.cpp
 
 cmd_line.o:
 	$(CXX) $(CXXFLAGS) -c ../cmd_line.cpp
