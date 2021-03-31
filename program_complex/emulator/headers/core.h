@@ -82,7 +82,7 @@ public:
 	
 	void test_start(SMP_word testInstr);
 
-	int start(int n, int mode);//Numbrt of iteration execute path
+	int start(int n, int mode);//Number of iteration execute path
 
 private:
 
@@ -103,8 +103,9 @@ private:
 	SMP_word port3;
 	int port3wait;
 	int port3ready;
-	SMP_word lowAddr;
-	SMP_word highAddr;
+
+	SMP_word lowBoundAddr;
+	SMP_word highBoundAddr;
 	
 
 	

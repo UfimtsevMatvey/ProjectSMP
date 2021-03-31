@@ -301,7 +301,7 @@ void core::mem_exec()
 	SMP_word offset = memTypeInst.offset;
 	SMP_word scale = memTypeInst.scale;
 	SMP_word addr = Rn * scale + offset;
-	if(addr - lowAddr > highAddr){
+	if(addr - lowBoundAddr > highBoundAddr){
 		setINR(MEMEX);
 		return;
 	}
@@ -1694,8 +1694,8 @@ void core::LFL()
 }
 void core::SMF()
 {
-	lowAddr = gpregs[sysTypeInst.Rd];
-	highAddr = gpregs[sysTypeInst.Rn];
+	lowBoundAddr = gpregs[sysTypeInst.Rd];
+	highBoundAddr = gpregs[sysTypeInst.Rn];
 	//PC += 8;
 }
 void core::SINT()
