@@ -2,7 +2,7 @@
 vlib work
 
 # compile all the Verilog sources
-vlog   ../../testbench/testbench_adder.v ../../adder/*.v 
+vlog   ../../testbench/testbench_adder.v ../../alu/adder/*.v  ../../alu/*.v
 
 # open the testbench module for simulation
 vsim -novopt work.testbench
