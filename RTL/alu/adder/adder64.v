@@ -1,4 +1,4 @@
-`include "../define/main.def.v"
+`include "../../define/main.def.v"
 
 module adder64(
     input wire rst,
