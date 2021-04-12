@@ -2,8 +2,8 @@
 `include "../define/alu.def.v"
 
 module alu(
-    input rst,
-    input clk,
+    input wire rst,
+    input wire clk,
     input wire en,
     input wire [LEN_DATA - 1:0] a,
     input wire [LEN_DATA - 1:0] b,

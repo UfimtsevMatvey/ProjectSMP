@@ -1,4 +1,4 @@
-`include "../define/main.def.v"
+`include "../../define/main.def.v"
 
 module adder_stage7(
     input wire [`LEN_DATA - 1:0] generate_in,

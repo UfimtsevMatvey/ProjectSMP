@@ -5,9 +5,9 @@ module shift(
     input wire [5:0] c,
     input wire [2:0] code,
     input wire carry,
-    output wire [LEN_DATA - 1:0] s_res,
-    output wire carry_out,
-    output wire rst
+    output reg [LEN_DATA - 1:0] s_res,
+    output reg carry_out,
+    output reg rst
 )
 always @(*) begin
     case (code)
