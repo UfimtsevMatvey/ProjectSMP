@@ -1,0 +1,313 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/Matvey/Desktop/ProjectSMP/RTL/simulation/sim
+vadder64
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+r1
+!s85 0
+31
+!i10b 1
+!s100 lil_Z5Mk]S84j=2L0c81e3
+ISJYmTBnX3HnhF;30=N]KK3
+R0
+Z2 w1623792376
+8../../alu/adder/adder64.v
+F../../alu/adder/adder64.v
+L0 3
+Z3 OL;L;10.6d;65
+Z4 !s108 1623796030.000000
+Z5 !s107 ../../define/main.def.v|..\..\alu\..\define\alu.def.v|..\..\alu\..\define\main.def.v|..\..\testbench\..\define\main.def.v|../../alu/adder/reg.v|../../alu/adder/gp_cell.v|../../alu/adder/adder_stage7.v|../../alu/adder/adder_stage6.v|../../alu/adder/adder_stage5.v|../../alu/adder/adder_stage4.v|../../alu/adder/adder_stage3.v|../../alu/adder/adder_stage2.v|../../alu/adder/adder_stage1.v|../../alu/adder/adder_stage0.v|../../alu/adder/adder64.v|../../alu/two_step_adder64.v|../../alu/shift.v|../../alu/main.v|../../alu/alu.v|../../testbench/testbench_adder.v|
+Z6 !s90 -reportprogress|300|../../testbench/testbench_adder.v|../../alu/alu.v|../../alu/main.v|../../alu/shift.v|../../alu/two_step_adder64.v|../../alu/adder/adder64.v|../../alu/adder/adder_stage0.v|../../alu/adder/adder_stage1.v|../../alu/adder/adder_stage2.v|../../alu/adder/adder_stage3.v|../../alu/adder/adder_stage4.v|../../alu/adder/adder_stage5.v|../../alu/adder/adder_stage6.v|../../alu/adder/adder_stage7.v|../../alu/adder/gp_cell.v|../../alu/adder/reg.v|
+!i113 0
+Z7 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z8 tCvgOpt 0
+vadder_stage0
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 CSDhamlNW@oM5XmTJIU`^2
+IIbEjTIH:8<_:EfjG3SF2P1
+R0
+R2
+8../../alu/adder/adder_stage0.v
+F../../alu/adder/adder_stage0.v
+L0 3
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vadder_stage1
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 AmRJ1I7j5bGRc5m<5NAIF2
+I5aN1H48cDR;@6ZKbfEbn_0
+R0
+R2
+8../../alu/adder/adder_stage1.v
+F../../alu/adder/adder_stage1.v
+L0 3
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vadder_stage2
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 KJJl?1RLG<InNa^KN4VFh1
+IT9QBJYaZcQ7Q_7RD9aWQz1
+R0
+R2
+8../../alu/adder/adder_stage2.v
+F../../alu/adder/adder_stage2.v
+L0 3
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vadder_stage3
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 3WbNTR1gKYoNb57in;<o22
+I8@mKo<dQ=R5IUkOY;[SiM3
+R0
+R2
+8../../alu/adder/adder_stage3.v
+F../../alu/adder/adder_stage3.v
+L0 3
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vadder_stage4
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 Ao7<DUdAJBoJg6GfIJR4O1
+Ign3OaGV@BjzG9N9C1gj0J1
+R0
+R2
+8../../alu/adder/adder_stage4.v
+F../../alu/adder/adder_stage4.v
+L0 3
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vadder_stage5
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 YP8Uo4IogPdWnRk3S8TF:0
+IhJbId0^hWBG13YQ2T^4T52
+R0
+R2
+8../../alu/adder/adder_stage5.v
+F../../alu/adder/adder_stage5.v
+L0 3
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vadder_stage6
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 A81BESh<Q]D`[1[9HNGHD3
+Ib5NSX<4Eee]L2V1RZ9d3V3
+R0
+R2
+8../../alu/adder/adder_stage6.v
+F../../alu/adder/adder_stage6.v
+L0 3
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vadder_stage7
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 Q6RgU:f^2O@]h7hil>WQ[1
+IHkEAR7EQdecf14Um`JeP>3
+R0
+R2
+8../../alu/adder/adder_stage7.v
+F../../alu/adder/adder_stage7.v
+L0 3
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+valu
+Z9 !s110 1623796030
+!i10b 1
+!s100 kDZeDDHP<jZG_RbQ=I8aj2
+I;m2K=2jgF?o0HEU]j1Wl;0
+R1
+R0
+w1623795613
+8../../alu/alu.v
+F../../alu/alu.v
+L0 4
+R3
+r1
+!s85 0
+31
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vgp_cell
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 41hZT6nHXSXMUIc5<Q1]43
+I58C]:@;0Dl20hZNYD>CSh0
+R0
+R2
+8../../alu/adder/gp_cell.v
+F../../alu/adder/gp_cell.v
+L0 3
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vregister
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 Q6<Cico:niRAO==zL2W@T2
+Ilb6JmA:hkDJBaNkkbh[=82
+R0
+R2
+8../../alu/adder/reg.v
+F../../alu/adder/reg.v
+L0 1
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vshift
+R9
+!i10b 1
+!s100 i;@SBK`YdD5C;OLR]WIMQ1
+IC7WOeLf8[oK7hYX12JgW52
+R1
+R0
+w1623795622
+8../../alu/shift.v
+F../../alu/shift.v
+L0 2
+R3
+r1
+!s85 0
+31
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vtestbench_adder
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 E^FbF:[cl<`44_Z=AA1>`0
+IdmLZoPQM<ez9Qb^BDcMm30
+R0
+w1623792868
+8../../testbench/testbench_adder.v
+F../../testbench/testbench_adder.v
+L0 4
+R3
+R4
+R5
+R6
+!i113 0
+R7
+R8
+vtwo_step_adder64
+R9
+!i10b 1
+!s100 ]mVk_dRG3W6gjb`@8K_`E2
+ILFUzHBP8aO^3YJOgzVcFh0
+R1
+R0
+w1623792999
+8../../alu/two_step_adder64.v
+F../../alu/two_step_adder64.v
+L0 2
+R3
+r1
+!s85 0
+31
+R4
+R5
+R6
+!i113 0
+R7
+R8

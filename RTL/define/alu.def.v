@@ -25,3 +25,9 @@
 `define ALU_ROR     5'b11000
 `define ALU_BSWP    5'b11001
 `define ALU_SWR     5'b11010
+
+//extended alu operations
+`define ALU_ADD128_BYTE     5'b11011
+`define ALU_ADD128_TWOBYTE  5'b11100
+`define ALU_SUB128_BYTE     5'b11101
+`define ALU_SUB128_TWOBYTE  5'b11110
