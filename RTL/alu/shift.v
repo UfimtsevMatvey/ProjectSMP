@@ -1,6 +1,6 @@
 `include "../define/main.def.v"
 module shift(
-    input wire rst,
+    input wire rst_n,
     input wire clk,
     input wire shift_en,
     input wire [`LEN_DATA - 1:0] a,

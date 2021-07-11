@@ -1,15 +1,15 @@
 `include "../../define/main.def.v"
 
 module adder_stage5(
-    input wire [`LEN_DATA - 1:0] generate_in,
-    input wire [`LEN_DATA - 1:0] propogate_in,
-    output wire [`LEN_DATA - 1:0] generate_out,
-    output wire [`LEN_DATA - 1:0] propogate_out
+    input wire [`LEN_DATA:0] generate_in,
+    input wire [`LEN_DATA:0] propogate_in,
+    output wire [`LEN_DATA:0] generate_out,
+    output wire [`LEN_DATA:0] propogate_out
 );
-    wire [`LEN_DATA - 1:0] g_in;
-    wire [`LEN_DATA - 1:0] p_in;
-    wire [`LEN_DATA - 1:0] g_out;
-    wire [`LEN_DATA - 1:0] p_out;
+    wire [`LEN_DATA:0] g_in;
+    wire [`LEN_DATA:0] p_in;
+    wire [`LEN_DATA:0] g_out;
+    wire [`LEN_DATA:0] p_out;
 
     assign g_in = generate_in;
     assign p_in = propogate_in;
@@ -101,6 +101,8 @@ module adder_stage5(
             assign p_out[i + 6] = p_in[i + 6];
             assign p_out[i + 7] = p_in[i + 7];
         end
+        assign g_out[`LEN_DATA] = g_in[`LEN_DATA];
+        assign p_out[`LEN_DATA] = p_in[`LEN_DATA];
     endgenerate
     assign generate_out = g_out;
     assign propogate_out = p_out;

@@ -1,22 +1,22 @@
 `include "../../define/main.def.v"
 
 module adder_stage6(
-    input wire [`LEN_DATA - 1:0] generate_in,
-    input wire [`LEN_DATA - 1:0] propogate_in,
-    output wire [`LEN_DATA - 1:0] generate_out,
-    output wire [`LEN_DATA - 1:0] propogate_out
+    input wire [`LEN_DATA:0] generate_in,
+    input wire [`LEN_DATA:0] propogate_in,
+    output wire [`LEN_DATA:0] generate_out,
+    output wire [`LEN_DATA:0] propogate_out
 );
-    wire [`LEN_DATA - 1:0] g_in;
-    wire [`LEN_DATA - 1:0] p_in;
-    wire [`LEN_DATA - 1:0] g_out;
-    wire [`LEN_DATA - 1:0] p_out;
+    wire [`LEN_DATA:0] g_in;
+    wire [`LEN_DATA:0] p_in;
+    wire [`LEN_DATA:0] g_out;
+    wire [`LEN_DATA:0] p_out;
 
     assign g_in = generate_in;
     assign p_in = propogate_in;
     
     generate
         genvar i;
-        for (i = 16; i < `LEN_DATA; i = i + 32) begin : stage6_16odd
+        for (i = 16; i < `LEN_DATA + 1; i = i + 32) begin : stage6_16odd
             gp_cell gpcell0(
                 .g_left (g_in   [i]     ),
                 .g_right(g_in   [i - 1] ),
@@ -146,6 +146,7 @@ module adder_stage6(
                 .p_out  (p_out  [i + 15] )
             );
         end
+       
         for (i = 0; i < `LEN_DATA; i = i + 32) begin : stage6_16ever
             assign g_out[i] = g_in[i];
             assign g_out[i + 1] = g_in[i + 1];
@@ -180,6 +181,8 @@ module adder_stage6(
             assign p_out[i + 14] = p_in[i + 14];
             assign p_out[i + 15] = p_in[i + 15];
         end
+        assign g_out[`LEN_DATA] = g_in[`LEN_DATA];
+        assign p_out[`LEN_DATA] = p_in[`LEN_DATA];
     endgenerate
     assign generate_out = g_out;
     assign propogate_out = p_out;
