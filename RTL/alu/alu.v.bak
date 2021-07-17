@@ -55,7 +55,7 @@ begin
 end 
 endfunction
 
-always @(*) begin
+always @(posedge clk) begin
     if(~rst_n) begin
         result    <= 0;
         ex_result <= 0;
@@ -63,13 +63,12 @@ always @(*) begin
         rdy       <= 0;
     end
     else begin
-        result    <= adder_rdy    ? result_adder_out    : (shift_rdy ? result_out : 0);
-        ex_result <= adder_ex_rdy ? ex_result_adder_out : ex_result_out;
+        result    <= adder_l_en ? result_adder_out    : result_out;
+        ex_result <= adder_h_en ? ex_result_adder_out : ex_result_out;
         cout      <= shift_rdy  ? shift_carry_out     : (adder_l_en ? (adder_h_en ? ex_carry_out : carry_out) : 0);
         rdy       <= (adder_l_en ? (adder_h_en ? adder_rdy | adder_ex_rdy : rdy) : 0);
     end 
 end
-
 //generate control-signal for adder
 always @(posedge clk) begin
     if(~rst_n) begin
@@ -93,7 +92,7 @@ always @(posedge clk) begin
                 b_in             <= b;
                 adder_l_en       <= 1'b1;
                 adder_h_en       <= 1'b0;
-                carry_in         <= {7'b0000_000, cin[0]};
+                carry_in         <= cin;
                 bit_mask_in_n    <= 8'b1111_1111;
                 shift_en         <= 1'b0;
             end
@@ -103,7 +102,7 @@ always @(posedge clk) begin
                 adder_l_en       <= 1'b1;
                 adder_h_en       <= 1'b0;
                 carry_in         <= 8'b0000_0000;
-                bit_mask_in_n    <= 8'b1110_1111;
+                bit_mask_in_n    <= 8'b1111_0111;
                 shift_en         <= 1'b0;
             end
             `ALU_ADD16 : begin
@@ -134,20 +133,20 @@ always @(posedge clk) begin
                 shift_en         <= 1'b0;
             end
             `ALU_RSB64 : begin
-                a_in             <= ~a;
-                b_in             <= b;
-                adder_l_en       <= 1'b1;
-                adder_h_en       <= 1'b0;
-                carry_in         <=  8'b0000_0001;
-                bit_mask_in_n    <= 8'b1111_1111;
-                shift_en         <= 1'b0;
-            end
-            `ALU_SBC64 : begin
                 a_in             <= a;
                 b_in             <= ~b;
                 adder_l_en       <= 1'b1;
                 adder_h_en       <= 1'b0;
-                carry_in         <= {7'b0000_000, 1'b1^cin[0]};
+                carry_in         <=  8'b0000_0001 ^ cin;
+                bit_mask_in_n    <= ~8'b1111_1111;
+                shift_en         <= 1'b0;
+            end
+            `ALU_SBC64 : begin
+                a_in             <= a;
+                b_in             <= b;
+                adder_l_en       <= 1'b1;
+                adder_h_en       <= 1'b0;
+                carry_in         <= 8'b0000_0001;
                 bit_mask_in_n    <= 8'b1111_1111;
                 shift_en         <= 1'b0;
             end
@@ -244,7 +243,7 @@ always @(posedge clk) begin
                 shift_code       <= 2;
                 shift_arg        <= a;
                 shift_value      <= b[5:0];
-                shift_carry_in   <= cin[0];
+                shift_carry_in   <= cin;
                 result_out       <= shift_rdy ? shift_res : 0;
                 shift_en         <= 1'b1;
             end
@@ -255,7 +254,7 @@ always @(posedge clk) begin
                 shift_code       <= 3;
                 shift_arg        <= a;
                 shift_value      <= b[5:0];
-                shift_carry_in   <= cin[0];
+                shift_carry_in   <= cin;
                 result_out       <= shift_rdy ? shift_res : 0;
                 shift_en         <= 1'b1;
             end
@@ -301,38 +300,48 @@ always @(posedge clk) begin
                 adder_h_en       <= 1'b1;
                 a_in             <= a;
                 b_in             <= imm;
-                bit_mask_in_n    <= 8'b0000_0000;
-                carry_in         <= 8'b1010_1010;
+                bit_mask_in_n    <= 8'b0101_0101;
+                carry_in         <= 8'b0000_0000;
                 ex_a_in          <= b;
                 ex_b_in          <= imm;
-                ex_bit_mask_in_n <= 8'b0000_0000;
-                ex_carry_in      <= 8'b1010_1010;
+                ex_bit_mask_in_n <= 8'b0101_0101;
+                ex_carry_in      <= 8'b0000_0000;
                 shift_en         <= 1'b0;
             end
             `ALU_SUB128_BYTE : begin
                 adder_l_en       <= 1'b1;
                 adder_h_en       <= 1'b1;
                 a_in             <= a;
-                b_in             <= ~imm;
+                b_in[7:0]        <= ~imm[7:0  ] + 1;
+                b_in[15:8]       <= ~imm[15:8 ] + 1;
+                b_in[23:16]      <= ~imm[23:16] + 1;
+                b_in[31:24]      <= ~imm[31:24] + 1;
+                b_in[39:32]      <= ~imm[39:32] + 1;
+                b_in[47:40]      <= ~imm[47:40] + 1;
+                b_in[55:48]      <= ~imm[55:48] + 1;
+                b_in[63:56]      <= ~imm[63:56] + 1;
                 bit_mask_in_n    <= 8'b1111_1111;
-                carry_in         <= 8'b1111_1111;
+                carry_in         <= 8'b0000_0001;
                 ex_a_in          <= b;
-                ex_b_in          <= ~imm;
+                ex_b_in          <= imm;
                 ex_bit_mask_in_n <= 8'b1111_1111;
-                ex_carry_in      <= 8'b1111_1111;
+                ex_carry_in      <= 8'b0000_0001;
                 shift_en         <= 1'b0;
             end
             `ALU_SUB128_TWOBYTE : begin
                 adder_l_en       <= 1'b1;
                 adder_h_en       <= 1'b1;
                 a_in             <= a;
-                b_in             <= ~imm;
-                bit_mask_in_n    <= 8'b1111_1111;
-                carry_in         <= 8'b0101_0101;
+                b_in[15:0]       <= ~imm[15:0 ] + 1;
+                b_in[31:16]      <= ~imm[31:16] + 1;
+                b_in[47:32]      <= ~imm[47:32] + 1;
+                b_in[63:48]      <= ~imm[63:48] + 1;
+                bit_mask_in_n    <= ~8'b0101_0101;
+                carry_in         <=  8'b0000_0001;
                 ex_a_in          <= b;
-                ex_b_in          <= ~imm;
-                ex_bit_mask_in_n <= 8'b1111_1111;
-                ex_carry_in      <= 8'b0101_0101;
+                ex_b_in          <= imm;
+                ex_bit_mask_in_n <= ~8'b0101_0101;
+                ex_carry_in      <=  8'b0000_0001;
                 shift_en         <= 1'b0;
             end
             default: begin

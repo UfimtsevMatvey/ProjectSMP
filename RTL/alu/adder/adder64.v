@@ -16,6 +16,7 @@ module adder64(
 wire [`LEN_DATA:0] p_pipeline [9:0];
 wire [`LEN_DATA:0] g_pipeline [9:0];
 wire [7:0] carry_mask_pipeline_n [9:0];
+wire [`LEN_DATA:0] mask_pipeline [9:0];
 wire carry_in_pipeline [9:0];
 wire [`LEN_DATA - 1:0] a_reg;
 wire [`LEN_DATA - 1:0] b_reg;
@@ -28,18 +29,36 @@ wire [`LEN_DATA - 1:0] res;
 //init pipeline
 assign axorb_pipeline[0] = a_reg ^ b_reg;
 assign carry_mask_pipeline_n[0] = cmsk_n;
+
+assign mask_pipeline[0][0 ] = cmsk_n[0];
+assign mask_pipeline[0][7:1] = 7'b1111111;
+assign mask_pipeline[0][8 ] = cmsk_n[1];
+assign mask_pipeline[0][15:9] = 7'b1111111;
+assign mask_pipeline[0][16] = cmsk_n[2];
+assign mask_pipeline[0][23:17] = 7'b1111111;
+assign mask_pipeline[0][24] = cmsk_n[3];
+assign mask_pipeline[0][31:25] = 7'b1111111;
+assign mask_pipeline[0][32] = cmsk_n[4];
+assign mask_pipeline[0][39:33] = 7'b1111111;
+assign mask_pipeline[0][40] = cmsk_n[5];
+assign mask_pipeline[0][47:41] = 7'b1111111;
+assign mask_pipeline[0][48] = cmsk_n[6];
+assign mask_pipeline[0][55:49] = 7'b1111111;
+assign mask_pipeline[0][56] = cmsk_n[7];
+assign mask_pipeline[0][64:57] = 8'b11111111;
+
 assign carry_in_pipeline[0] = cin_reg[0];
 //bit mask for carry
 always @(*) begin
     carry        = g_pipeline[8][`LEN_DATA - 1:0];//{g_pipeline[8][`LEN_DATA - 1:0],carry_in_pipeline[8]};
-    carry[0]     = carry[0]    & carry_mask_pipeline_n[8][0];
-    carry[8]     = carry[8]    & carry_mask_pipeline_n[8][1];
-    carry[16]    = carry[16]   & carry_mask_pipeline_n[8][2];
-    carry[24]    = carry[24]   & carry_mask_pipeline_n[8][3];
-    carry[32]    = carry[32]   & carry_mask_pipeline_n[8][4];
-    carry[40]    = carry[40]   & carry_mask_pipeline_n[8][5];
-    carry[48]    = carry[48]   & carry_mask_pipeline_n[8][6];
-    carry[56]    = carry[56]   & carry_mask_pipeline_n[8][7];
+    carry[0]     = carry[0]/*    & carry_mask_pipeline_n[8][0]*/;
+    carry[8]     = carry[8]/*   & carry_mask_pipeline_n[8][1]*/;
+    carry[16]    = carry[16]/*   & carry_mask_pipeline_n[8][2]*/;
+    carry[24]    = carry[24]/*   & carry_mask_pipeline_n[8][3]*/;
+    carry[32]    = carry[32]/*   & carry_mask_pipeline_n[8][4]*/;
+    carry[40]    = carry[40]/*   & carry_mask_pipeline_n[8][5]*/;
+    carry[48]    = carry[48]/*   & carry_mask_pipeline_n[8][6]*/;
+    carry[56]    = carry[56]/*   & carry_mask_pipeline_n[8][7]*/;
     sum          = axorb_pipeline[8] ^ carry;
     cout         = g_pipeline[8][`LEN_DATA - 1];
     rdy          = rdy_pipeline[8];
@@ -55,7 +74,7 @@ register #(.width(1))
     (
         .rst_n(rst_n),
         .clk  (clk),
-        .en   (1'b1),
+        .en   (en),
         .d    (valid),
         .q    (rdy_pipeline[0])
     );
@@ -67,7 +86,7 @@ generate
         (
             .rst_n(rst_n),
             .clk(clk),
-            .en(1'b1),
+            .en(en),
             .d(rdy_pipeline[j]),
             .q(rdy_pipeline[j + 1])
         );
@@ -115,6 +134,15 @@ generate
             .d(carry_in_pipeline[i    ]),
             .q(carry_in_pipeline[i + 1])
         );
+    register #(.width(`LEN_DATA + 1))
+        reg_data_mask
+        (
+            .rst_n(rst_n),
+            .clk(clk),
+            .en(en),
+            .d(mask_pipeline[i    ]),
+            .q(mask_pipeline[i + 1])
+        );
     end
 endgenerate
     //adder pipeline
@@ -126,6 +154,7 @@ adder_stage0
         .A(a_reg),
         .B(b_reg),
         .cin(cin_reg),
+        .mask(mask_pipeline[0]),
         .gen_out(gen_stage0),
         .prop_out(prop_stage0)
     );
@@ -147,6 +176,7 @@ adder_stage1
     (
         .generate_in(g_pipeline[1]),
         .propogate_in(p_pipeline[1]),
+        .mask(mask_pipeline[1]),
         .generate_out(gen_stage1),
         .propogate_out(prop_stage1)
     );
@@ -168,6 +198,7 @@ adder_stage2
     (
         .generate_in(g_pipeline[2]),
         .propogate_in(p_pipeline[2]),
+        .mask(mask_pipeline[2]),
         .generate_out(gen_stage2),
         .propogate_out(prop_stage2)
     );
@@ -189,6 +220,7 @@ adder_stage3
     (
         .generate_in(g_pipeline[3]),
         .propogate_in(p_pipeline[3]),
+        .mask(mask_pipeline[3]),
         .generate_out(gen_stage3),
         .propogate_out(prop_stage3)
     );
@@ -210,6 +242,7 @@ adder_stage4
     (
         .generate_in(g_pipeline[4]),
         .propogate_in(p_pipeline[4]),
+        .mask(mask_pipeline[4]),
         .generate_out(gen_stage4),
         .propogate_out(prop_stage4)
     );
@@ -230,6 +263,7 @@ adder_stage5
     (
         .generate_in(g_pipeline[5]),
         .propogate_in(p_pipeline[5]),
+        .mask(mask_pipeline[5]),
         .generate_out(gen_stage5),
         .propogate_out(prop_stage5)
     );
@@ -251,6 +285,7 @@ adder_stage6
     (
         .generate_in(g_pipeline[6]),
         .propogate_in(p_pipeline[6]),
+        .mask(mask_pipeline[6]),
         .generate_out(gen_stage6),
         .propogate_out(prop_stage6)
     );
@@ -272,6 +307,7 @@ adder_stage7
     (
         .generate_in(g_pipeline[7]),
         .propogate_in(p_pipeline[7]),
+        .mask(mask_pipeline[7]),
         .generate_out(gen_stage7),
         .propogate_out(prop_stage7)
     );

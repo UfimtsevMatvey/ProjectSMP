@@ -3,6 +3,7 @@
 module adder_stage2(
     input wire [`LEN_DATA:0] generate_in,
     input wire [`LEN_DATA:0] propogate_in,
+    input wire [`LEN_DATA:0] mask,
     output wire [`LEN_DATA:0] generate_out,
     output wire [`LEN_DATA:0] propogate_out
 );
@@ -32,6 +33,6 @@ module adder_stage2(
             assign p_out[j] = p_in[j];
         end
     endgenerate
-    assign generate_out = g_out;
-    assign propogate_out = p_out;
+    assign generate_out = g_out & mask;
+    assign propogate_out = p_out & mask;
 endmodule

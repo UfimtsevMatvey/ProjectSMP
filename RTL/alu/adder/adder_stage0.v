@@ -4,6 +4,7 @@ module adder_stage0(
     input wire [`LEN_DATA:0] A,
     input wire [`LEN_DATA:0] B,
     input wire [7:0] cin,
+    input wire [`LEN_DATA:0] mask,
     output wire [`LEN_DATA:0] gen_out,
     output wire [`LEN_DATA:0] prop_out
 );
@@ -27,6 +28,6 @@ module adder_stage0(
         assign generate_in [0] = cin[0];
         assign propogate_in[0] = cin[0];
     endgenerate
-    assign gen_out  = generate_in;
-    assign prop_out = propogate_in;
+    assign gen_out  = generate_in & mask;
+    assign prop_out = propogate_in & mask;
 endmodule

@@ -3,6 +3,7 @@
 module adder_stage6(
     input wire [`LEN_DATA:0] generate_in,
     input wire [`LEN_DATA:0] propogate_in,
+    input wire [`LEN_DATA:0] mask,
     output wire [`LEN_DATA:0] generate_out,
     output wire [`LEN_DATA:0] propogate_out
 );
@@ -184,6 +185,6 @@ module adder_stage6(
         assign g_out[`LEN_DATA] = g_in[`LEN_DATA];
         assign p_out[`LEN_DATA] = p_in[`LEN_DATA];
     endgenerate
-    assign generate_out = g_out;
-    assign propogate_out = p_out;
+    assign generate_out = g_out & mask;
+    assign propogate_out = p_out & mask;
 endmodule
