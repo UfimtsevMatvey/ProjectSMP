@@ -345,17 +345,17 @@ always @(posedge clk) begin
 end
 //Ladner-Fisher adder
 adder64 adder_l(
-    .rst_n  (rst_n    ),
-    .clk    (clk    ),
-    .en     (adder_l_en     ),
-    .valid  (1'b1   ),
-    .a      (a_in  ),
-    .b      (b_in  ),
-    .cin    (carry_in),
-    .cmsk_n (bit_mask_in_n),
-    .sum    (result_adder_out ),
-    .cout   (carry_out),
-    .rdy    (adder_rdy    )
+    .rst_n  (rst_n              ),
+    .clk    (clk                ),
+    .en     (adder_l_en         ),
+    .valid  (1'b1               ),
+    .a      (a_in               ),
+    .b      (b_in               ),
+    .cin    (carry_in           ),
+    .cmsk_n (bit_mask_in_n      ),
+    .sum    (result_adder_out   ),
+    .cout   (carry_out          ),
+    .rdy    (adder_rdy          )
 );
 adder64 adder_h(
     .rst_n  (rst_n              ),
