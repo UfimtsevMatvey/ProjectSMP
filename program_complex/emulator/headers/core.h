@@ -3,7 +3,11 @@
 #include "regf.h"
 #include "mem.h"
 #include "testClass.h"
+#include "emu_keyboard.h"
+#include "emu_display.h"
 #include "def.h"
+#include "device.h"
+
 struct ALU_instr
 {
 	void flush();
@@ -74,35 +78,80 @@ struct SYS_instr
 class core
 {
 	friend class debugger;
+	friend class emu_keybord;
+	friend class emu_display;
 public:
 	
 	SMP_word getPort(int n);
-	
-	core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile);
-	
+	//init without external device
+	core(	SMP_word entry, 
+			SMP_word isize, 
+			SMP_word dsize, 
+			const char* ifile, 
+			const char* dfile);
+	//init with display
+	core(	SMP_word entry, 
+			SMP_word isize, 
+			SMP_word dsize, 
+			const char* ifile, 
+			const char* dfile, 
+			emu_display display, 
+			int disp_port_num);
+	//init with keyboard
+	core(	SMP_word entry, 
+			SMP_word isize, 
+			SMP_word dsize, 
+			const char* ifile, 
+			const char* dfile, 
+			emu_keyboard keyboard, 
+			int key_port_num);
+	//init with dispaly and keyboard
+	core(	SMP_word entry, 
+			SMP_word isize, 
+			SMP_word dsize, 
+			const char* ifile, 
+			const char* dfile, 
+			emu_display display, 
+			int disp_port_num, 
+			emu_keyboard keyboard, 
+			int key_port_num);
+	//start with debug mode
 	void test_start(SMP_word testInstr);
-
+	//start emulating
 	int start(int n, int mode);//Number of iteration execute path
 
 private:
+	//external device
+	//TODO
+	//Подумать про наследование и придумать механизм подкдючения внешних устройств к портам ядра
+	//Внешними устройствами могут быть KeyBoard, dispaly, terminal, other core, and other input/output device
+	//Классы устройств должны наследоваться от класса device.
+	
+	//Может нужно сделать 4е external_device, по одному на каждый порт?
+	//
+	class device external_device;
 
 	int state;
 
 	SMP_word port0;
 	int port0wait;
 	int port0ready;
+	int port0_device;
 
 	SMP_word port1;
 	int port1wait;
 	int port1ready;
+	int port1_device;
 
 	SMP_word port2;
 	int port2wait;
 	int port2ready;
+	int port2_device;
 
 	SMP_word port3;
 	int port3wait;
 	int port3ready;
+	int port3_device;
 
 	SMP_word lowBoundAddr;
 	SMP_word highBoundAddr;

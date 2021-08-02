@@ -61,6 +61,6 @@ int main(int argv, char* argc[])
 	//init core
 	core master_core(entry, instr_size, data_size, filenameInstr, filenameData);
 	//start core emulating
-	master_core.start(ni, mode);
+	if(master_core.start(ni, mode)) return 1;
 	return 0;
 }

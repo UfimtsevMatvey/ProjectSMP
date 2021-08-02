@@ -2,7 +2,8 @@ CXX = g++
 CXXFLAGS = -Wall -g  -mavx  -masm=intel
 
 all: SMPemu
-
+	rm -rf *.o smpemu 
+	
 SMPemu: maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o cmd_line.o
 	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o cmd_line.o -o smpemu.out
 

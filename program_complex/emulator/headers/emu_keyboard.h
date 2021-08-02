@@ -1,4 +1,7 @@
-class emu_keyboard
+#include "device.h"
+#include "def.h"
+
+class emu_keyboard : public device
 {
 private:
     /* data */

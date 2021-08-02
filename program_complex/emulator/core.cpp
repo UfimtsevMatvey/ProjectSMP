@@ -13,15 +13,70 @@
 #include "headers/testClass.h"
 #include "headers/error_Core.h"
 #include "headers/core_Mode.h"
+#include "headers/device_number.h"
 
 using namespace std;
-
+//init without external device
 core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile)
 {
 	FLR = 0;
 	PC = entry;
 	state = CORFIN;
 	initMemory(isize, dsize, ifile, dfile);
+}
+//init with display
+core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile, emu_display display, int disp_port_num)
+{
+	SMP_word* temp_port_num;
+	FLR = 0;
+	PC = entry;
+	state = CORFIN;
+	initMemory(isize, dsize, ifile, dfile);
+	switch (disp_port_num)
+	{
+	case 0: temp_port_num = &port0; break;
+	case 1: temp_port_num = &port1; break;
+	case 2: temp_port_num = &port2; break;
+	case 3: temp_port_num = &port3; break;
+	default:
+		temp_port_num = NULL;
+		break;
+	}
+	external_device = display;
+	if(display.init_display(temp_port_num)){
+		state = DISPERR;
+	}
+}
+//init with keyboard (dummmy)
+core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile, emu_keyboard keyboard, int key_port_num)
+{
+	FLR = 0;
+	PC = entry;
+	state = CORFIN;
+	initMemory(isize, dsize, ifile, dfile);
+}
+//init with display and keyboard (dummy)
+core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile, emu_display display, int disp_port_num, emu_keyboard keyboard, int key_port_num)
+{
+	SMP_word* temp_port_num;
+	FLR = 0;
+	PC = entry;
+	state = CORFIN;
+	initMemory(isize, dsize, ifile, dfile);
+		switch (disp_port_num)
+	{
+	case 0: temp_port_num = &port0; break;
+	case 1: temp_port_num = &port1; break;
+	case 2: temp_port_num = &port2; break;
+	case 3: temp_port_num = &port3; break;
+	default:
+		temp_port_num = NULL;
+		break;
+	}
+	external_device = display;
+	if(display.init_display(temp_port_num)){
+		state = DISPERR;
+	}
 }
 void core::initMemory(SMP_word isize, SMP_word dsize, const char* fileInst, const char* fileData)
 {
@@ -68,6 +123,12 @@ int core::start(int n, int mode)
 	debugger DBG;
 	int dbgparam = 0;
 	int i = 0;
+	if((state & DISPERR) != 0) {
+		std::cout << "Error!" << std::endl;
+		std::cout << "Display initialization is not correct" << std::endl;
+		std::cout << "Program is ended with return code: 1." << std::endl;
+		return DISPERR;
+	}
 	if((state & FMINF) != 0){
 		std::cout << "Error!" << std::endl;
 		std::cout << "Instaction memory is not found" << std::endl;
@@ -105,6 +166,7 @@ int core::start(int n, int mode)
 			PC++;
 			exec();
 			flushInstr();
+
 			i++;
 		}
 	}

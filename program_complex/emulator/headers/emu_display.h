@@ -1,16 +1,15 @@
-class emu_display
+#include "device.h"
+#include "def.h"
+
+class emu_display : public device
 {
 private:
-    /* data */
+    SMP_word* port;
+    SMP_word flag_new_port;
+    int print_char();
 public:
-    emu_display(/* args */);
+    int update();
+    int init_display(SMP_word* external_port);
+    emu_display();
     ~emu_display();
 };
-
-emu_display::emu_display(/* args */)
-{
-}
-
-emu_display::~emu_display()
-{
-}
