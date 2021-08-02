@@ -1,4 +1,4 @@
-int cmd_line(int argv, char* argc[], const char** filenameInstr, const char** filenameData, char* cmode, int* ni)
+int cmd_line(int argv, char* argc[], const char** filenameInstr, const char** filenameData, char* cmode, char* mode, int* ni)
 {
     if(argv == 1){
         if(filenameInstr != nullptr) *filenameInstr = "../../translator/out.bin";
@@ -11,12 +11,14 @@ int cmd_line(int argv, char* argc[], const char** filenameInstr, const char** fi
             *filenameInstr = "../../translator/out.bin";
             *filenameData= "data.bin";
             *cmode = argc[1][1];
+            *mode = argc[1][2];
             *ni = 100;
         }
         else{
             *filenameInstr = argc[1];
             *filenameData= "data.bin";
             *cmode = 'r';
+            *mode = 'a';
             *ni = 100;
         }
     }
@@ -25,12 +27,14 @@ int cmd_line(int argv, char* argc[], const char** filenameInstr, const char** fi
             *filenameInstr = argc[2];
             *filenameData= "data.bin";
             *cmode = argc[1][1];
+            *mode = 'a';
             *ni = 100;
         }
         else{
             *filenameInstr = argc[1];
             *filenameData= argc[2];
             *cmode = 'r';
+            *mode = 'a';
             *ni = 100;
         }
     }
@@ -39,12 +43,14 @@ int cmd_line(int argv, char* argc[], const char** filenameInstr, const char** fi
             *filenameInstr = argc[2];
             *filenameData= argc[3];
             *cmode = argc[1][1];
+            *mode = argc[1][2];
             *ni = 100;
         }
         else{
             *filenameInstr = argc[1];
             *filenameData= argc[2];
             *cmode = 'r';
+            *mode = 'a';
             *ni = 100;
         }
     }
