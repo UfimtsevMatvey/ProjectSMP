@@ -642,6 +642,6 @@ def main(argv):
 
 #entry point
 if(main(sys.argv) == 0):
-    print("sucsesfull")
+    print("successfull")
 else:
     print("Error in main function")
