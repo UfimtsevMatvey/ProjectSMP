@@ -17,8 +17,8 @@ int main(int argv, char* argc[])
 	char core_mode;
 	char mode_code;
 	int mode;
-	int ni;
-	if(cmd_line(argv, argc, &filenameInstr, &filenameData, &core_mode, &mode_code, &ni))
+	int instr_cntr;
+	if(cmd_line(argv, argc, &filenameInstr, &filenameData, &core_mode, &mode_code, &instr_cntr))
 		return 0;
 	std::cout << argv << std::endl;
 	std::cout << core_mode << std::endl;
@@ -65,6 +65,6 @@ int main(int argv, char* argc[])
 	//init core
 	core master_core(entry, instr_size, data_size, filenameInstr, filenameData);
 	//start core emulating
-	if(master_core.start(ni, mode)) return 1;
+	if(master_core.start(instr_cntr, mode)) return 1;
 	return 0;
 }
