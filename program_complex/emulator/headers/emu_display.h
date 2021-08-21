@@ -1,7 +1,8 @@
-#include "device.h"
+#pragma once
+//#include "device.h"
 #include "def.h"
 
-class emu_display : public device
+class emu_display// : public device
 {
 private:
     SMP_word* port;

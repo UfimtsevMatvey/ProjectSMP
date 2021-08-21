@@ -4,8 +4,8 @@ CXXFLAGS = -Wall -g  -mavx  -masm=intel
 all: SMPemu
 	rm -rf *.o smpemu 
 	
-SMPemu: maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o cmd_line.o
-	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o cmd_line.o -o smpemu.out
+SMPemu: maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o cmd_line.o emu_display.o emu_keyboard.o device.o subline.o
+	$(CXX) $(CXXFLAGS) maincpp.o core.o mem.o regf.o subfunc.o testClass.o checkArh.o cmd_line.o emu_display.o subline.o emu_keyboard.o device.o -o smpemu.out
 
 maincpp.o:
 	$(CXX) $(CXXFLAGS) -c ../maincpp.cpp
@@ -31,5 +31,16 @@ checkArh.o:
 cmd_line.o:
 	$(CXX) $(CXXFLAGS) -c ../cmd_line.cpp
 
+emu_display.o:
+	$(CXX) $(CXXFLAGS) -c ../emu_display.cpp
+
+emu_keyboard.o:
+	$(CXX) $(CXXFLAGS) -c ../emu_keyboard.cpp
+
+device.o:
+	$(CXX) $(CXXFLAGS) -c ../device.cpp
+
+subline.o:
+	$(CXX) $(CXXFLAGS) -c ../subline.cpp
 clean:
 	rm -rf *.o smpemu 

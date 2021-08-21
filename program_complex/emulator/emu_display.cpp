@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "headers/emu_display.h"
 #include "headers/def.h"

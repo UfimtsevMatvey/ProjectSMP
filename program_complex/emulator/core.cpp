@@ -1,3 +1,4 @@
+#pragma once
 #include "headers/core.h"
 #include <iostream>
 #include "headers/subfunc.h"
@@ -25,7 +26,7 @@ core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, co
 	initMemory(isize, dsize, ifile, dfile);
 }
 //init with display
-core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile, emu_display display, int disp_port_num)
+core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile, class emu_display display, int disp_port_num)
 {
 	SMP_word* temp_port_num;
 	FLR = 0;
@@ -42,13 +43,13 @@ core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, co
 		temp_port_num = NULL;
 		break;
 	}
-	external_device = display;
+	//external_device = display;
 	if(display.init_display(temp_port_num)){
 		state = DISPERR;
 	}
 }
 //init with keyboard (dummmy)
-core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile, emu_keyboard keyboard, int key_port_num)
+core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile, class emu_keyboard keyboard, int key_port_num)
 {
 	FLR = 0;
 	PC = entry;
@@ -56,7 +57,7 @@ core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, co
 	initMemory(isize, dsize, ifile, dfile);
 }
 //init with display and keyboard (dummy)
-core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile, emu_display display, int disp_port_num, emu_keyboard keyboard, int key_port_num)
+core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, const char* dfile, class emu_display display, int disp_port_num, emu_keyboard keyboard, int key_port_num)
 {
 	SMP_word* temp_port_num;
 	FLR = 0;
@@ -73,7 +74,7 @@ core::core(SMP_word entry, SMP_word isize, SMP_word dsize, const char* ifile, co
 		temp_port_num = NULL;
 		break;
 	}
-	external_device = display;
+	//external_device = display;
 	if(display.init_display(temp_port_num)){
 		state = DISPERR;
 	}
@@ -166,7 +167,6 @@ int core::start(int n, int mode)
 			PC++;
 			exec();
 			flushInstr();
-
 			i++;
 		}
 	}

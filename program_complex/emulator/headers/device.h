@@ -5,11 +5,3 @@ public:
     device();
     ~device();
 };
-
-device::device()
-{
-}
-
-device::~device()
-{
-}

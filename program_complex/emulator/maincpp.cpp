@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <array>
 #include "headers/core.h"
@@ -6,20 +7,22 @@
 #include "headers/checkArh.h"
 #include "headers/core_Mode.h"
 #include "headers/cmd_line.h"
+#include "headers/emu_display.h"
+#include "headers/emu_keyboard.h"
 
 int main(int argv, char* argc[])
 {
 	const char* filenameInstr;
 	const char* filenameData;
-	char cmode;
+	char core_mode;
 	char mode_code;
 	int mode;
 	int ni;
-	if(cmd_line(argv, argc, &filenameInstr, &filenameData, &cmode, &mode_code, &ni))
+	if(cmd_line(argv, argc, &filenameInstr, &filenameData, &core_mode, &mode_code, &ni))
 		return 0;
-	std::cout << cmode << std::endl;
+	std::cout << argv << std::endl;
+	std::cout << core_mode << std::endl;
 	std::cout << mode_code << std::endl;
-
 
 	switch (mode_code)
 	{
@@ -29,6 +32,7 @@ int main(int argv, char* argc[])
         std::cout << "Use -s mode for step by step emulating" << std::endl;//step by step
 		std::cout << "Use -a for ignore check AVX2" << std::endl;
 		std::cout << "Use -h for print this message" << std::endl;
+		return 0;
 		break;
 	case 'a':
 		std::cout << "Check AVX2 instaraction set ignore" << std::endl;
@@ -42,12 +46,12 @@ int main(int argv, char* argc[])
 		std::cout << "Program is ended with return code: 1." << std::endl;
 		return 1;
 	}
-	switch(cmode){
+	switch(core_mode){
 		case 'r': mode = STDMODE;	break;
 		case 'd': mode = DEBUGMODE;	break;
 		case 's': mode = STEPMODE;	break;
 		default: 
-			std::cout << "Unknown mode: " << cmode << std::endl;
+			std::cout << "Unknown mode: " << core_mode << std::endl;
             std::cout << "Use -r"" mode for standart emulating" << std::endl;//run
             std::cout << "Use -d mode for debug print emulating" << std::endl;//debug
             std::cout << "Use -s mode for step by step emulating" << std::endl;//step by step
