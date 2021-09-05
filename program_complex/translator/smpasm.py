@@ -178,51 +178,49 @@ sysImmTable = {
         "CINT"  :   "0",
         "INT"   :   "1"
 }
-def ALUinstrType(instr):
+def ALUinstrType(instr, priv):
     #begin
-    
     #parts of ALU instraction
     Nwords = len(instr)
     #we cut conditional
-    instr[0] = instr[0].upper()
-    itype = instr[0]
+    itype = instr[0].upper()
+    # find condition 
     conditional = itype[0:2]
-    print("conditional = ", conditional)
     cond = icond.get(conditional.upper())
-    if cond != None:
+    if (cond != None):
+        #begin  
         itype = itype[2:]
+        print("conditional = ", conditional)
+        print("code condition = ", cond)
+        #end
     else:
         cond = "11111"
-
-    lenopcode = len(itype)
-    print(itype)
-    print(cond)
-    if (itype[lenopcode - 1] == 'S'):
+    # find signed condition 
+    if (itype[len(itype) - 1] == 'S'):
         #begin
         S = "1"
-        itype = itype[0:lenopcode - 1]
+        itype = itype[0:len(itype) - 1]
         #end
     else:
         S = "0"
-    itype = itype.upper()
     #we get only type
-    func = aluTable.get(itype)
-    if func == None:
-        return None
 
+    func = aluTable.get(itype)
+    if (func == None): #ALU?
+        return None
+    print("Instraction type is: ", itype)
+    opcode = "0001" # ALU opcode is 0001b
+
+    
+    #regs or imm?
     #last or prelast word in instarction can consist of imm32/16 value
-    if (instr[Nwords - 1][0].upper() != "R"):
+    if (instr[Nwords - 1][0].upper() != "R"): #not regs?
         #begin
         imm32 = format(int(instr[Nwords - 1], base = 16), "b").zfill(32)
         I = "1"
         #end
     else:
         I = "0"
-    
-
-    #Attantion!!!! Hardcode
-    priv = "11"
-    opcode = "0001"
 
     if Nwords == 6:
         #begin
@@ -251,7 +249,6 @@ def ALUinstrType(instr):
             #end
         #end
     #debugging code
-    print("priv = ", priv)
     print("Rd = ", Rd)
     print("Rn = ", Rn)
     print("Rm = ", Rm)
@@ -265,10 +262,11 @@ def ALUinstrType(instr):
     temp = '{:<064}'
     output = temp.format(binInstr) 
     print("binary instraction is: ", output)
+    print('\n')
     return output
     #end
 
-def MULinstrType(instr):
+def MULinstrType(instr, priv):
     #begin
     #parts of instraction
     Nwords = len(instr)
@@ -298,9 +296,6 @@ def MULinstrType(instr):
     else:
         I = "0"
     print("mul imm = ", imm32)
-    
-    #Attantion!!!! Hardcode
-    priv = "11"
 
     #mul or mul with accumulation
     A = mulTable.get(itype)
@@ -342,10 +337,11 @@ def MULinstrType(instr):
     temp = '{:<064}'
     output = temp.format(binInstr) 
     print("binary instraction is: ", output)
+    print('\n')
     return output
     #end
 
-def MEMinstrType(instr):
+def MEMinstrType(instr, priv):
     #begin
     #parts of instraction
     Nwords = len(instr)
@@ -378,8 +374,6 @@ def MEMinstrType(instr):
     #we get only type
     slbit = memTypeTable.get(itype)
     TO = memOperSizeTable.get(itype)
-    #Attantion!!!! Hardcode
-    priv = "11"
 
     binInstr = priv + cond + opcode + slbit + TO + scale + Rn + Rd + offset
     #debagging code
@@ -393,10 +387,11 @@ def MEMinstrType(instr):
     temp = '{:<064}'
     output = temp.format(binInstr) 
     print("binary instraction is: ", output)
+    print('\n')
     return output
     #end
 
-def CTinstrType(instr):
+def CTinstrType(instr, priv):
     #begin
     imm48 = ""
     #parts of instraction
@@ -424,8 +419,6 @@ def CTinstrType(instr):
     if I == None:
         return None
 
-    #Attantion!!!! Hardcode
-    priv = "11"
     R = None
     #last or prelast word in instarction can consist of imm32/16 value
     if Nwords == 2:
@@ -466,10 +459,11 @@ def CTinstrType(instr):
     temp = '{:<064}'
     output = temp.format(binInstr) 
     print("binary instraction is: ", output)
+    print('\n')
     return output
     #end
 
-def SYSinstrType(instr):
+def SYSinstrType(instr, priv):
     #begin
     #parts of instraction
     Nwords = len(instr)
@@ -495,9 +489,6 @@ def SYSinstrType(instr):
     print("CT I = ", I)
     if I == None:
         return None
-
-    #Attantion!!!! Hardcode
-    priv = "11"
 
     #last or prelast word in instarction can consist of imm32/16 value
     if Nwords == 3:
@@ -541,38 +532,37 @@ def SYSinstrType(instr):
     temp = '{:<064}'
     output = temp.format(binInstr) 
     print("binary instraction is: ", output)
+    print('\n')
     return output
     #end
 
-def decode(instr):
+def decode(instr, priv):
     #begin
     instrTemp = instr.replace(',', ' ')
-    #instrTemp = instr.replace('', ' ')
     instrTemp = instrTemp.replace('[', '')
     instrTemp = instrTemp.replace(']', '')
     instrTemp = instrTemp.replace('\n', '')
-    #instrTemp = instrTemp.replace('  ', ' ')
     instrTemp = re.sub('\s+',' ',instrTemp)
     words = instrTemp.split(' ')
-    print(words)
-    #We split instraction on words
-    binaryOut = ALUinstrType(words)
+    print("Instraction is parsed:", words)
+    #split instraction on words
+    binaryOut = ALUinstrType(words, priv) #Is this an ALU instraction?
     if binaryOut == None:
         #begin
-        binaryOut = MULinstrType(words)
+        binaryOut = MULinstrType(words, priv) #Is this an MLU instraction?
         if binaryOut == None:
             #begin
-            binaryOut = MEMinstrType(words)
+            binaryOut = MEMinstrType(words, priv) #Is this an Memory instraction?
             if binaryOut == None:
                 #begin
                 print("CT")
-                binaryOut = CTinstrType(words)
+                binaryOut = CTinstrType(words, priv) #Is this an Control Take instaraction
                 if binaryOut == None:
                     #begin
-                    binaryOut = SYSinstrType(words)
+                    binaryOut = SYSinstrType(words, priv) #Is tis an System instaraction
                     if binaryOut == None:
                         #begin
-                        print("OOOOOh, NOOOO")
+                        #print("Unknown instraction: ", instr)
                         return None
                         #end
                     #end
@@ -588,7 +578,6 @@ def main(argv):
     sFileName = ''
     dFileName = ''
     binFileName = ''
-    print("len = ", len(sys.argv))
     if (len(sys.argv) == 3):
         #begin
         sFileName = sys.argv[1]
@@ -616,20 +605,33 @@ def main(argv):
         print("File error\n")
         return 1
         #end
+    priv = "11" #default value
     instrs = sFile.readlines()
     for x in  instrs:
         #begin
-        print("instraction", x ,"is translating\n")
-        if(x != '\n'):
+        words = x.split(' ')
+        if(words[0] == "priv"):
             #begin
-            dex = decode(x)
-            if(dex != None):
-                #begin 
-                dFile.writelines(dex + "\n")
-                a = int(BitArray(bin=dex).bin,2)
-                bytes16 = a.to_bytes(16, byteorder='little', signed=False)
-                binFile.write(bytes16[0:8])
+            if (words[1].replace('\n', '') == "0"): priv = "00"
+            if (words[1].replace('\n', '') == "1"): priv = "01"
+            if (words[1].replace('\n', '') == '2'): priv = "10"
+            if (words[1].replace('\n', '') == "3"): priv = "11"
+            #end
+        else:
+            #begin
+            print("instraction",'[', x[0:-1] ,']',"is translating...\n")
+            if(x != '\n'):
                 #begin
+                dex = decode(x, priv)
+                if(dex != None):
+                    #begin 
+                    dFile.writelines(dex + "\n")
+                    a = int(BitArray(bin=dex).bin,2)
+                    bytes16 = a.to_bytes(16, byteorder='little', signed=False)
+                    binFile.write(bytes16[0:8])
+                    #begin
+                else: print("Unknown instraction: ", x)
+                #end
             #end
         #end    
     

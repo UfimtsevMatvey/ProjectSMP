@@ -1,3 +1,4 @@
+priv 2
 add r10, r3, 0
 adds r10, r2  , 12
 eqand r5, r8, 123
