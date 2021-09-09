@@ -1,0 +1,41 @@
+add r10, r3, 0
+adds r10, r2  , 12
+eqand r5, r8, 123
+eor r8, r34, r5
+orr r1, r52, r9
+tst r5, r7, r6
+cmp r9, r23, 890
+lable1:
+cmn r34, r35, 36
+sub r8, r8, r8
+adc r8, r21, 897
+rsb r7, r2, r1
+sbc r7, r7, 45
+mvn r8, r9, r10
+lsl r1, r1, r2
+asr r7, r7, r8
+neasrs r8, r8, r8
+rrxs r9, r43, 44
+ror r21, r35, 5352
+bswp r43, r56, 34645
+swps r5, r56, r43
+BL lable2
+uaddpb r3, r3, r4
+uaddph r6, r62, r23
+lable2:
+uaddpw r45, r23, 42314
+saddpb r1, r2, r3
+saddph r5, r6, r7
+saddpw r1, r2, 345
+BR lable1
+vuaddb r23, r32, r34, r31, 23
+vuaddh r4, r5, r5, r8, 212
+vsaddb r4, r8, r4, r8, 43
+vsaddh r5, r6, r7, r8, 34
+mul r32, r8,    98213
+str r7, [r10  , 10, 21]
+BL -14
+BINT
+add R1, R2, 10
+STR R7, [r0  , 0, 0]
+ldr R29, [r0  , 0, 0]

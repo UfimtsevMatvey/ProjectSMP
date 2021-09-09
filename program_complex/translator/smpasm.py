@@ -629,7 +629,7 @@ def main(argv):
                     a = int(BitArray(bin=dex).bin,2)
                     bytes16 = a.to_bytes(16, byteorder='little', signed=False)
                     binFile.write(bytes16[0:8])
-                    #begin
+                    #end
                 else: print("Unknown instraction: ", x)
                 #end
             #end
