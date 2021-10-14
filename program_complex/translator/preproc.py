@@ -33,6 +33,7 @@ ctOpcodeTable = {
         "BI"    :   "0100",
         "BR"    :   "0100"
 }
+
 def split_str(instr):
     instrTemp = instr.replace(',', ' ')
     instrTemp = instrTemp.replace('[', '')
@@ -72,7 +73,7 @@ def this_Lable(word):
     return (word[-1] == ':')
 
 def lable_proc(instrs):
-    lables_ct = {'':''}
+    lables_ct = {}
     lable_cntr = 0
     for counter, x in enumerate(instrs):
         #begin
@@ -126,7 +127,7 @@ def main(argv):
         return 1
         #end
     instrs = sFile.readlines()
-    lables_ct = {'':''}
+    lables_ct = {}
     lables_ct = lable_proc(instrs)
     print(lables_ct)
     for x in  instrs:
