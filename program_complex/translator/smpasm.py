@@ -50,8 +50,8 @@ aluTable = {
         "SADDPW"   :   "11000",
         "VUADDB"   :   "11001",
         "VUADDH"   :   "11010",
-        "VSADDB"   :   "11011",
-        "VSADDH"   :   "11100"
+        "VADDB"   :   "11011",
+        "VADDH"   :   "11100"
     }
 
 mulOpcodeTable = {
@@ -356,9 +356,10 @@ def MEMinstrType(instr, priv):
         cond = "11111"#if nocond instraction
     #get opcode
     opcode = memOpcodeTable.get(itype)
-    print("MEM opcode", opcode)
+    
     if opcode == None:
         return None
+    print("MEM opcode", opcode)
     #last or prelast word in instarction can consist of imm32/16 value
     if Nwords == 5:
         #begin
@@ -376,7 +377,7 @@ def MEMinstrType(instr, priv):
     TO = memOperSizeTable.get(itype)
 
     binInstr = priv + cond + opcode + slbit + TO + scale + Rn + Rd + offset
-    #debagging code
+    #debugging code
     print("MEM priv = ", priv)
     print("MEM Rd = ", Rd)
     print("MEM Rn = ", Rn)
@@ -418,13 +419,15 @@ def CTinstrType(instr, priv):
     print("CT I = ", I)
     if I == None:
         return None
-
     R = None
     #last or prelast word in instarction can consist of imm32/16 value
     if Nwords == 2:
         #begin
         if I == "0":
             #begin
+            if(instr[1][0] != 'R'):
+                print("translation error: incorrect register:", instr[1])
+                return None
             R = format(int(instr[1][1:], base = 10), "b").zfill(6)
             xfill = "00000"
             binInstr = priv + cond + opcode + func + xfill + R
@@ -630,7 +633,9 @@ def main(argv):
                     bytes16 = a.to_bytes(16, byteorder='little', signed=False)
                     binFile.write(bytes16[0:8])
                     #end
-                else: print("Unknown instraction: ", x)
+                else: 
+                    print("Unknown instraction: ", x)
+                    break
                 #end
             #end
         #end    

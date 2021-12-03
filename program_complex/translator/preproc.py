@@ -89,6 +89,9 @@ def decode_CT(instr, lables_ct):
     #begin
     words = split_str(instr)
     num_lable = 0
+    if(this_Lable(words[0])):
+        return None
+        
     if(this_CT(words[0])):
         #begin
         lable = get_val_CTinstr(words)
