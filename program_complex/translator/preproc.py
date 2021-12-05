@@ -119,8 +119,23 @@ def decode_CT(instr, lables_ct):
 
 def main(argv):
     #begin
-    sFileName = 'sourse_preproc_test.smpasm'
-    dFileName = 'sourse_preproc_out.smpasm'
+    sFileName = ''
+    dFileName = ''
+    if(len(sys.argv) == 3):
+        #begin
+        sFileName = sys.argv[1]
+        dFileName = sys.argv[2]
+        #end
+    if(len(sys.argv) == 2):
+        #begin
+        sFileName = sys.argv[1]
+        dFileName = sys.argv[1] + '.preproc.out'
+        #end
+    if(len(sys.argv) == 1):
+        #begin
+        sFileName = 'sourse_preproc_test.smpasm'
+        dFileName = 'sourse_preproc_out.smpasm'
+        #end
     sFile  = open(sFileName, 'r')
     dFile  = open(dFileName, 'w')
     if ((dFile.mode != 'w') | (sFile.mode != 'r')):
