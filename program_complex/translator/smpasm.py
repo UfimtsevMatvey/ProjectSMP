@@ -178,6 +178,38 @@ sysImmTable = {
         "CINT"  :   "0",
         "INT"   :   "1"
 }
+
+def instrType(instr):
+    #begin
+    Nwords = len(instr)
+    #we cut conditional
+    itype = instr[0].upper()
+    itype_alu = instr[0].upper()
+    # find condition 
+    conditional = itype[0:2]
+    cond = icond.get(conditional.upper())
+    if (cond != None):
+        itype_alu = itype_alu[2:]
+        itype = itype[2:]
+    
+    if (itype_alu[len(itype_alu) - 1] == 'S'):
+        itype_alu = itype_alu[0:len(itype_alu) - 1]
+    
+    if(aluTable.get(itype_alu) != None):
+        return "ALU"
+    elif(mulTable.get(itype) != None):
+        return "MUL"
+    elif(memTypeTable.get(itype) != None):
+        return "MEM"
+    elif(ctOpcodeTable.get(itype) != None):
+        return "CT"
+    elif(sysTypeTable.get(itype) != None):
+        return "SYS"
+    else:
+        return None
+    #end
+
+
 def ALUinstrType(instr, priv):
     #begin
     #parts of ALU instraction
@@ -549,29 +581,19 @@ def decode(instr, priv):
     words = instrTemp.split(' ')
     print("Instraction is parsed:", words)
     #split instraction on words
-    binaryOut = ALUinstrType(words, priv) #Is this an ALU instraction?
-    if binaryOut == None:
-        #begin
+    itype = instrType(words)
+    if(itype == None):
+        return None
+    elif(itype == "ALU"):
+        binaryOut = ALUinstrType(words, priv) #Is this an ALU instraction?
+    elif(itype == "MUL"):
         binaryOut = MULinstrType(words, priv) #Is this an MLU instraction?
-        if binaryOut == None:
-            #begin
-            binaryOut = MEMinstrType(words, priv) #Is this an Memory instraction?
-            if binaryOut == None:
-                #begin
-                print("CT")
-                binaryOut = CTinstrType(words, priv) #Is this an Control Take instaraction
-                if binaryOut == None:
-                    #begin
-                    binaryOut = SYSinstrType(words, priv) #Is tis an System instaraction
-                    if binaryOut == None:
-                        #begin
-                        #print("Unknown instraction: ", instr)
-                        return None
-                        #end
-                    #end
-                #end
-            #end
-        #end
+    elif(itype == "MEM"):
+        binaryOut = MEMinstrType(words, priv) #Is this an Memory instraction?
+    elif(itype == "CT"):
+        binaryOut = CTinstrType(words, priv) #Is this an Control Take instaraction
+    elif(itype == "SYS"):
+        binaryOut = SYSinstrType(words, priv) #Is tis an System instaraction
     return binaryOut
     #end
 
